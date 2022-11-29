@@ -1,17 +1,19 @@
 import React from 'react';
 import { Layout } from 'antd';
 import { Outlet } from 'react-router-dom';
+import Header from './header';
+import Footer from './footer';
 
-const { Header, Footer, Content } = Layout;
+const { Content } = Layout;
 
 const MainLayout = () => {
     return (
         <Layout>
-            <Header>Header</Header>
+            <Header />
             <Content>
                 <Outlet />
             </Content>
-            <Footer>Footer</Footer>
+            <Footer />
         </Layout>
     );
 };
