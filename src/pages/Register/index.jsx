@@ -1,5 +1,5 @@
 import React from 'react';
-import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import { LockOutlined, PhoneOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Checkbox, Form, Input } from 'antd';
 import { Link } from 'react-router-dom';
 const Register = () => {
@@ -20,19 +20,20 @@ const Register = () => {
               name="name"
               rules={[{ required: true, message: 'Vui lòng nhập Họ và tên!' }]}
             >
-              <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Họ và tên" />
+              <Input className="py-2" prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Họ và tên" />
             </Form.Item>
             <Form.Item
               name="username"
               rules={[{ required: true, message: 'Vui lòng nhập Số điện thoại!' }]}
             >
-              <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Số điện thoại" />
+              <Input className="py-2" prefix={<PhoneOutlined className="site-form-item-icon" />} placeholder="Số điện thoại" />
             </Form.Item>
             <Form.Item
               name="password"
               rules={[{ required: true, message: 'Vui lòng nhập Mật khẩu!' }]}
             >
               <Input.Password
+                className="py-2"
                 prefix={<LockOutlined className="site-form-item-icon" />}
                 type="password"
                 placeholder="Mật khẩu"
@@ -43,6 +44,7 @@ const Register = () => {
               rules={[{ required: true, message: 'Vui lòng nhập lại Mật khẩu!' }]}
             >
               <Input.Password
+                className="py-2"
                 prefix={<LockOutlined className="site-form-item-icon" />}
                 type="password"
                 placeholder="Nhập lại mật khẩu"
@@ -70,11 +72,11 @@ const Register = () => {
               <p>Bằng việc bấm nút Đăng ký bên dưới, tôi xác nhận đã đọc, hiểu và đồng ý với các <a href="#" className="underline text-[#cfb4dd]">Điều kiện và Điều khoản</a> của Dodoris.</p>
             </Form.Item>
             <Form.Item>
-              <Button type="primary" htmlType="submit" className="login-form-button bg-[#02b875] w-full ">
+              <Button type="primary" htmlType="submit" className="login-form-button text-[15px] bg-[#02b875] w-full ">
                 Đăng ký
               </Button>
               <p className="my-5 text-center">Đã có tài khoản?</p>
-              <Link to='/dang-nhap' className="inline-block w-full py-1 rounded text-[#1464f4] text-center border border-[#1464f4] hover:text-[#fff] hover:bg-[#125eb9]">Đăng nhập</Link>
+              <Link to='/dang-nhap' className="inline-block text-[16px] w-full py-1 rounded text-[#1464f4] text-center border border-[#1464f4] hover:text-[#fff] hover:bg-[#125eb9]">Đăng nhập</Link>
             </Form.Item>
           </Form>
         </div>
