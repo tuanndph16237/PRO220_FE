@@ -9,7 +9,7 @@ const Header = () => {
             <nav className="bg-white border-gray-200 px-2 sm:px-4 py-2.5">
                 <div className="container flex flex-wrap items-center justify-between mx-auto">
                     <Link to="/" className="flex items-center">
-                        <img src="/images/logo.png" className="mr-3 sm:h-16" alt="Dodoris Logo" />
+                        <img src="/images/myLogo.png" className="mr-3 sm:h-16" alt="Dodoris Logo" />
                         <span className="self-center text-xl text-[#02b875] font-bold whitespace-nowrap">DODORIS</span>
                     </Link>
                     <div className="flex items-center md:order-2">

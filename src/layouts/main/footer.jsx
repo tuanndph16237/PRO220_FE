@@ -7,7 +7,7 @@ const Footer = () => {
             <div className="container flex flex-wrap items-center justify-between mx-auto">
                 <div className="mb-6 md:mb-0">
                     <Link to="/" className="flex items-center">
-                        <img src="/images/logo.png" className="mr-3 sm:h-16" alt="Dodoris Logo" />
+                        <img src="/images/mylogo.png" className="mr-3 sm:h-16" alt="Dodoris Logo" />
                         <span className="self-center text-xl text-[#02b875] font-bold whitespace-nowrap">DODORIS</span>
                     </Link>
                     <span></span>
