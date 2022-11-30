@@ -1,0 +1,13 @@
+.sider-admin-bg,
+#sider-admin .ant-menu-dark.ant-menu-inline .ant-menu-sub.ant-menu-inline {
+    background-color: var(--sider-admin-color) !important;
+}
+
+.sider-admin-bg .ant-menu-item-selected,
+.sider-admin-bg .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected,
+#sider-admin .ant-menu-dark:not(.ant-menu-horizontal) .ant-menu-item:not(.ant-menu-item-selected):active,
+#sider-admin .ant-menu-dark:not(.ant-menu-horizontal) .ant-menu-submenu-title:active,
+.ant-menu-dark:not(.ant-menu-horizontal) .ant-menu-item:not(.ant-menu-item-selected):active,
+.ant-menu-dark:not(.ant-menu-horizontal) .ant-menu-item-selected {
+    background: var(--primary-color) !important;
+}

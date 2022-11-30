@@ -20,7 +20,7 @@ function App() {
                 <Route path="dang-ky" element={<Register />} />
             </Route>
             <Route path="/admin" element={<AdminLayout />}>
-                <Route index element={<HomePage />} />
+                <Route path="dang-ky" element={<Register />} />
             </Route>
         </Routes>
     );
