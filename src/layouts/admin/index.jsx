@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, useNavigate, useNavigation } from 'react-router-dom';
 import { Layout, Menu, Dropdown, Space } from 'antd';
 import {
     MenuFoldOutlined,
@@ -19,37 +19,48 @@ const items = [
         key: 'thong-ke',
         icon: <PieChartOutlined />,
         children: [
-            { key: 'thong-ke-don-hang', label: 'Thống kê đơn hàng' },
-            { key: 'thong-ke-doanh-thu', label: 'Thống kê doanh thu' },
+            { key: 'Thống kê đơn hàng', path: 'thong-ke-don-hang', label: 'Thống kê đơn hàng' },
+            { key: 'Thống kê doanh thu', path: 'thong-ke-doanh-thu', label: 'Thống kê doanh thu' },
         ],
     },
     {
         label: 'Quản lý đơn hàng',
-        key: 'submenu',
+        key: 'Quản lý đơn hàng',
         icon: <FileTextOutlined />,
         children: [
-            { key: 'don-hang', label: 'Đơn hàng' },
-            { key: 'them-don-hang', label: 'Thêm đơn hàng' },
+            { key: 'Đơn hàng', path: 'don-hang', label: 'Đơn hàng' },
+            { key: 'Thêm đơn hàng', path: 'them-don-hang', label: 'Thêm đơn hàng' },
         ],
     },
-    { key: 'Option 3', icon: <FileDoneOutlined />, label: 'Quản lý vật tư' },
+    { key: 'Quản lý vật tư', path: 'quan-ly-vat-tu', icon: <FileDoneOutlined />, label: 'Quản lý vật tư' },
     {
         label: 'Quản lý vai trò',
-        key: 'submenu',
+        key: 'Quản lý vai trò',
         icon: <ContactsOutlined />,
         children: [
-            { key: 'vai-tro', label: 'Vai trò' },
-            { key: 'them-vai-tro', label: 'Thêm vai trò' },
+            { key: 'Vai trò', path: 'vai-tro', label: 'Vai trò' },
+            { key: 'Thêm vai trò', path: 'them-vai-tro', label: 'Thêm vai trò' },
         ],
     },
 ];
 
 const AdminLayout = () => {
     const [collapsed, setCollapsed] = useState(false);
+    const navigate = useNavigate();
+    const handleClick = ({
+        item: {
+            props: { path },
+        },
+        key,
+    }) => {
+        document.title = key;
+        navigate(`/admin/${path}`);
+    };
+
     return (
         <Layout>
             <Sider trigger={null} collapsible collapsed={collapsed} className="sider-admin-bg" id="sider-admin">
-                <img src="/images/admin-logo.png" class="mx-auto my-4 sm:h-16" alt="Dodoris Logo" />
+                <img src="/images/admin-logo.png" className="mx-auto my-4 sm:h-16" alt="Dodoris Logo" />
                 <Menu
                     style={{ backgroundColor: '#17274e' }}
                     theme="dark"
@@ -57,6 +68,7 @@ const AdminLayout = () => {
                     defaultSelectedKeys={['1']}
                     mode="inline"
                     items={items}
+                    onClick={handleClick}
                 />
             </Sider>
             <Layout className="site-layout h-screen">

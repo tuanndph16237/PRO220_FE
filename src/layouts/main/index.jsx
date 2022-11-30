@@ -10,7 +10,7 @@ const MainLayout = () => {
     return (
         <Layout>
             <Header />
-            <Content>
+            <Content className="bg-white">
                 <Outlet />
             </Content>
             <Footer />
