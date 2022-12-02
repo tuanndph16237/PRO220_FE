@@ -3,6 +3,7 @@
 @tailwind utilities;
 :root {
     --primary-color: #02b875;
+    --primary-color-hover: #09915f;
     --sider-admin-color: #17274e;
 }
 a:hover {
