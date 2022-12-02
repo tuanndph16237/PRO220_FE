@@ -1,0 +1,10 @@
+.ant-select-selector {
+    border: 1px solid var(--primary-color) !important;
+}
+.ant-select-selector:focus-within {
+    border: 1px solid blue !important;
+}
+
+.content-booking {
+    background-image: url(https://shop.vinfastauto.com/on/demandware.static/Sites-app_vinfast_vn-Site/-/vi_VN/images/dat-lich-bao-duong.png) !important;
+}
