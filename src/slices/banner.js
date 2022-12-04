@@ -12,7 +12,6 @@ export const getAllBannerAsync = createAsyncThunk('getAllBannerAsync', async (fi
 
 export const updateBannerAsync = createAsyncThunk('updateBannerAsync', async ({ _id, data }, { rejectWithValue }) => {
     try {
-        console.log('id, data', _id, data);
         const banner = await updateBanner(_id, data);
         return banner;
     } catch (error) {
@@ -32,7 +31,6 @@ export const BannerSlice = createSlice({
             state.banners = action.payload.data;
         },
         [updateBannerAsync.fulfilled.type]: (state, action) => {
-            console.log(22222, action);
             state.banners = state.banners.map((banner) => {
                 if (banner._id !== action.payload.data._id) return banner;
                 return action.payload.data;

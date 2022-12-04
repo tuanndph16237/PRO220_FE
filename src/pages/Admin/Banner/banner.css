@@ -1,0 +1,14 @@
+.banner-content .ant-switch.ant-switch-checked {
+    background: var(--primary-color) !important;
+}
+
+.banner-content .ant-switch {
+    background: var(--btn-checkbox-disable) !important;
+}
+.banner-content .ant-btn-default:disabled {
+    background: var(--btn-checkbox-disable) !important;
+}
+.banner-content .ant-btn-default:not(:disabled):hover {
+    color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
