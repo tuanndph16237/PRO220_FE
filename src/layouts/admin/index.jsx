@@ -33,6 +33,7 @@ const items = [
         ],
     },
     { key: 'Quản lý vật tư', path: 'quan-ly-vat-tu', icon: <FileDoneOutlined />, label: 'Quản lý vật tư' },
+    { key: 'Quản lý banner', path: 'quan-ly-banner', icon: <FileDoneOutlined />, label: 'Quản lý banner' },
     {
         label: 'Quản lý vai trò',
         key: 'Quản lý vai trò',
@@ -59,19 +60,33 @@ const AdminLayout = () => {
 
     return (
         <Layout>
-            <Sider trigger={null} collapsible collapsed={collapsed} className="sider-admin-bg" id="sider-admin">
+            <Sider
+                trigger={null}
+                collapsible
+                collapsed={collapsed}
+                className="sider-admin-bg"
+                id="sider-admin"
+                style={{
+                    overflow: 'auto',
+                    height: '100vh',
+                    position: 'fixed',
+                    left: 0,
+                    top: 0,
+                    bottom: 0,
+                }}
+            >
                 <img src="/images/admin-logo.png" className="mx-auto my-4 sm:h-16" alt="Dodoris Logo" />
                 <Menu
                     style={{ backgroundColor: '#17274e' }}
                     theme="dark"
-                    className="sider-admin-bg"
+                    className="menu-admin-bg"
                     defaultSelectedKeys={['1']}
                     mode="inline"
                     items={items}
                     onClick={handleClick}
                 />
             </Sider>
-            <Layout className="site-layout h-screen">
+            <Layout className="site-layout h-screen" style={{ overflow: 'initial', marginLeft: collapsed ? 80 : 200 }}>
                 <Header
                     style={{
                         padding: 0,
@@ -159,15 +174,10 @@ const AdminLayout = () => {
                         </div>
                     </div>
                 </Header>
-                <Content
-                    className="site-layout-background"
-                    style={{
-                        margin: '24px 16px',
-                        padding: 24,
-                        minHeight: 280,
-                    }}
-                >
-                    <Outlet />
+                <Content className="bg-white p-6">
+                    <div className="site-layout-background">
+                        <Outlet />
+                    </div>
                 </Content>
             </Layout>
         </Layout>
