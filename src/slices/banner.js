@@ -36,7 +36,11 @@ export const BannerSlice = createSlice({
             errors: null,
             loading: false,
         },
-        value: {},
+        bannerUpdate: {
+            values: {},
+            errors: null,
+            loading: false,
+        },
         bannersRemove: {
             errors: null,
             message: null,
@@ -45,6 +49,9 @@ export const BannerSlice = createSlice({
     },
     reducers: {},
     extraReducers: {
+        [getAllBannerAsync.rejected.type]: (state, action) => {
+            state.banners.loading = false;
+        },
         [getAllBannerAsync.pending.type]: (state, action) => {
             state.banners.loading = true;
         },
