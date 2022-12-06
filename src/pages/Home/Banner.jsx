@@ -22,7 +22,6 @@ const Banner = () => {
             dispatch(getAllBannerAsync({ enabled: true, deleted: false }));
         }
     }, []);
-    console.log('banners', banners);
     return (
         <Carousel autoplay>
             {_.map(banners, (banner) => (

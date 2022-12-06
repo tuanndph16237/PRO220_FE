@@ -3,7 +3,6 @@ import { getBanners, removeBannerByIds, updateBanner } from '../api/banner';
 
 export const getAllBannerAsync = createAsyncThunk('getAllBannerAsync', async (filter, { rejectWithValue }) => {
     try {
-        console.log('filter', filter);
         const banners = await getBanners(filter);
         return banners;
     } catch (error) {

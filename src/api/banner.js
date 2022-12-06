@@ -3,7 +3,6 @@ import instance from './instance';
 const URL = '/banner';
 
 export const getBanners = (filter) => {
-    console.log(2222, filter);
     return instance.get(URL, { params: { filter } });
 };
 
