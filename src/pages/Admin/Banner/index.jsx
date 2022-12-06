@@ -22,7 +22,7 @@ const BannerManage = () => {
     const loadding = useSelector((state) => state.banner.banners.loading);
 
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-    const [open, setOpen] = useState(true);
+    const [open, setOpen] = useState(false);
 
     const data = banners.map((banner) => ({ ...banner, key: banner._id }));
     useEffect(() => {
