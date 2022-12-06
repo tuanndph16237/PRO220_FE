@@ -7,6 +7,7 @@ import { notification, Popconfirm, Switch, Table, Row, Button, Spin } from 'antd
 import { getAllBannerAsync, removeBannerByIdsAsync, updateBannerAsync } from '../../../slices/banner';
 import './banner.css';
 import DrawerCreateBanner from './DrawerCreateBanner';
+import { NOTIFICATION_TYPE } from '../../../constants/status';
 
 const noti = (type, message, description) => {
     notification[type]({
@@ -21,7 +22,7 @@ const BannerManage = () => {
     const loadding = useSelector((state) => state.banner.banners.loading);
 
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-    const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState(true);
 
     const data = banners.map((banner) => ({ ...banner, key: banner._id }));
     useEffect(() => {
@@ -29,7 +30,6 @@ const BannerManage = () => {
     }, []);
 
     const onSelectChange = (newSelectedRowKeys) => {
-        console.log('selectedRowKeys changed: ', newSelectedRowKeys);
         setSelectedRowKeys(newSelectedRowKeys);
     };
     const rowSelection = {
@@ -50,10 +50,18 @@ const BannerManage = () => {
         dispatch(removeBannerByIdsAsync(ids)).then((res) => {
             const bannerRemoved = _.get(res, 'payload.data.dataDeleted', null);
             if (bannerRemoved) {
-                noti('success', 'Xóa thành banner công!', `Bạn đã xóa ${bannerRemoved.name}  thành công!`);
+                noti(
+                    NOTIFICATION_TYPE.SUCCESS,
+                    'Xóa thành banner công!',
+                    `Bạn đã xóa ${bannerRemoved.name}  thành công!`,
+                );
             } else {
                 const ids = _.get(res, 'payload.data.ids', null);
-                noti('success', 'Xóa thành banner công!', `Bạn đã xóa ${ids.length} banner  thành công!`);
+                noti(
+                    NOTIFICATION_TYPE.SUCCESS,
+                    'Xóa thành banner công!',
+                    `Bạn đã xóa ${ids.length} banner  thành công!`,
+                );
             }
         });
     };

@@ -6,6 +6,10 @@ export const getBanners = (filter) => {
     return instance.get(URL, { params: { filter } });
 };
 
+export const createBanner = (data) => {
+    return instance.post(URL, data);
+};
+
 export const getBannerById = (id) => {
     return instance.get(`${URL}/${id}`);
 };

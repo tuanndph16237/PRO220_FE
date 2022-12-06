@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { getBanners, removeBannerByIds, updateBanner } from '../api/banner';
+import { createBanner, getBanners, removeBannerByIds, updateBanner } from '../api/banner';
 
 export const getAllBannerAsync = createAsyncThunk('getAllBannerAsync', async (filter, { rejectWithValue }) => {
     try {
@@ -28,6 +28,15 @@ export const removeBannerByIdsAsync = createAsyncThunk('removeBannerByIdsAsync',
     }
 });
 
+export const createBannerAsync = createAsyncThunk('createBannerAsync', async (data, { rejectWithValue }) => {
+    try {
+        const banner = await createBanner(data);
+        return banner;
+    } catch (error) {
+        return rejectWithValue(error);
+    }
+});
+
 export const BannerSlice = createSlice({
     name: 'banner',
     initialState: {
@@ -45,6 +54,12 @@ export const BannerSlice = createSlice({
             errors: null,
             message: null,
             dataDeleted: null,
+        },
+        create: {
+            errors: null,
+            message: null,
+            loadding: false,
+            status: null,
         },
     },
     reducers: {},
@@ -72,6 +87,18 @@ export const BannerSlice = createSlice({
             state.banners.values = state.banners.values.filter((banner) => {
                 return !action.payload.data.ids.includes(banner._id);
             });
+        },
+        [createBannerAsync.rejected.type]: (state, action) => {
+            state.create.status = 'error';
+        },
+        [createBannerAsync.pending.type]: (state, action) => {
+            state.create.status = 'error';
+            state.create.loadding = true;
+        },
+        [createBannerAsync.fulfilled.type]: (state, action) => {
+            state.create.loadding = false;
+            state.create.message = 'Thêm thành công';
+            state.banners.values.push(action.payload.data);
         },
     },
 });
