@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import _ from 'lodash';
 import { Carousel } from 'antd';
+import { useSelector, useDispatch } from 'react-redux';
+import { getAllBannerAsync } from '../../slices/banner';
 const contentStyle = {
     width: '100%',
     height: '600px',
@@ -11,22 +14,23 @@ const contentStyle = {
     border: 'none',
 };
 const Banner = () => {
+    const dispatch = useDispatch();
+    const banners = useSelector((state) => _.filter(state.banner.banners.values, (banner) => banner.enabled));
+
+    useEffect(() => {
+        if (_.isEmpty(banners)) {
+            dispatch(getAllBannerAsync({ enabled: true, deleted: false }));
+        }
+    }, []);
     return (
         <Carousel autoplay>
-            <div>
-                <Link to="dat-lich">
-                    <img style={contentStyle} src="http://phatthanhvinh.com/uploads/banner/b.png" alt="" />
-                </Link>
-            </div>
-            <div>
-                <Link to="dat-lich">
-                    <img
-                        style={contentStyle}
-                        src="https://bizweb.sapocdn.net/100/438/408/themes/886242/assets/slider_1.jpg?1669448380227"
-                        alt=""
-                    />
-                </Link>
-            </div>
+            {_.map(banners, (banner) => (
+                <div key={banner._id}>
+                    <Link to={banner.redirectTo}>
+                        <img style={contentStyle} src={banner.url} alt="" />
+                    </Link>
+                </div>
+            ))}
         </Carousel>
     );
 };
