@@ -10,8 +10,12 @@ export const getBannerById = (id) => {
     return instance.get(`${URL}/${id}`);
 };
 
-export const removeBanner = (id) => {
+export const removeBannerById = (id) => {
     return instance.delete(`${URL}/${id}`);
+};
+
+export const removeBannerByIds = (ids = []) => {
+    return instance.delete(URL, { data: { ids } });
 };
 
 export const updateBanner = (id, data) => {

@@ -2,19 +2,28 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import _ from 'lodash';
-import { DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined } from '@ant-design/icons';
-import { Switch, Table, Row, Button } from 'antd';
-import { getAllBannerAsync, updateBannerAsync } from '../../../slices/banner';
+import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
+import { notification, Popconfirm, Switch, Table, Row, Button, Spin } from 'antd';
+import { getAllBannerAsync, removeBannerByIdsAsync, updateBannerAsync } from '../../../slices/banner';
 import './banner.css';
+import DrawerCreateBanner from './DrawerCreateBanner';
+
+const noti = (type, message, description) => {
+    notification[type]({
+        message,
+        description,
+    });
+};
 
 const BannerManage = () => {
-    const [selectedRowKeys, setSelectedRowKeys] = useState([]);
     const dispatch = useDispatch();
-    const banners = useSelector((state) => state.banner.banners);
+    const banners = useSelector((state) => state.banner.banners.values);
+    const loadding = useSelector((state) => state.banner.banners.loading);
+
+    const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+    const [open, setOpen] = useState(false);
 
     const data = banners.map((banner) => ({ ...banner, key: banner._id }));
-    console.log('data', data);
-
     useEffect(() => {
         dispatch(getAllBannerAsync());
     }, []);
@@ -37,7 +46,17 @@ const BannerManage = () => {
         );
     };
 
-    const handleRemoveBanner = (ids) => {};
+    const handleRemoveBannerByIds = (ids) => {
+        dispatch(removeBannerByIdsAsync(ids)).then((res) => {
+            const bannerRemoved = _.get(res, 'payload.data.dataDeleted', null);
+            if (bannerRemoved) {
+                noti('success', 'Xóa thành banner công!', `Bạn đã xóa ${bannerRemoved.name}  thành công!`);
+            } else {
+                const ids = _.get(res, 'payload.data.ids', null);
+                noti('success', 'Xóa thành banner công!', `Bạn đã xóa ${ids.length} banner  thành công!`);
+            }
+        });
+    };
 
     const columns = [
         {
@@ -77,9 +96,16 @@ const BannerManage = () => {
                         <Link to={data._id}>
                             <EditOutlined className="text-xl pr-4" />
                         </Link>
-                        <Link to="#">
+                        <Popconfirm
+                            title={`Bạn chắc chắn muốn xóa ${data.name} không?`}
+                            onConfirm={() => {
+                                handleRemoveBannerByIds([data._id]);
+                            }}
+                            okText="Đồng ý"
+                            cancelText="Hủy"
+                        >
                             <DeleteOutlined className="text-xl" />
-                        </Link>
+                        </Popconfirm>
                     </Row>
                 );
             },
@@ -88,23 +114,36 @@ const BannerManage = () => {
 
     return (
         <div className="banner-content">
-            <div className="flex justify-between align-center pb-4">
-                <Button
-                    size="large"
-                    class="focus:outline-none text-base text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2"
-                    disabled={_.isEmpty(selectedRowKeys) ? true : false}
-                >
-                    Xóa {_.isEmpty(selectedRowKeys) ? '' : _.get(selectedRowKeys, 'length', '') + ' banner'}
-                </Button>
-                <button
-                    type="button"
-                    class="focus:outline-none h-10 text-white bg-[#02b875] hover:bg-[#09915f] focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-base px-5 py-2.5"
-                >
-                    <PlusOutlined className="pr-2 text-white " />
-                    Thêm
-                </button>
-            </div>
-            <Table rowSelection={rowSelection} columns={columns} dataSource={data} />
+            {loadding ? (
+                <div className="absolute top-1/2 left-1/2">
+                    <Spin tip="" size="large">
+                        <div className="content" />
+                    </Spin>
+                </div>
+            ) : (
+                <>
+                    <div className="flex justify-between align-center pb-4">
+                        <Button
+                            size="large"
+                            onClick={() => handleRemoveBannerByIds(selectedRowKeys)}
+                            className="focus:outline-none text-base text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2"
+                            disabled={_.isEmpty(selectedRowKeys) ? true : false}
+                        >
+                            Xóa {_.isEmpty(selectedRowKeys) ? '' : _.get(selectedRowKeys, 'length', '') + ' banner'}
+                        </Button>
+                        <button
+                            type="button"
+                            onClick={() => setOpen(true)}
+                            className="focus:outline-none h-10 text-white bg-[#02b875] hover:bg-[#09915f] focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-base px-5 py-2.5"
+                        >
+                            <PlusOutlined className="pr-2 text-white " />
+                            Thêm
+                        </button>
+                    </div>
+                    <Table rowSelection={rowSelection} columns={columns} dataSource={data} />
+                </>
+            )}
+            {open && <DrawerCreateBanner open={open} onClose={setOpen} />}
         </div>
     );
 };

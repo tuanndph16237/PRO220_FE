@@ -6,11 +6,13 @@
     --primary-color-hover: #09915f;
     --sider-admin-color: #17274e;
     --btn-checkbox-disable: #bfbfbf;
+    --white-color: #ffffff;
 }
 a:hover {
     color: var(--primary-color);
 }
 
+/* customize btn checkbox checked */
 .ant-checkbox-checked .ant-checkbox-inner {
     background-color: var(--primary-color) !important;
     border-color: var(--primary-color) !important;
