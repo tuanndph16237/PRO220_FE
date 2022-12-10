@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { createBanner, getBanners, removeBannerByIds, updateBanner } from '../api/banner';
+import { NOTIFICATION_TYPE } from '../constants/status';
 
 export const getAllBannerAsync = createAsyncThunk('getAllBannerAsync', async (filter, { rejectWithValue }) => {
     try {
@@ -58,7 +59,7 @@ export const BannerSlice = createSlice({
         create: {
             errors: null,
             message: null,
-            loadding: false,
+            loading: false,
             status: null,
         },
     },
@@ -89,14 +90,15 @@ export const BannerSlice = createSlice({
             });
         },
         [createBannerAsync.rejected.type]: (state, action) => {
-            state.create.status = 'error';
+            state.create.message = 'Thêm thất bại';
+            state.create.status = NOTIFICATION_TYPE.ERROR;
         },
         [createBannerAsync.pending.type]: (state, action) => {
-            state.create.status = 'error';
-            state.create.loadding = true;
+            state.create.loading = true;
         },
         [createBannerAsync.fulfilled.type]: (state, action) => {
-            state.create.loadding = false;
+            state.create.status = NOTIFICATION_TYPE.SUCCESS;
+            state.create.loading = false;
             state.create.message = 'Thêm thành công';
             state.banners.values.push(action.payload.data);
         },
