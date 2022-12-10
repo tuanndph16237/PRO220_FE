@@ -8,6 +8,7 @@ import { getAllBannerAsync, removeBannerByIdsAsync, updateBannerAsync } from '..
 import './banner.css';
 import DrawerCreateBanner from './DrawerCreateBanner';
 import { NOTIFICATION_TYPE } from '../../../constants/status';
+import useDocumentTitle from '../../../hooks/useDocumentTitle';
 
 const noti = (type, message, description) => {
     notification[type]({
@@ -17,6 +18,7 @@ const noti = (type, message, description) => {
 };
 
 const BannerManage = () => {
+    useDocumentTitle('Quản lý banner');
     const dispatch = useDispatch();
     const banners = useSelector((state) => state.banner.banners.values);
     const loadding = useSelector((state) => state.banner.banners.loading);
