@@ -54,7 +54,6 @@ const AdminLayout = () => {
         },
         key,
     }) => {
-        document.title = key;
         navigate(`/admin/${path}`);
     };
 
