@@ -10,6 +10,7 @@ import BookingPage from './pages/Booking';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import BannerManage from './pages/Admin/Banner';
+import PageNotFound from './pages/PageNotFound';
 function App() {
     return (
         <Routes>
@@ -24,6 +25,7 @@ function App() {
                 <Route path="dang-ky" element={<Register />} />
                 <Route path="quan-ly-banner" element={<BannerManage />} />
             </Route>
+            <Route path="*" element={<PageNotFound />} />
         </Routes>
     );
 }
