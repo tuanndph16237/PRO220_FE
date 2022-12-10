@@ -11,6 +11,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import BannerManage from './pages/Admin/Banner';
 import PageNotFound from './pages/PageNotFound';
+import UpdateBanner from './pages/Admin/Banner/UpdateBanner';
 function App() {
     return (
         <Routes>
@@ -22,8 +23,8 @@ function App() {
                 <Route path="dang-ky" element={<Register />} />
             </Route>
             <Route path="/admin" element={<AdminLayout />}>
-                <Route path="dang-ky" element={<Register />} />
                 <Route path="quan-ly-banner" element={<BannerManage />} />
+                <Route path="quan-ly-banner/:id" element={<UpdateBanner />} />
             </Route>
             <Route path="*" element={<PageNotFound />} />
         </Routes>
