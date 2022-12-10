@@ -22,6 +22,8 @@ const BannerManage = () => {
     const dispatch = useDispatch();
     const banners = useSelector((state) => state.banner.banners.values);
     const loadding = useSelector((state) => state.banner.banners.loading);
+    const messageCreated = useSelector((state) => state.banner.create.message);
+    const statusNotiCreated = useSelector((state) => state.banner.create.status);
 
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
     const [open, setOpen] = useState(false);
@@ -30,6 +32,10 @@ const BannerManage = () => {
     useEffect(() => {
         dispatch(getAllBannerAsync());
     }, []);
+
+    useEffect(() => {
+        if (messageCreated && statusNotiCreated) return noti(statusNotiCreated, messageCreated);
+    }, [messageCreated, statusNotiCreated]);
 
     const onSelectChange = (newSelectedRowKeys) => {
         setSelectedRowKeys(newSelectedRowKeys);
