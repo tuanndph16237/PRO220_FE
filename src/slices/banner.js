@@ -46,15 +46,16 @@ export const BannerSlice = createSlice({
             errors: null,
             loading: false,
         },
-        bannerUpdate: {
-            values: {},
-            errors: null,
-            loading: false,
-        },
         bannersRemove: {
             errors: null,
             message: null,
             dataDeleted: null,
+        },
+        update: {
+            errors: null,
+            message: null,
+            loading: false,
+            status: null,
         },
         create: {
             errors: null,
@@ -75,7 +76,14 @@ export const BannerSlice = createSlice({
             state.banners.loading = false;
             state.banners.values = action.payload.data;
         },
+        [updateBannerAsync.rejected.type]: (state, action) => {
+            state.update.loading = false;
+        },
+        [updateBannerAsync.pending.type]: (state, action) => {
+            state.update.loading = true;
+        },
         [updateBannerAsync.fulfilled.type]: (state, action) => {
+            state.update.loading = false;
             state.banners.values = state.banners.values.map((banner) => {
                 if (banner._id !== action.payload.data._id) return banner;
                 return action.payload.data;
