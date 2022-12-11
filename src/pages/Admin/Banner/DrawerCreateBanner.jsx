@@ -1,19 +1,36 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { Button, Drawer, Form, Input, Switch } from 'antd';
+import { useDispatch, useSelector } from 'react-redux';
+import _ from 'lodash';
+import { Button, Drawer, Form, Input, Switch, Select } from 'antd';
 import './banner.css';
 import UploadImage from '../../../components/UploadImage';
 import { createBannerAsync } from '../../../slices/banner';
+import { REDIRECT_BANNER } from '../../../constants/orther';
 const DrawerCreateBanner = ({ open, onClose }) => {
     const dispatch = useDispatch();
+    const loading = useSelector((state) => state.banner.create.loading);
     const [url, setUrl] = useState(null);
+    const [defaultList, setDefaultList] = useState([]);
     const handleClose = () => {
         onClose(false);
     };
 
+    const handleChangeUrl = (value) => {
+        setUrl(value);
+        if (!value) return setDefaultList([]);
+        setDefaultList([
+            {
+                name: 'Click để xem ảnh!',
+                url: value,
+                status: 'done',
+                thumbUrl: value,
+            },
+        ]);
+    };
+
     const onFinish = (values) => {
         const data = { ...values, url };
-        dispatch(createBannerAsync(data));
+        dispatch(createBannerAsync(data)).then((res) => handleClose());
     };
     return (
         <>
@@ -44,7 +61,7 @@ const DrawerCreateBanner = ({ open, onClose }) => {
                     <p className="text-base font-semibold">
                         <span className="text-[#ff4d4f]">*</span> Ảnh
                     </p>
-                    <UploadImage onSendUrl={(value) => setUrl(value)} />
+                    <UploadImage onChangeUrl={handleChangeUrl} defaultFileList={defaultList} />
                     {!url && <div className="text-[#ff4d4f]">Vui lòng tải ảnh lên!</div>}
                     <Form.Item
                         label={<p className="text-base font-semibold">Trạng thái kích hoạt</p>}
@@ -65,7 +82,13 @@ const DrawerCreateBanner = ({ open, onClose }) => {
                             },
                         ]}
                     >
-                        <Input className="h-10 text-base border-[#02b875]" placeholder="Nhập đường dẫn chuyển hướng" />
+                        <Select className="h-10 text-base border-[#02b875]" placeholder="Nhập đường dẫn chuyển hướng">
+                            {_.map(REDIRECT_BANNER, (item) => (
+                                <Option value={item.value} key={item.value}>
+                                    {item.label}
+                                </Option>
+                            ))}
+                        </Select>
                     </Form.Item>
                     <Form.Item
                         label={<p className="text-base font-semibold">Độ ưu tiên</p>}
@@ -96,7 +119,7 @@ const DrawerCreateBanner = ({ open, onClose }) => {
                                     Thêm
                                 </button>
                             ) : (
-                                <Button type="dashed" disabled size="large" className="mr-4">
+                                <Button type="dashed" disabled size="large" loading={loading} className="mr-4">
                                     Thêm
                                 </Button>
                             )}
