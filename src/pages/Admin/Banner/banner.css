@@ -14,3 +14,8 @@
     color: var(--primary-color) !important;
     border-color: var(--primary-color) !important;
 }
+.form-add-banner .btn-submit:hover,
+.form-add-banner .btn-submit:active {
+    color: var(--white-color) !important ;
+    border: none !important;
+}
