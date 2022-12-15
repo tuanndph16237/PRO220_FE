@@ -20,11 +20,14 @@ const Register = () => {
             case 'reCAPTCHA has already been rendered in this element':
                 return 'ReCapCha đã tồn tại! Vui lòng tải lại trang.';
             case 'Firebase: Error (auth/too-many-requests).':
+            case 'Firebase: Exceeded quota. (auth/quota-exceeded).':
                 return 'Nhận mã OTP xác thực quá nhiều!';
             case 'Firebase: Error (auth/invalid-verification-code).':
                 return 'Mã OTP không hợp lệ vui lòng nhập lại!';
             case 'Firebase: Invalid format. (auth/invalid-phone-number).':
                 return 'Số điện thoại không hợp lệ';
+            case 'Firebase: Error (auth/code-expired).':
+                return 'Hết thời gian xác thực OTP!';
             default:
                 message;
         }
@@ -71,18 +74,23 @@ const Register = () => {
             })
             .catch((error) => {
                 console.log('nhap sai otp', error);
-                Notification(NOTIFICATION_TYPE.ERROR, 'Đã có lỗi xảy ra!', error.message);
+                Notification(NOTIFICATION_TYPE.ERROR, 'Đã có lỗi xảy ra!', formatErrorMessageSendOTP(error.message));
+                if (formatErrorMessageSendOTP(error.message) === 'Hết thời gian xác thực OTP!') {
+                    setOtp('');
+                    setIsVerify(false);
+                    setSendOTP(false);
+                }
             });
     };
 
     const onFinish = (values) => {
-        if (!isVerify) return onSignInSubmit(values.phone);
+        if (!isVerify) return onSignInSubmit(values.number_phone);
         register({ ...values, image: '' })
             .then(({ data }) => {
                 Notification(NOTIFICATION_TYPE.WARNING, data.message);
-                // setTimeout(() => {
-                //     navigate('/dang-nhap');
-                // }, 500);
+                setTimeout(() => {
+                    navigate('/dang-nhap');
+                }, 500);
             })
             .catch((err) => {
                 Notification(NOTIFICATION_TYPE.ERROR, err.message);
@@ -140,6 +148,7 @@ const Register = () => {
                             <Input
                                 type="text"
                                 className="w-full h-10 rouded py-2 text-base"
+                                value={otp}
                                 onChange={(e) => setOtp(e.target.value)}
                                 placeholder="Mã OTP"
                                 disabled={!sendOTP}
