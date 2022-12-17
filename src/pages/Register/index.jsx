@@ -6,7 +6,7 @@ import app from './fisebase_config';
 import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from 'firebase/auth';
 import { Notification } from '../../utils/notifications';
 import { NOTIFICATION_TYPE } from '../../constants/status';
-import { register } from '../../api/account';
+import { register } from '../../api/auth';
 const auth = getAuth(app);
 const Register = () => {
     useDocumentTitle('Đăng ký tài khoản');

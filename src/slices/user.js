@@ -1,8 +1,8 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { login } from '../api/login';
+import { login } from '../api/auth';
 import jwtDecode from 'jwt-decode';
 
-export const loginAsync = createAsyncThunk('user/login', async (values) => {
+export const loginAsync = createAsyncThunk('user/login', async (values, { rejectWithValue }) => {
     try {
         const { data } = await login(values);
         return data;
@@ -33,10 +33,7 @@ export const userSlice = createSlice({
             (state.loading = true), (state.error = ''), (state.currentUser.accessToken = '');
         });
         builder.addCase(loginAsync.fulfilled, (state, action) => {
-            if (
-                action.payload.message == 'email chưa tồn tại' ||
-                action.payload.message == 'mật khẩu sai vui lòng nhập lại'
-            ) {
+            if (action.payload.message) {
                 (state.error = action.payload.message), (state.currentUser.accessToken = ''), (state.loading = false);
             } else {
                 state.currentUser.values = jwtDecode(action.payload.accessToken);

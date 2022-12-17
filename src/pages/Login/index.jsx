@@ -16,13 +16,13 @@ const Login = () => {
         if (user.error !== '') {
             notificationRef.current = user.error;
             if (notificationRef.current !== '') {
-                Notification(NOTIFICATION_TYPE.ERROR, notificationRef.current);
+                Notification(NOTIFICATION_TYPE.ERROR, 'Đã có lỗi xảy ra vui lòng thử lại.', notificationRef.current);
             }
         }
     }, [user.error]);
     useEffect(() => {
         if (user.currentUser.accessToken !== '') {
-            Notification(NOTIFICATION_TYPE.SUCCESS, 'Đăng Nhập Thành Công');
+            Notification(NOTIFICATION_TYPE.SUCCESS, 'Đăng Nhập Thành Công!');
             localStorage.setItem(Token.accessToken, user.currentUser.accessToken);
             setTimeout(() => {
                 navigate('/');
@@ -37,7 +37,6 @@ const Login = () => {
         <>
             <Spin tip="Loading" spinning={user.loading} size="large">
                 <div className="flex h-[580px] items-center font-sans font-semibold text-2xl">
-                    {/* {contextHolder} */}
                     <Form
                         name="normal_login"
                         className="login-form w-[360px] m-auto"
@@ -45,20 +44,24 @@ const Login = () => {
                         onFinish={onFinish}
                     >
                         <h1 className="text-[28px] mb-6">Đăng nhập</h1>
-                        <Form.Item name="email" rules={[{ required: true, message: 'Vui lòng nhập số điện thoại!' }]}>
-                            <Input
-                                className="py-2 text-base"
-                                prefix={<PhoneOutlined className="site-form-item-icon" />}
-                                placeholder="Số điện thoại"
-                            />
+                        <Form.Item
+                            name="number_phone"
+                            rules={[
+                                { required: true, message: 'Vui lòng nhập Số điện thoại!' },
+                                { min: 10, message: 'Số điện thoại không đúng định dạng!' },
+                                { max: 11, message: 'Số điện thoại không đúng định dạng!' },
+                            ]}
+                        >
+                            <Input className="py-2 text-base" placeholder="Số điện thoại" />
                         </Form.Item>
-                        <Form.Item name="password" rules={[{ required: true, message: 'Vui lòng nhập mật khẩu!' }]}>
-                            <Input.Password
-                                className="py-2 text-base"
-                                prefix={<LockOutlined className="site-form-item-icon" />}
-                                type="password"
-                                placeholder="Mật khẩu"
-                            />
+                        <Form.Item
+                            name="password"
+                            rules={[
+                                { required: true, message: 'Vui lòng nhập Mật khẩu!' },
+                                { min: 6, message: 'Mật khẩu phải đủ 8 ký tự!' },
+                            ]}
+                        >
+                            <Input.Password className="py-2 text-base" type="password" placeholder="Mật khẩu" />
                         </Form.Item>
                         <Form.Item>
                             <Form.Item valuePropName="checked" noStyle>
