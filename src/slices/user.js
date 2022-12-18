@@ -27,6 +27,9 @@ export const userSlice = createSlice({
         logout(state, action) {
             (state.currentUser.values = {}), (state.currentUser.accessToken = '');
         },
+        saveUserValues(state, action) {
+            state.currentUser.values = action.payload;
+        },
     },
     extraReducers: (builder) => {
         builder.addCase(loginAsync.pending, (state, action) => {
@@ -45,5 +48,5 @@ export const userSlice = createSlice({
     },
 });
 
-export const { logout } = userSlice.actions;
+export const { logout, saveUserValues } = userSlice.actions;
 export default userSlice.reducer;

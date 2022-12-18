@@ -26,7 +26,7 @@ const Login = () => {
             localStorage.setItem(Token.accessToken, user.currentUser.accessToken);
             setTimeout(() => {
                 navigate('/');
-            }, 1500);
+            }, 700);
         }
     }, [user.currentUser.accessToken]);
     const onFinish = async (values) => {
