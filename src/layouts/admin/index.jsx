@@ -44,6 +44,7 @@ const items = [
             { key: 'Thêm vai trò', path: 'them-vai-tro', label: 'Thêm vai trò' },
         ],
     },
+    { key: 'Quản lý cửa hàng', path: 'quan-ly-cua-hang', icon: <FileDoneOutlined />, label: 'Quản lý cửa hàng' },
 ];
 
 const AdminLayout = () => {
