@@ -17,6 +17,7 @@ const initialState = {
         values: {},
         accessToken: '',
     },
+    isLogged: false,
     error: '',
 };
 
@@ -25,26 +26,34 @@ export const userSlice = createSlice({
     initialState,
     reducers: {
         logout(state, action) {
-            (state.currentUser.values = {}), (state.currentUser.accessToken = '');
+            state.currentUser.values = {};
+            state.currentUser.accessToken = '';
+            state.isLogged = false;
         },
         saveUserValues(state, action) {
             state.currentUser.values = action.payload;
+            state.isLogged = true;
         },
     },
-    extraReducers: (builder) => {
-        builder.addCase(loginAsync.pending, (state, action) => {
-            (state.loading = true), (state.error = ''), (state.currentUser.accessToken = '');
-        });
-        builder.addCase(loginAsync.fulfilled, (state, action) => {
+    extraReducers: {
+        [loginAsync.rejected.type]: (state, action) => {
+            state.loading = false;
+            state.error = action.payload.message;
+        },
+        [loginAsync.pending.type]: (state, action) => {
+            state.loading = true;
+        },
+        [loginAsync.fulfilled.type]: (state, action) => {
+            state.loading = false;
             if (action.payload.message) {
-                (state.error = action.payload.message), (state.currentUser.accessToken = ''), (state.loading = false);
+                state.error = action.payload.message;
             } else {
                 state.currentUser.values = jwtDecode(action.payload.accessToken);
-                (state.loading = false),
-                    (state.currentUser.accessToken = action.payload.accessToken),
-                    (state.error = '');
+                state.currentUser.accessToken = action.payload.accessToken;
+                state.error = '';
+                state.isLogged = true;
             }
-        });
+        },
     },
 });
 

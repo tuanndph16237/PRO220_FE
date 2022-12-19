@@ -10,6 +10,7 @@ import {
     FileDoneOutlined,
 } from '@ant-design/icons';
 import './admin-layout.css';
+import User from '../User';
 
 const { Header, Sider, Content } = Layout;
 
@@ -105,71 +106,8 @@ const AdminLayout = () => {
                                 </span>
                             )}
                         </div>
-                        <div>
-                            <Dropdown
-                                className="relative"
-                                menu={[]}
-                                dropdownRender={(menu) => (
-                                    <div className="dropdown-content absolute top-[-32px] right-0">
-                                        <div
-                                            className="z-50 my-4 text-base list-none bg-white rounded divide-y divide-gray-100 shadow"
-                                            id="user-dropdown"
-                                        >
-                                            <div className="py-3 px-4">
-                                                <span className="block text-sm text-gray-900">user.displayName</span>
-                                                <span className="block text-sm font-medium text-gray-500 truncate dark:text-gray-400">
-                                                    user.email
-                                                </span>
-                                            </div>
-                                            <ul className="py-1" aria-labelledby="user-menu-button">
-                                                <li>
-                                                    <Link
-                                                        to="#"
-                                                        className="block py-2 px-4 text-sm text-gray-700 hover:bg-[#02b875] hover:text-white"
-                                                    >
-                                                        Tài khoản
-                                                    </Link>
-                                                </li>
-                                                <li>
-                                                    <Link
-                                                        to="#"
-                                                        className="block py-2 px-4 text-sm text-gray-700 hover:bg-[#02b875] hover:text-white"
-                                                    >
-                                                        Đơn hàng
-                                                    </Link>
-                                                </li>
-                                                <li>
-                                                    <Link
-                                                        // onClick={logout}
-                                                        to="/"
-                                                        className="block py-2 px-4 text-sm text-gray-700 hover:bg-[#02b875] hover:text-white"
-                                                    >
-                                                        Đăng xuất
-                                                    </Link>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                )}
-                                trigger={['click']}
-                            >
-                                <Space className="relative">
-                                    <button
-                                        type="button"
-                                        className=" text-sm rounded-full dark:focus:ring-gray-600 pt-2"
-                                        id="user-menu-button"
-                                        aria-expanded="false"
-                                        data-dropdown-toggle="user-dropdown"
-                                        data-dropdown-placement="bottom"
-                                    >
-                                        <img
-                                            className="w-10 h-10 rounded-full"
-                                            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLvPJKXmD3mIlfOVee-apUyIhjnkCDFLtLGpxUA5-8hA&s"
-                                            alt="user photo"
-                                        />
-                                    </button>
-                                </Space>
-                            </Dropdown>
+                        <div className="pt-2">
+                            <User layoutAdmin={true} />
                         </div>
                     </div>
                 </Header>
