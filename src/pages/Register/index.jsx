@@ -85,7 +85,7 @@ const Register = () => {
 
     const onFinish = (values) => {
         if (!isVerify) return onSignInSubmit(values.number_phone);
-        register({ ...values, image: '' })
+        register(values)
             .then(({ data }) => {
                 Notification(NOTIFICATION_TYPE.WARNING, data.message);
                 setTimeout(() => {

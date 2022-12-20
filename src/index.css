@@ -17,3 +17,24 @@ a:hover {
     background-color: var(--primary-color) !important;
     border-color: var(--primary-color) !important;
 }
+
+/*  customize btn type primary*/
+
+.ant-btn.ant-btn-sm {
+    background-color: var(--primary-color) !important;
+}
+
+.ant-btn.ant-btn-sm:hover {
+    background-color: var(--primary-color-hover) !important;
+}
+
+/* customize color spin loading  */
+.spin-customize .ant-spin-dot-item {
+    background-color: var(--primary-color) !important;
+}
+.spin-customize .ant-spin-text {
+    padding-top: 24px !important;
+    font-size: 18px !important;
+    font-weight: 500;
+    color: var(--primary-color);
+}
