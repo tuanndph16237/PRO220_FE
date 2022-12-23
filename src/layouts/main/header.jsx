@@ -21,7 +21,7 @@ const Header = () => {
                         <ul className="flex flex-col p-4 mt-4 border border-gray-100 rounded-lg md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium md:border-0">
                             <li>
                                 <Link
-                                    to="#"
+                                    to="/"
                                     className="block py-2 pl-3 pr-4 text-base text-[#3c3c3c] rounded md:bg-transparent md:p-0 hover:text-[#02b875]"
                                     aria-current="page"
                                 >
