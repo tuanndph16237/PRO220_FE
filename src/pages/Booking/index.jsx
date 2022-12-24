@@ -12,7 +12,7 @@ import { createBannerByCustomer } from '../../api/order';
 import { Notification } from '../../utils/notifications';
 import { NOTIFICATION_TYPE } from '../../constants/status';
 import { getAllShowroomAsync } from '../../slices/showroom';
-import { SEVICE_TYPE } from '../../constants/orther';
+import { SEVICE_TYPE } from '../../constants/order';
 
 const range = (start, end) => {
     const result = [];

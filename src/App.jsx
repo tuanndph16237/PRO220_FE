@@ -15,6 +15,9 @@ import PrivateLayout from './components/Private/PrivateLayout';
 import PageNotFound from './pages/PageNotFound';
 import UpdateBanner from './pages/Admin/Banner/UpdateBanner';
 import PrivateRouter from './components/Private/PrivateRouter';
+
+import OrderManage from './pages/Admin/Order';
+import UpdateOrder from './pages/Admin/Order/UpdateOrder';
 import Personal from './pages/Setting';
 import UpdateProfile from './pages/Setting/UpdateProfile';
 import PrivateSetting from './components/Private/PrivateSetting';
@@ -61,6 +64,8 @@ function App() {
                 <Route path="quan-ly-banner" element={<BannerManage />} />
                 <Route path="quan-ly-cua-hang" element={<ShowRoom />} />
                 <Route path="quan-ly-banner/:id" element={<UpdateBanner />} />
+                <Route path="don-hang" element={<OrderManage />} />
+                <Route path="don-hang/:id" element={<UpdateOrder />} />
             </Route>
             <Route path="*" element={<PageNotFound />} />
         </Routes>
