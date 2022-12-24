@@ -3,35 +3,33 @@ import "./about.css"
 const AboutPage = () => {
     return <div>
         <section class="about">
-<div class="content">
-    <h3>GIỚI THIỆU</h3>
-    <p>Được chính thức thành lập năm 2019, cho tới nay, Công ty Dodoris - Sửa chữa và bảo dưỡng xe chuyên nghiệp vô cùng tự hào khi là một trong những đơn vị nhập khẩu và phân phối phát triển sản phẩm dinh dưỡng cao cấp hàng đầu Việt Nam. Các sản phẩm do Công ty Hoan TT nhập khẩu và phân phối đều là những sản phẩm dinh dưỡng chất lượng cao đến từ những Tập đoàn lớn trên thế giới như Yamaha, honda, SYM, vinfast,...
+            <div class="content">
+                <h3>GIỚI THIỆU</h3>
+                <p>Dodoris là công ty cung cấp dịch vụ sửa chữa và bảo dưỡng xe.</p>
+                <br />
+                <p>Với 20 năm kinh nghiệm, chúng tôi luôn sẵn sàng đem lại trải nghiệm bảo dưỡng xe hiện đại, tiện lợi nhất cho khách hàng.</p>
+                <p>Đội ngũ chuyên gia của chúng tôi sẽ chẩn đoán vấn đề thông qua các sự cố khách hành gặp phải khi lái xe, từ đó đưa 
+                    ra giải pháp tiết kiệm và hiệu quả nhất về chi phí cũng như thời gian của quý khách.</p>
+                <a href="#" class="btn">read more</a>
 
-Những sản phẩm chất lượng cao kết hợp với đội ngũ nhân sự với hàng chục năm kinh nghiệm trong ngành hàng, với sự am hiểu thị trường nội địa, cho đến nay Công ty Hoan TT đã đưa thành công nhiều sản phẩm dinh dưỡng nhập khẩu trở thành những sản phẩm có chỗ đứng vững chắc trên thị trường Việt Nam. Các sản phẩm sữa Biostime, Lotte Kid Power A+, men vi sinh SYSY, Swisse… đã có mức độ nhận diện thương hiệu cao, mạng lưới phân phối rộng khắp các tỉnh thành và đang bước đầu đạt được những bước đi vững chắc về mặt doanh thu.</p>
-    <p>Bên cạnh những Đối tác lớn kể trên, có được sự thành công hôm nay đó là nhờ sự hợp tác tốt đẹp, bền vững từ những khách hàng lớn, uy tín là các Hệ thống Siêu thị Mẹ và Bé, các đại lý lớn của Việt Nam tại các 63 tỉnh thành, đặc biệt tại các thành phố lớn như Hà Nội, Hồ Chí Minh, Đà Nẵng, Hải Dương, Hưng Yên, Hải Phòng…</p>
-    <a href="#" class="btn">read more</a>
+                <div class="image">
+                <img src="https://storage.googleapis.com/vinfast-data-01/suachuachung_1656870130_1658394834.png" alt=""/>
+                </div>
 
-    <div class="image">
-    <img src="https://storage.googleapis.com/vinfast-data-01/suachuachung_1656870130_1658394834.png" alt=""/>
-</div>
-<div class="image">
-    <img src="" alt="" />
-</div>
-<h3>TIÊU CHÍ KINH DOANH</h3>
-<p>Hoan TT luôn mong muốn tập trung xây dựng và phát triển mối quan hệ giữa các đối tác, luôn là sự tin cậy, uy tín lâu dài.
+                <h3>Dấu chân toàn cầu</h3>
+                <p>Dodoris đã có mặt tại hơn 20 quốc gia trên thế giới, đáp ứng được các yêu cầu khắt khe về kĩ thuật của thị trường quốc tế.</p>
+                <p>Chúng tôi có kinh nghiệm bảo dưỡng xe từ bất cứ nguồn gốc nào (Mỹ, Đức, Ý, Hồng Công, Việt Nam,...). Quý
+                    khách có thể yên tâm gửi gắm xe cho chúng tôi.
+                </p>
+                <div class="image">
+                    <img src="../../../public/images/blue-world-map-continents-planet-globalization-communications-social-network-stock-vector-150025459.jpg" alt="" />
+                </div>
 
-Tháng 10/2019: Trở thành đơn vị nhập khẩu và phân phối độc quyền sản phẩm Kid Power A+ (nay thành Lotte Kid A+) của công ty Lotte Foods (trực thuộc tập đoàn Lotte thành lập 1948)
+            </div>
 
-Tháng 4/2020: Trở thành đơn vị nhập khẩu và phân phối độc quyền sản phẩm men vi sinh Sysy của công ty Lotte Foods (trực thuộc tập đoàn Lotte thành lập 1948)
-
-Tháng 5/2021: Trở thành đơn vị nhập khẩu và phân phối độc quyền sản phẩm Biostime (trực thuộc tập đoàn đa quốc gia H&H Group)
-
-Hoan TT vẫn không ngừng nghiên cứu, tìm kiếm và phân phối các sản phẩm có thương hiệu và chất lượng hàng đầu thế giới tại Việt Nam và mang lại nhiều giá trị cho đối tác và người tiêu dùng</p>
-</div>
-
-</section>
+        </section>
 
     </div>;
-};
+    };
 
 export default AboutPage;
