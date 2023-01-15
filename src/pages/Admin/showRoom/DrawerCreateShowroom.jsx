@@ -58,10 +58,11 @@ const DrawerCreateShowroom = ({ open, onClose, reloading}) => {
 			key: 'CKlzQ1LLayVnG9v67Xs3'
 		});
         geocoder.on('select', (item)=> {
+            console.log(item);
 			let coordinates = item.center
             coordinate.current.latitude = coordinates[1]
             coordinate.current.longitude = coordinates[0]
-            setAddress(item.place_name_vi)
+            setAddress(item.place_name_en)
         })
     },[])
 

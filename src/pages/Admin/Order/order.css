@@ -1,0 +1,20 @@
+/* customize css step antd */
+/* status */
+/* process */
+.status-content .ant-steps-item-process .ant-steps-item-icon,
+.status-content .ant-steps .ant-steps-item-finish .ant-steps-item-icon,
+.status-content .ant-steps.ant-steps-navigation .ant-steps-item::before {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+.status-content .ant-steps .ant-steps-item-finish .ant-steps-item-icon .ant-steps-icon {
+    color: var(--white-color) !important;
+}
+
+.status-content .ant-steps-item-container:hover .ant-steps-item-title {
+    color: var(--primary-color) !important;
+}
+
+.status-content .ant-steps-item-description:hover {
+    color: var(--primary-color) !important;
+}

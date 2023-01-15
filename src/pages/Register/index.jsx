@@ -13,6 +13,7 @@ const Register = () => {
     const [otp, setOtp] = useState('');
     const [isVerify, setIsVerify] = useState(false);
     const [sendOTP, setSendOTP] = useState(false);
+    const [loadingSendOTP, setLoadingSendOTP] = useState(false);
     const navigate = useNavigate();
 
     const formatErrorMessageSendOTP = (message) => {
@@ -50,6 +51,9 @@ const Register = () => {
                     'Đã có lỗi xảy ra! Vui lòng thử lại',
                     formatErrorMessageSendOTP(error.message),
                 );
+            })
+            .finally(() => {
+                setLoadingSendOTP(false);
             });
     };
 
@@ -79,12 +83,16 @@ const Register = () => {
                     setOtp('');
                     setIsVerify(false);
                     setSendOTP(false);
+                    setLoadingSendOTP(false);
                 }
             });
     };
 
     const onFinish = (values) => {
-        if (!isVerify) return onSignInSubmit(values.number_phone);
+        if (!isVerify) {
+            setLoadingSendOTP(true);
+            return onSignInSubmit(values.number_phone);
+        }
         register(values)
             .then(({ data }) => {
                 Notification(NOTIFICATION_TYPE.WARNING, data.message);
@@ -97,6 +105,7 @@ const Register = () => {
                 setOtp('');
                 setIsVerify(false);
                 setSendOTP(false);
+                setLoadingSendOTP(false);
             });
     };
 
@@ -129,7 +138,7 @@ const Register = () => {
                             { max: 11, message: 'Số điện thoại không đúng định dạng!' },
                         ]}
                     >
-                        <Input className="py-2 text-base" placeholder="Số điện thoại" />
+                        <Input className="py-2 text-base" placeholder="Số điện thoại" disabled={isVerify} />
                     </Form.Item>
                     {!sendOTP ? (
                         <Form.Item>
@@ -137,6 +146,7 @@ const Register = () => {
                                 type="primary"
                                 htmlType="submit"
                                 disabled={sendOTP}
+                                loading={loadingSendOTP}
                                 className="login-form-button mt-2 bg-[#02b875] w-full h-10 text-base font-medium"
                             >
                                 Nhận mã OTP xác thực

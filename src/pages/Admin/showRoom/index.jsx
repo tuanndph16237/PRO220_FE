@@ -98,6 +98,9 @@ const ShowRoom = () => {
               size="small"
               onClick={() => {
                 close();
+                setReload({
+                  reload:false
+                })
               }}
             >
               close

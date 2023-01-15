@@ -18,36 +18,24 @@ a:hover {
     border-color: var(--primary-color) !important;
 }
 
+/*  customize btn type primary*/
 
-.swiper {
-    width: 100%;
-    height: 100%;
-  }
-  
-  
-  .swiper-slide {
-    text-align: center;
-    font-size: 18px;
-    background: #fff;
-    /* Center slide text vertically */
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: -webkit-flex;
-    display: flex;
-    -webkit-box-pack: center;
-    -ms-flex-pack: center;
-    -webkit-justify-content: center;
-    justify-content: center;
-    -webkit-box-align: center;
-    -ms-flex-align: center;
-    -webkit-align-items: center;
-    align-items: center;
-  }
-  
-  .swiper-slide img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  
+.ant-btn.ant-btn-sm,
+.btn-primary {
+    background-color: var(--primary-color) !important;
+}
+
+.ant-btn.ant-btn-sm:hover {
+    background-color: var(--primary-color-hover) !important;
+}
+
+/* customize color spin loading  */
+.spin-customize .ant-spin-dot-item {
+    background-color: var(--primary-color) !important;
+}
+.spin-customize .ant-spin-text {
+    padding-top: 24px !important;
+    font-size: 18px !important;
+    font-weight: 500;
+    color: var(--primary-color);
+}
