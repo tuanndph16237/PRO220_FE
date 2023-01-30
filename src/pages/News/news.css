@@ -5721,6 +5721,7 @@ button.close {
     right: 0;
     bottom: 10px;
     left: 0;
+    top: 0;
     z-index: 15;
     display: -webkit-box;
     display: -webkit-flex;

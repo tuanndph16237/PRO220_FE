@@ -32,7 +32,7 @@ function App() {
                 <Route index element={<HomePage />} />
                 <Route path="about" element={<AboutPage />} />
                 <Route path="dat-lich" element={<BookingPage />} />
-                <Route path="news" element={<News/>}/>
+                <Route path="news" element={<News />}/>
                 <Route
                     path="dang-nhap"
                     element={

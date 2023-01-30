@@ -89,7 +89,7 @@ const News = () => {
 				</div>
 				<div className="col-md-7">
 					<div className="card-block">
-						<h2 className="card-title"><a href="#">dodoris hợp tác với Yamaha triển khai dịch vụ sửa tất cả các dòng xe được phân phối bởi Honda, với phụ tùng thay thế chính hãng và không thu thêm bất cứ khoản phí trung gian nào</a></h2>
+						<h2 className="card-title"><a href="#">Dodoris hợp tác với Yamaha triển khai dịch vụ sửa tất cả các dòng xe được phân phối bởi Honda, với phụ tùng thay thế chính hãng và không thu thêm bất cứ khoản phí trung gian nào</a></h2>
 						<h4 className="card-text">Để giúp chiếc xe của Quý khách hàng luôn hoạt động trong điều kiện tốt nhất, duy trì sức bền và tiết kiệm chi phí trong quá trình sử dụng, Công ty dodoris hợp tác với Yamaha khuyến cáo Quý khách hàng tham gia đầy đủ chương trình bảo dưỡng xe định kỳ miễn phí trong vòng ba (03) năm.</h4>
 						<div className="metafooter">
 							<div className="wrapfooter">
