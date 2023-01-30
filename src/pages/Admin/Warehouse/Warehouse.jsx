@@ -1,10 +1,14 @@
-import { Form, Input, InputNumber, Popconfirm, Table, Typography, Space, Button, Tooltip } from 'antd';
+import { Form, Input, InputNumber, Popconfirm, Table, Typography, Space, Button, Tooltip, notification } from 'antd';
 import { JwtDecode } from '../../../utils/auth';
-import { SearchOutlined} from '@ant-design/icons';
-import React, { useEffect, useRef, useState } from 'react';
-import { getWarehouseByShowroomId } from '../../../api/warehouse';
+import { SearchOutlined } from '@ant-design/icons';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
+import { getWarehouseByShowroomId, updateQuantityOnePart } from '../../../api/warehouse';
 import ListShowroom from './ListShowrom';
 import { getShowrooms } from '../../../api/showroom';
+import { NOTIFICATION_TYPE } from '../../../constants/status';
+import useDocumentTitle from '../../../hooks/useDocumentTitle';
+
+import _ from 'lodash';
 
 const EditableCell = ({ editing, dataIndex, title, inputType, record, index, children, ...restProps }) => {
     const inputNode = inputType === 'number' ? <InputNumber /> : <Input />;
@@ -19,11 +23,11 @@ const EditableCell = ({ editing, dataIndex, title, inputType, record, index, chi
                     rules={[
                         {
                             required: true,
-                            message: `Please Input ${title}!`,
+                            message: `không để trống ${title}!`,
                         },
                         {
                             pattern: /^[\d]{0,9}$/,
-                            message: "Value should be grater than 0",
+                            message: 'số lượng phải lớn hơn 0',
                         },
                     ]}
                 >
@@ -37,160 +41,164 @@ const EditableCell = ({ editing, dataIndex, title, inputType, record, index, chi
 };
 
 const Warehouse = () => {
+    useDocumentTitle('Quản lý kho')
     const [form] = Form.useForm();
     const [data, setData] = useState([]);
     const [editingKey, setEditingKey] = useState('');
     const [searchText, setSearchText] = useState('');
     const [searchedColumn, setSearchedColumn] = useState('');
-    const [totals,setTotals] = useState(0)
-    const {showroomId} = JwtDecode()
-    const [idShowroom,setIdShowroom] = useState(showroomId || null)
-    const [listShowroom,setListShowroom] = useState([])
+    const [totals, setTotals] = useState(0);
+    const { showroomId } = JwtDecode();
+    const [idShowroom, setIdShowroom] = useState(showroomId);
+    const [listShowroom, setListShowroom] = useState([]);
     let searchInput = useRef(null);
-    console.log(idShowroom);
-    
-   
+
     const isEditing = (record) => record.key === editingKey;
+
+    const noti = (type, message, description) => {
+        notification[type]({
+            message,
+            description,
+        });
+    };
 
     const fetchApiWarehouse = async (idShowroom) => {
         try {
-            const dataWarehouse = await getWarehouseByShowroomId(idShowroom)
-            const data = dataWarehouse.data.handleData.map((item)=>{
+            const dataWarehouse = await getWarehouseByShowroomId(idShowroom);
+            const data = dataWarehouse.data.handleData.map((item) => {
                 return {
                     key: item.materialId._id,
                     name: item.materialId.name,
                     quantity: item.quantity,
-                }
-            })
-            setData(data)
-            setTotals(dataWarehouse.data.totals)
-        } catch (error) {
-            
+                };
+            });
+            setData(data);
+            setTotals(dataWarehouse.data.totals);
+        } catch (res) {
+             noti(
+                NOTIFICATION_TYPE.ERROR,
+                `${res.response.data.error}`
+            );
         }
-    }
-
-    const fetchApiShowroom = async()=>{
-         try {
-            const dataShowrooms = await getShowrooms()
-            const handleDataShowroom = dataShowrooms.data.map((showroom)=>({value:showroom._id,label:showroom.name}))
-            setListShowroom(handleDataShowroom)
-        } catch (error) {
-            
-        }
-    }
-
-    const handleSearch = (
-      selectedKeys,
-      confirm,
-      dataIndex,
-    ) => {
-      confirm()
-      setSearchText(selectedKeys[0]);
-      setSearchedColumn(dataIndex);
     };
 
-    const handleReset = (clearFilters) => {  
-      clearFilters();
-      setSearchText('');
+    const fetchApiShowroom = async () => {
+        try {
+            const dataShowrooms = await getShowrooms();
+            const handleDataShowroom = dataShowrooms.data.map((showroom) => ({
+                value: showroom._id,
+                label: showroom.name,
+            }));
+            setListShowroom(handleDataShowroom);
+        } catch (res) {
+             noti(
+                NOTIFICATION_TYPE.ERROR,
+                `${res.response.data.error}`
+            );
+        }
+    };
+
+    const handleSearch = (selectedKeys, confirm, dataIndex) => {
+        confirm();
+        setSearchText(selectedKeys[0]);
+        setSearchedColumn(dataIndex);
+    };
+
+    const handleReset = (clearFilters) => {
+        clearFilters();
+        setSearchText('');
     };
 
     const getColumnSearchProps = (dataIndex) => ({
-      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }) => (
-        <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
-          <Input
-            ref={searchInput}
-            placeholder={`Search ${dataIndex}`}
-            value={selectedKeys[0]}
-            onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-            onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
-            style={{ marginBottom: 8, display: 'block' }}
-          />
-          <Space>
-            <Button
-              type="primary"
-              onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
-              icon={<SearchOutlined />}
-              size="small"
-              style={{ width: 90 }}
-            >
-              Search
-            </Button>
-            <Button
-              onClick={() => clearFilters && handleReset(clearFilters)}
-              size="small"
-              style={{ width: 90 }}
-            >
-              Reset
-            </Button>
-            <Button
-              type="link"
-              size="small"
-              onClick={()=>{
-                clearFilters()
-                handleSearch(selectedKeys, confirm, dataIndex)
-            }}
-       
-            >
-              close
-            </Button>
-          </Space>
-        </div>
-      ),
-
-      filterIcon: (filtered) => (
-        <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
-      ),
-
-      onFilter: (value, record) =>
-        record[dataIndex]
-          .toString()
-          .toLowerCase()
-          .includes((value).toLowerCase()),
-
-      onFilterDropdownOpenChange: (visible) => {
-        if (visible) {
-          setTimeout(() => searchInput.current?.select(), 100);
-        }
-      },
-
-      render: (text) =>
-        searchedColumn === dataIndex ? (
-          <Highlighter
-            highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
-            searchWords={[searchText]}
-            autoEscape
-            textToHighlight={text ? text.toString() : ''}
-          />
-        ) : (
-          text
+        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }) => (
+            <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
+                <Input
+                    ref={searchInput}
+                    placeholder={`Search ${dataIndex}`}
+                    value={selectedKeys[0]}
+                    onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+                    onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+                    style={{ marginBottom: 8, display: 'block' }}
+                />
+                <Space>
+                    <Button
+                        type="primary"
+                        onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+                        icon={<SearchOutlined />}
+                        size="small"
+                        style={{ width: 90 }}
+                    >
+                        Search
+                    </Button>
+                    <Button
+                        onClick={() => clearFilters && handleReset(clearFilters)}
+                        size="small"
+                        style={{ width: 90 }}
+                    >
+                        Reset
+                    </Button>
+                    <Button
+                        type="link"
+                        size="small"
+                        onClick={() => {
+                            clearFilters();
+                            handleSearch(selectedKeys, confirm, dataIndex);
+                        }}
+                    >
+                        close
+                    </Button>
+                </Space>
+            </div>
         ),
+
+        filterIcon: (filtered) => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
+
+        onFilter: (value, record) => record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+
+        onFilterDropdownOpenChange: (visible) => {
+            if (visible) {
+                setTimeout(() => searchInput.current?.select(), 100);
+            }
+        },
+
+        render: (text) =>
+            searchedColumn === dataIndex ? (
+                <Highlighter
+                    highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+                    searchWords={[searchText]}
+                    autoEscape
+                    textToHighlight={text ? text.toString() : ''}
+                />
+            ) : (
+                text
+            ),
     });
 
     const columns = [
         {
-            key:'name',
+            key: 'name',
             title: 'Tên linh kiện',
             dataIndex: 'name',
-            width: '50%',
+            width: '70%',
             editable: false,
             ellipsis: {
                 showTitle: false,
-              },
+            },
             ...getColumnSearchProps('name'),
             render: (name) => (
-              <Tooltip placement="topLeft" title={name}>
-                {name}
-              </Tooltip>
-            )
+                <Tooltip placement="topLeft" title={name}>
+                    {name}
+                </Tooltip>
+            ),
         },
         {
             title: 'Số lượng',
-            dataIndex: 'quantity',  
+            dataIndex: 'quantity',
             width: '15%',
             editable: true,
         },
         {
-            title: 'operation',
+            title: 'Cập nhật',
             dataIndex: 'operation',
             render: (_, record) => {
                 const editable = isEditing(record);
@@ -216,7 +224,7 @@ const Warehouse = () => {
             },
         },
     ];
- 
+
     const edit = (record) => {
         form.setFieldsValue({
             name: '',
@@ -228,7 +236,7 @@ const Warehouse = () => {
     const cancel = () => {
         setEditingKey('');
     };
-    
+
     const save = async (record) => {
         try {
             const row = await form.validateFields();
@@ -237,15 +245,16 @@ const Warehouse = () => {
             if (index > -1) {
                 const item = newData[index];
                 const saveDataToDB = {
-                    showroomId,
-                    materials:[
+                    idShowroom,
+                    material: 
                         {
-                            materialId:item.key,
-                            ...row
+                            materialId: item.key,
+                            ...row,
                         }
-                    ]
-                }
-   
+                };
+
+                await updateQuantityOnePart(saveDataToDB)
+                
                 newData.splice(index, 1, {
                     ...item,
                     ...row,
@@ -258,7 +267,10 @@ const Warehouse = () => {
                 setEditingKey('');
             }
         } catch (errInfo) {
-            console.log('Validate Failed:', errInfo);
+            noti(
+                NOTIFICATION_TYPE.ERROR,
+                'Cập nhật số lượng thất bại!'
+            );
         }
     };
 
@@ -274,35 +286,32 @@ const Warehouse = () => {
                 dataIndex: col.dataIndex,
                 title: col.title,
                 editing: isEditing(record),
-                min:0
+                min: 0,
             }),
         };
     });
 
-     if(idShowroom){
-        useEffect(()=>{
-            fetchApiWarehouse(idShowroom)
-        },[idShowroom])
-    }
+    useMemo(() => {
+        fetchApiShowroom();
+    }, []);
 
-    if(!idShowroom){
-        useEffect(()=>{
-            fetchApiShowroom()
-        },[])
-    }
-
+    useEffect(() => {
+        if (idShowroom) {
+            fetchApiWarehouse(idShowroom);
+        }
+    }, [idShowroom]);
 
     return (
         <>
-            <div className='my-3 grid grid-cols-2'>
-                <div>
-                    <ListShowroom options={listShowroom} setIdShowroom={setIdShowroom}/>
+            <div className="my-3 grid grid-cols-2">
+                <div>{!showroomId ? <ListShowroom options={listShowroom} setIdShowrooms={setIdShowroom} /> : ''}</div>
+                <div className="flex justify-end pr-4">
+                    <p className="text-[18px]">
+                        Tổng số linh kiện: <span className="font-bold">{totals}</span>
+                    </p>
                 </div>
-                <div className='flex justify-end pr-4'>
-                    <p className='text-[18px]'>Tổng số linh kiện: <span className='font-bold'>{totals}</span></p>
-                </div>
-            </div>    
-                
+            </div>
+
             <Form form={form} component={false}>
                 <Table
                     components={{

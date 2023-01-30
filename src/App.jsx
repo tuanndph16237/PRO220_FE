@@ -23,19 +23,16 @@ import UpdateProfile from './pages/Setting/UpdateProfile';
 import PrivateSetting from './components/Private/PrivateSetting';
 import ChangePassword from './pages/Setting/ChangePassword';
 import Orders from './pages/Setting/Orders';
-import CreateOrder from './pages/Admin/Order/CreateOrder';
-import News from './pages/News/news';
-import MaterialManage from './pages/Admin/Material';
-import UpdateMaterial from './pages/Admin/Material/DrawerUpdateMaterial';
 import Warehouse from './pages/Admin/Warehouse/Warehouse';
+import News from './pages/News/news';
 function App() {
     return (
         <Routes>
             <Route path="/" element={<MainLayout />}>
                 <Route index element={<HomePage />} />
                 <Route path="about" element={<AboutPage />} />
-                <Route path="news" element={<News />} />
                 <Route path="dat-lich" element={<BookingPage />} />
+                <Route path="news" element={<News/>}/>
                 <Route
                     path="dang-nhap"
                     element={
@@ -70,10 +67,7 @@ function App() {
                 <Route path="quan-ly-banner" element={<BannerManage />} />
                 <Route path="quan-ly-cua-hang" element={<ShowRoom />} />
                 <Route path="quan-ly-banner/:id" element={<UpdateBanner />} />
-                <Route path="quan-ly-vat-tu" element={<MaterialManage />} />
-                <Route path="quan-ly-vat-tu/:id" element={<UpdateMaterial />} />
                 <Route path="don-hang" element={<OrderManage />} />
-                <Route path="them-don-hang" element={<CreateOrder />} />
                 <Route path="don-hang/:id" element={<UpdateOrder />} />
                 <Route path="quan-ly-kho" element={<Warehouse/>}/>
             </Route>
