@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { LockOutlined, PhoneOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Checkbox, Form, Input } from 'antd';
@@ -69,12 +70,15 @@ const Register = () => {
                     <p className="my-5 text-center">Đã có tài khoản?</p>
                     <Link
                         to="/dang-ky"
+
                         className="inline-block leading-10 text-base h-10 w-full rounded text-[#1464f4] text-center border border-[#1464f4] hover:text-[#fff] hover:bg-[#02b875] hover:border-none"
                     >
                         Đăng nhập
                     </Link>
+
                 </Form.Item>
             </Form>
+
         </div>
     );
 };

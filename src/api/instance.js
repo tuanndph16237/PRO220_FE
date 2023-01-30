@@ -1,4 +1,6 @@
 import axios from 'axios';
+import { ROLE } from '../constants/auth';
+import { JwtDecode } from '../utils/auth';
 
 const instance = axios.create({
     baseURL: import.meta.env.VITE_BASE_URL,
@@ -6,10 +8,13 @@ const instance = axios.create({
 });
 
 instance.interceptors.request.use(
-    function (config) {
+    async (config) => {
+        const userDecode = JwtDecode();
+        if (!userDecode || !userDecode.role || userDecode.role == ROLE.ADMIN) return config;
+        config.params = { ...config.params, showroomId: userDecode.showroomId };
         return config;
     },
-    function (error) {
+    (error) => {
         return Promise.reject(error);
     },
 );

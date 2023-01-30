@@ -16,4 +16,6 @@ a:hover {
 .ant-checkbox-checked .ant-checkbox-inner {
     background-color: var(--primary-color) !important;
     border-color: var(--primary-color) !important;
+
+
 }

@@ -1,7 +1,9 @@
+
 import React, { useState } from 'react';
 import { Avatar, Button, Col, DatePicker, Form, Input, Row, Select } from 'antd';
 import dayjs from 'dayjs';
 import './booking.css';
+
 
 const range = (start, end) => {
     const result = [];
@@ -124,6 +126,7 @@ const BookingPage = () => {
                             </Col>
                             <Col span={24}>
                                 {isShowroom ? (
+
                                     <Form.Item
                                         name="showroomId"
                                         label={<p className="text-base font-semibold">Showroom</p>}
@@ -136,6 +139,7 @@ const BookingPage = () => {
                                     >
                                         <Select
                                             size="large"
+
                                             placeholder="Sửa chữa tại..."
                                             className="h-10 text-base border-[#02b875]"
                                         >
@@ -269,6 +273,7 @@ const BookingPage = () => {
                     </Button>
                 </Form.Item>
             </Form>
+
         </div>
     );
 };
