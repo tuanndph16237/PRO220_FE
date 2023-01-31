@@ -23,6 +23,8 @@ import UpdateProfile from './pages/Setting/UpdateProfile';
 import PrivateSetting from './components/Private/PrivateSetting';
 import ChangePassword from './pages/Setting/ChangePassword';
 import Orders from './pages/Setting/Orders';
+import CreateOrder from './pages/Admin/Order/CreateOrder';
+
 function App() {
     return (
         <Routes>
@@ -65,6 +67,7 @@ function App() {
                 <Route path="quan-ly-cua-hang" element={<ShowRoom />} />
                 <Route path="quan-ly-banner/:id" element={<UpdateBanner />} />
                 <Route path="don-hang" element={<OrderManage />} />
+                <Route path="them-don-hang" element={<CreateOrder />} />
                 <Route path="don-hang/:id" element={<UpdateOrder />} />
             </Route>
             <Route path="*" element={<PageNotFound />} />

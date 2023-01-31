@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import _ from 'lodash';
 import useDocumentTitle from '../../hooks/useDocumentTitle';
 import { Avatar, Button, Col, DatePicker, Form, Input, Row, Select } from 'antd';
-import dayjs from 'dayjs';
 import { HOUR_DATE_TIME } from '../../constants/format';
 import { search } from '../../api/showroom';
 import './booking.css';
@@ -12,25 +11,9 @@ import { createBannerByCustomer } from '../../api/order';
 import { Notification } from '../../utils/notifications';
 import { NOTIFICATION_TYPE } from '../../constants/status';
 import { getAllShowroomAsync } from '../../slices/showroom';
-import { SEVICE_TYPE } from '../../constants/order';
-
-const range = (start, end) => {
-    const result = [];
-    for (let i = start; i < end; i++) {
-        result.push(i);
-    }
-    return result;
-};
-
-const disabledDate = (current) => {
-    return current && current < dayjs().endOf('day').subtract(1, 'days');
-};
-
-const disabledDateTime = () => ({
-    disabledHours: () => [...range(0, 7), ...range(12, 13), ...range(18, 24)],
-    disabledMinutes: () => range(0),
-    disabledSeconds: () => range(0, 60),
-});
+import { SEVICE_TYPE, VEHICLE_TYPE } from '../../constants/order';
+import { R_EMAIL, R_NUMBER, R_NUMBER_PHONE } from '../../constants/regex';
+import { disabledDate, disabledDateTime } from '../../utils/date';
 
 const BookingPage = () => {
     useDocumentTitle('Đặt lịch');
@@ -73,7 +56,11 @@ const BookingPage = () => {
     const onFinish = (values) => {
         setCreatingBooking(true);
         createBannerByCustomer({ ...values, accountId: user._id || null })
-            .then(({ data }) => {
+            .then(({ data: { message } }) => {
+                if (message) {
+                    Notification(NOTIFICATION_TYPE.WARNING, message);
+                    return;
+                }
                 if (isLogged) {
                     Notification(
                         NOTIFICATION_TYPE.SUCCESS,
@@ -130,7 +117,7 @@ const BookingPage = () => {
                                         <Avatar
                                             size={34}
                                             icon={<p className="text-base font-semibold leading-8">1</p>}
-                                            style={{ backgroundColor: '#707070' }}
+                                            style={{ backgroundColor: '#02b875' }}
                                         />
                                         <span className="text-base pl-4 font-medium">Thông tin khách hàng</span>
                                     </Col>
@@ -161,25 +148,28 @@ const BookingPage = () => {
                                                     message: 'Quý khách vui lòng không để trống trường thông tin này.',
                                                 },
                                                 {
-                                                    min: 10,
-                                                    message: 'Số điện thoại không đúng định dạng.',
-                                                },
-                                                {
-                                                    max: 10,
+                                                    pattern: R_NUMBER_PHONE,
                                                     message: 'Số điện thoại không đúng định dạng.',
                                                 },
                                             ]}
                                         >
-                                            <Input
-                                                className="h-10 text-base border-[#02b875]"
-                                                placeholder="Tối thiểu 10 chữ số."
-                                            />
+                                            <Input className="h-10 text-base border-[#02b875]" />
                                         </Form.Item>
                                     </Col>
                                     <Col span={24}>
                                         <Form.Item
                                             label={<p className="text-base font-semibold">Email</p>}
                                             name="email"
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    message: 'Quý khách vui lòng không để trống trường thông tin này.',
+                                                },
+                                                {
+                                                    pattern: R_EMAIL,
+                                                    message: 'Email không đúng định dạng.',
+                                                },
+                                            ]}
                                         >
                                             <Input
                                                 type="email"
@@ -193,43 +183,19 @@ const BookingPage = () => {
                                     <Col span={24} className="pb-6">
                                         <Avatar
                                             size={34}
-                                            icon={<p className="text-base font-semibold leading-8">4</p>}
-                                            style={{ backgroundColor: '#707070' }}
-                                        />
-                                        <span className="text-base pl-4 font-medium">Ghi chú</span>
-                                    </Col>
-                                    <Col span={24}>
-                                        <Form.Item
-                                            name="description"
-                                            label={<p className="text-base font-semibold">Ghi chú</p>}
-                                        >
-                                            <Input.TextArea
-                                                className="text-base border-[#02b875]"
-                                                rows={4}
-                                                placeholder="Cụ thể yêu cầu với Dodoris"
-                                            />
-                                        </Form.Item>
-                                    </Col>
-                                </Col>
-                            </Col>
-                            <Col span={12}>
-                                <Col span={24}>
-                                    <Col span={24} className="pb-6">
-                                        <Avatar
-                                            size={34}
-                                            icon={<p className="text-base font-semibold leading-8">2</p>}
-                                            style={{ backgroundColor: '#707070' }}
+                                            icon={<p className="text-base font-semibold leading-8">3</p>}
+                                            style={{ backgroundColor: '#02b875' }}
                                         />
                                         <span className="text-base pl-4 font-medium">Dịch vụ</span>
                                     </Col>
                                     <Col span={24}>
                                         <Form.Item
                                             name="serviceType"
-                                            label={<p className="text-base font-semibold">Dịch vụ</p>}
+                                            label={<p className="text-base font-semibold">Nơi sửa chữa</p>}
                                             rules={[
                                                 {
                                                     required: true,
-                                                    message: 'Vui lòng chọn dịch vụ.',
+                                                    message: 'Quý khách vui lòng không để trống trường thông tin này.',
                                                 },
                                             ]}
                                             initialValue={SEVICE_TYPE.SHOWROOM}
@@ -254,32 +220,100 @@ const BookingPage = () => {
                                                 </Select.Option>
                                             </Select>
                                         </Form.Item>
+                                        <Form.Item
+                                            name="description"
+                                            label={<p className="text-base font-semibold">Ghi chú</p>}
+                                        >
+                                            <Input.TextArea
+                                                className="text-base border-[#02b875]"
+                                                rows={4}
+                                                placeholder="Cụ thể yêu cầu với Dodoris"
+                                            />
+                                        </Form.Item>
+                                    </Col>
+                                </Col>
+                            </Col>
+                            <Col span={12}>
+                                <Col span={24}>
+                                    <Col span={24} className="pb-6">
+                                        <Avatar
+                                            size={34}
+                                            icon={<p className="text-base font-semibold leading-8">2</p>}
+                                            style={{ backgroundColor: '#02b875' }}
+                                        />
+                                        <span className="text-base pl-4 font-medium">Thông tin xe</span>
+                                    </Col>
+                                    <Col span={24}>
+                                        <Form.Item
+                                            label={<p className="text-base font-semibold">Số km xe đã chạy</p>}
+                                            name="km"
+                                            rules={[
+                                                {
+                                                    pattern: R_NUMBER,
+                                                    message: 'Số km không đúng định dạng.',
+                                                },
+                                            ]}
+                                        >
+                                            <Input className="h-10 text-base border-[#02b875]" placeholder="" />
+                                        </Form.Item>
+                                        <Form.Item
+                                            name="vehicleType"
+                                            label={<p className="text-base font-semibold">Loại xe</p>}
+                                            initialValue={SEVICE_TYPE.SHOWROOM}
+                                        >
+                                            <Select size="large" className="h-10 text-base border-[#02b875]">
+                                                {VEHICLE_TYPE.map((item) => (
+                                                    <Select.Option
+                                                        key={item.value}
+                                                        value={item.value}
+                                                        label={item.label}
+                                                    >
+                                                        {item.label}
+                                                    </Select.Option>
+                                                ))}
+                                            </Select>
+                                        </Form.Item>
+                                        <Form.Item
+                                            label={<p className="text-base font-semibold">Biển số xe</p>}
+                                            name="licensePlates"
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    message: 'Quý khách vui lòng không để trống trường thông tin này.',
+                                                },
+                                            ]}
+                                        >
+                                            <Input
+                                                className="h-10 text-base border-[#02b875]"
+                                                placeholder="XX-XX/12345"
+                                            />
+                                        </Form.Item>
                                     </Col>
                                 </Col>
                                 <Col span={24}>
                                     <Col span={24} className="pb-6">
                                         <Avatar
                                             size={34}
-                                            icon={<p className="text-base font-semibold leading-8">3</p>}
-                                            style={{ backgroundColor: '#707070' }}
+                                            icon={<p className="text-base font-semibold leading-8">4</p>}
+                                            style={{ backgroundColor: '#02b875' }}
                                         />
                                         <span className="text-base pl-4 font-medium">Địa điểm và Thời gian</span>
                                     </Col>
                                     <Col span={24}>
                                         <Form.Item
                                             name="showroomId"
-                                            label={<p className="text-base font-semibold">Showroom</p>}
+                                            label={<p className="text-base font-semibold">Cửa hàng</p>}
                                             rules={[
                                                 {
                                                     required: true,
-                                                    message: 'Vui lòng showroom sửa chữa/bảo dưỡng.',
+                                                    message: 'Quý khách vui lòng không để trống trường thông tin này.',
                                                 },
                                             ]}
                                         >
                                             <Select
                                                 size="large"
                                                 value={filter}
-                                                placeholder="Tìm kiếm showroom theo tên, địa chỉ."
+                                                placeholder="Tìm kiếm cửa hàng theo tên, địa chỉ."
                                                 className="h-10 text-base border-[#02b875]"
                                                 optionLabelProp="label"
                                                 showSearch
@@ -314,7 +348,8 @@ const BookingPage = () => {
                                                 rules={[
                                                     {
                                                         required: true,
-                                                        message: 'Vui lòng nhập địa chỉ cụ thể.',
+                                                        message:
+                                                            'Quý khách vui lòng không để trống trường thông tin này.',
                                                     },
                                                 ]}
                                             >
@@ -333,7 +368,7 @@ const BookingPage = () => {
                                             rules={[
                                                 {
                                                     required: true,
-                                                    message: 'Vui lòng chọn thời gian!',
+                                                    message: 'Quý khách vui lòng không để trống trường thông tin này.',
                                                 },
                                             ]}
                                         >
@@ -359,12 +394,11 @@ const BookingPage = () => {
                         </Row>
                         <Form.Item wrapperCol={{ offset: 8, span: 8 }}>
                             <Button
-                                type="primary"
                                 htmlType="submit"
                                 disabled={creatingBooking}
                                 loading={creatingBooking}
-                                className="text-white bg-[#02b875] w-full hover:!bg-[#09915f] mb-8 mt-8 h-10 hover:text-white focus:ring-4 focus:outline-none
-                         focus:ring-blue-300 font-medium rounded-lg text-sm text-center mr-3 md:mr-0"
+                                className="btn-primary text-white bg-[#02b875] w-full hover:!bg-[#09915f] mb-8 mt-8 h-12 hover:text-white focus:ring-4 focus:outline-none
+                                font-medium rounded-lg text-sm text-center mr-3 md:mr-0"
                             >
                                 Đặt lịch
                             </Button>
@@ -388,7 +422,7 @@ const BookingPage = () => {
                                     <Avatar
                                         size={34}
                                         icon={<p className="text-base font-semibold leading-8">1</p>}
-                                        style={{ backgroundColor: '#707070' }}
+                                        style={{ backgroundColor: '#02b875' }}
                                     />
                                     <span className="text-base pl-4 font-medium">Thông tin khách hàng</span>
                                 </Col>
@@ -416,23 +450,29 @@ const BookingPage = () => {
                                                 message: 'Quý khách vui lòng không để trống trường thông tin này.',
                                             },
                                             {
-                                                min: 10,
-                                                message: 'Số điện thoại không đúng định dạng.',
-                                            },
-                                            {
-                                                max: 10,
+                                                pattern: R_NUMBER_PHONE,
                                                 message: 'Số điện thoại không đúng định dạng.',
                                             },
                                         ]}
                                     >
-                                        <Input
-                                            className="h-10 text-base border-[#02b875]"
-                                            placeholder="Tối thiểu 10 chữ số."
-                                        />
+                                        <Input className="h-10 text-base border-[#02b875]" />
                                     </Form.Item>
                                 </Col>
                                 <Col span={24}>
-                                    <Form.Item label={<p className="text-base font-semibold">Email</p>} name="email">
+                                    <Form.Item
+                                        label={<p className="text-base font-semibold">Email</p>}
+                                        name="email"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Quý khách vui lòng không để trống trường thông tin này.',
+                                            },
+                                            {
+                                                pattern: R_EMAIL,
+                                                message: 'Email không đúng định dạng.',
+                                            },
+                                        ]}
+                                    >
                                         <Input
                                             type="email"
                                             className="h-10 text-base border-[#02b875]"
@@ -445,43 +485,19 @@ const BookingPage = () => {
                                 <Col span={24} className="pb-6">
                                     <Avatar
                                         size={34}
-                                        icon={<p className="text-base font-semibold leading-8">4</p>}
-                                        style={{ backgroundColor: '#707070' }}
-                                    />
-                                    <span className="text-base pl-4 font-medium">Ghi chú</span>
-                                </Col>
-                                <Col span={24}>
-                                    <Form.Item
-                                        name="description"
-                                        label={<p className="text-base font-semibold">Ghi chú</p>}
-                                    >
-                                        <Input.TextArea
-                                            className="text-base border-[#02b875]"
-                                            rows={4}
-                                            placeholder="Cụ thể yêu cầu với Dodoris"
-                                        />
-                                    </Form.Item>
-                                </Col>
-                            </Col>
-                        </Col>
-                        <Col span={12}>
-                            <Col span={24}>
-                                <Col span={24} className="pb-6">
-                                    <Avatar
-                                        size={34}
-                                        icon={<p className="text-base font-semibold leading-8">2</p>}
-                                        style={{ backgroundColor: '#707070' }}
+                                        icon={<p className="text-base font-semibold leading-8">3</p>}
+                                        style={{ backgroundColor: '#02b875' }}
                                     />
                                     <span className="text-base pl-4 font-medium">Dịch vụ</span>
                                 </Col>
                                 <Col span={24}>
                                     <Form.Item
                                         name="serviceType"
-                                        label={<p className="text-base font-semibold">Dịch vụ</p>}
+                                        label={<p className="text-base font-semibold">Nơi sửa chữa</p>}
                                         rules={[
                                             {
                                                 required: true,
-                                                message: 'Vui lòng chọn dịch vụ.',
+                                                message: 'Quý khách vui lòng không để trống trường thông tin này.',
                                             },
                                         ]}
                                         initialValue={SEVICE_TYPE.SHOWROOM}
@@ -506,32 +522,93 @@ const BookingPage = () => {
                                             </Select.Option>
                                         </Select>
                                     </Form.Item>
+                                    <Form.Item
+                                        name="description"
+                                        label={<p className="text-base font-semibold">Ghi chú</p>}
+                                    >
+                                        <Input.TextArea
+                                            className="text-base border-[#02b875]"
+                                            rows={4}
+                                            placeholder="Cụ thể yêu cầu với Dodoris"
+                                        />
+                                    </Form.Item>
+                                </Col>
+                            </Col>
+                        </Col>
+                        <Col span={12}>
+                            <Col span={24}>
+                                <Col span={24} className="pb-6">
+                                    <Avatar
+                                        size={34}
+                                        icon={<p className="text-base font-semibold leading-8">2</p>}
+                                        style={{ backgroundColor: '#02b875' }}
+                                    />
+                                    <span className="text-base pl-4 font-medium">Thông tin xe</span>
+                                </Col>
+                                <Col span={24}>
+                                    <Form.Item
+                                        label={<p className="text-base font-semibold">Số km xe đã chạy</p>}
+                                        name="km"
+                                        rules={[
+                                            {
+                                                pattern: R_NUMBER,
+                                                message: 'Số km không đúng định dạng.',
+                                            },
+                                        ]}
+                                    >
+                                        <Input className="h-10 text-base border-[#02b875]" placeholder="" />
+                                    </Form.Item>
+                                    <Form.Item
+                                        name="vehicleType"
+                                        label={<p className="text-base font-semibold">Loại xe</p>}
+                                        initialValue={SEVICE_TYPE.SHOWROOM}
+                                    >
+                                        <Select size="large" className="h-10 text-base border-[#02b875]">
+                                            {VEHICLE_TYPE.map((item) => (
+                                                <Select.Option key={item.value} value={item.value} label={item.label}>
+                                                    {item.label}
+                                                </Select.Option>
+                                            ))}
+                                        </Select>
+                                    </Form.Item>
+                                    <Form.Item
+                                        label={<p className="text-base font-semibold">Biển số xe</p>}
+                                        name="licensePlates"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Quý khách vui lòng không để trống trường thông tin này.',
+                                            },
+                                        ]}
+                                    >
+                                        <Input className="h-10 text-base border-[#02b875]" placeholder="XX-XX/12345" />
+                                    </Form.Item>
                                 </Col>
                             </Col>
                             <Col span={24}>
                                 <Col span={24} className="pb-6">
                                     <Avatar
                                         size={34}
-                                        icon={<p className="text-base font-semibold leading-8">3</p>}
-                                        style={{ backgroundColor: '#707070' }}
+                                        icon={<p className="text-base font-semibold leading-8">4</p>}
+                                        style={{ backgroundColor: '#02b875' }}
                                     />
                                     <span className="text-base pl-4 font-medium">Địa điểm và Thời gian</span>
                                 </Col>
                                 <Col span={24}>
                                     <Form.Item
                                         name="showroomId"
-                                        label={<p className="text-base font-semibold">Showroom</p>}
+                                        label={<p className="text-base font-semibold">Cửa hàng</p>}
                                         rules={[
                                             {
                                                 required: true,
-                                                message: 'Vui lòng showroom sửa chữa/bảo dưỡng.',
+                                                message: 'Quý khách vui lòng không để trống trường thông tin này.',
                                             },
                                         ]}
                                     >
                                         <Select
                                             size="large"
                                             value={filter}
-                                            placeholder="Tìm kiếm showroom theo tên, địa chỉ."
+                                            placeholder="Tìm kiếm cửa hàng theo tên, địa chỉ."
                                             className="h-10 text-base border-[#02b875]"
                                             optionLabelProp="label"
                                             showSearch
@@ -566,7 +643,7 @@ const BookingPage = () => {
                                             rules={[
                                                 {
                                                     required: true,
-                                                    message: 'Vui lòng nhập địa chỉ cụ thể.',
+                                                    message: 'Quý khách vui lòng không để trống trường thông tin này.',
                                                 },
                                             ]}
                                         >
@@ -585,7 +662,7 @@ const BookingPage = () => {
                                         rules={[
                                             {
                                                 required: true,
-                                                message: 'Vui lòng chọn thời gian!',
+                                                message: 'Quý khách vui lòng không để trống trường thông tin này.',
                                             },
                                         ]}
                                     >
@@ -611,12 +688,11 @@ const BookingPage = () => {
                     </Row>
                     <Form.Item wrapperCol={{ offset: 8, span: 8 }}>
                         <Button
-                            type="primary"
                             htmlType="submit"
                             disabled={creatingBooking}
                             loading={creatingBooking}
-                            className="text-white bg-[#02b875] w-full hover:!bg-[#09915f] mb-8 mt-8 h-10 hover:text-white focus:ring-4 focus:outline-none
-                         focus:ring-blue-300 font-medium rounded-lg text-sm text-center mr-3 md:mr-0"
+                            className="btn-primary text-white bg-[#02b875] w-full hover:!bg-[#09915f] mb-8 mt-8 h-12 hover:!text-white hover:out
+                        font-medium rounded-lg text-sm text-center mr-3 md:mr-0"
                         >
                             Đặt lịch
                         </Button>
