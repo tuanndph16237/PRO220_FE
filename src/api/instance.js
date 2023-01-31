@@ -4,7 +4,7 @@ import { JwtDecode } from '../utils/auth';
 
 const instance = axios.create({
     baseURL: import.meta.env.VITE_BASE_URL,
-    timeout: 5000,
+    timeout: 10000,
 });
 
 instance.interceptors.request.use(

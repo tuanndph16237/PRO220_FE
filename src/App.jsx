@@ -14,6 +14,18 @@ import BannerManage from './pages/Admin/Banner';
 import PageNotFound from './pages/PageNotFound';
 import UpdateBanner from './pages/Admin/Banner/UpdateBanner';
 
+
+
+import OrderManage from './pages/Admin/Order';
+import UpdateOrder from './pages/Admin/Order/UpdateOrder';
+import Personal from './pages/Setting';
+import UpdateProfile from './pages/Setting/UpdateProfile';
+import PrivateSetting from './components/Private/PrivateSetting';
+import ChangePassword from './pages/Setting/ChangePassword';
+import Orders from './pages/Setting/Orders';
+import CreateOrder from './pages/Admin/Order/CreateOrder';
+
+
 function App() {
     return (
         <Routes>
@@ -28,6 +40,12 @@ function App() {
             <Route path="/admin" element={<AdminLayout />}>
                 <Route path="quan-ly-banner" element={<BannerManage />} />
                 <Route path="quan-ly-banner/:id" element={<UpdateBanner />} />
+
+
+
+                <Route path="don-hang" element={<OrderManage />} />
+                <Route path="them-don-hang" element={<CreateOrder />} />
+                <Route path="don-hang/:id" element={<UpdateOrder />} />
 
             </Route>
             <Route path="*" element={<PageNotFound />} />

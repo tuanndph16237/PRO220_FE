@@ -17,9 +17,7 @@ const User = (props) => {
         const userDecode = JwtDecode();
         if (userDecode) {
             dispatch(saveUserValues(userDecode));
-            if (!userDecode.role) {
-                setIsAdmin(false);
-            } else {
+            if (userDecode.role) {
                 setIsAdmin(true);
             }
         }
