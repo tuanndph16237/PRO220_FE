@@ -12,4 +12,6 @@ export const checkAuth = () => {
     const role = _.get(userDecode, 'role', null);
     if (!role) return false;
     return true;
+
 };
+

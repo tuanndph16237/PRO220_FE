@@ -1,1 +1,1 @@
-export const HOUR_DATE_TIME = 'HH DD/MM/YYYY';
+export const HOUR_DATE_TIME = 'HH:mm DD/MM/YYYY';

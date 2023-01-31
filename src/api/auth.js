@@ -5,4 +5,8 @@ export const login = async (data) => {
 };
 export const register = (data) => {
     return instance.post('/register', data);
+
 };
+
+};
+

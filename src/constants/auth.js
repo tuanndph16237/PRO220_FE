@@ -7,4 +7,3 @@ export const ROLE = {
 export const Token = {
     accessToken: 'accessToken',
     refrehToken: 'refrehToken',
-};

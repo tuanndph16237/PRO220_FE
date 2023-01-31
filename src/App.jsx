@@ -15,6 +15,19 @@ import PrivateLayout from './components/Private/PrivateLayout';
 import PageNotFound from './pages/PageNotFound';
 import UpdateBanner from './pages/Admin/Banner/UpdateBanner';
 import PrivateRouter from './components/Private/PrivateRouter';
+
+=======
+
+import OrderManage from './pages/Admin/Order';
+import UpdateOrder from './pages/Admin/Order/UpdateOrder';
+import Personal from './pages/Setting';
+import UpdateProfile from './pages/Setting/UpdateProfile';
+import PrivateSetting from './components/Private/PrivateSetting';
+import ChangePassword from './pages/Setting/ChangePassword';
+import Orders from './pages/Setting/Orders';
+import CreateOrder from './pages/Admin/Order/CreateOrder';
+
+
 function App() {
     return (
         <Routes>
@@ -22,6 +35,7 @@ function App() {
                 <Route index element={<HomePage />} />
                 <Route path="about" element={<AboutPage />} />
                 <Route path="dat-lich" element={<BookingPage />} />
+
                 <Route path="dang-nhap" element={<PrivateRouter><Login /></PrivateRouter>} />
                 <Route path="dang-ky" element={<Register />} />
             </Route>
@@ -29,7 +43,45 @@ function App() {
                 <Route path="dang-ky" element={<Register />} />
                 <Route path="quan-ly-banner" element={<BannerManage />} />
                 <Route path="quan-ly-cua-hang" element={<ShowRoom/>} />
+
+                <Route
+                    path="dang-nhap"
+                    element={
+                        <PrivateRouter>
+                            <Login />
+                        </PrivateRouter>
+                    }
+                />
+                <Route
+                    path="cai-dat"
+                    element={
+                        <PrivateSetting>
+                            <Personal />
+                        </PrivateSetting>
+                    }
+                >
+                    <Route index path="tai-khoan" element={<UpdateProfile />} />
+                    <Route index path="doi-mat-khau" element={<ChangePassword />} />
+                    <Route path="quan-ly-don-hang" element={<Orders />} />
+                </Route>
+                <Route path="dang-ky" element={<Register />} />
+            </Route>
+            <Route
+                path="/admin"
+                element={
+                    <PrivateLayout>
+                        <AdminLayout />
+                    </PrivateLayout>
+                }
+            >
+                <Route path="dang-ky" element={<Register />} />
+                <Route path="quan-ly-banner" element={<BannerManage />} />
+                <Route path="quan-ly-cua-hang" element={<ShowRoom />} />
+
                 <Route path="quan-ly-banner/:id" element={<UpdateBanner />} />
+                <Route path="don-hang" element={<OrderManage />} />
+                <Route path="them-don-hang" element={<CreateOrder />} />
+                <Route path="don-hang/:id" element={<UpdateOrder />} />
             </Route>
             <Route path="*" element={<PageNotFound />} />
         </Routes>
