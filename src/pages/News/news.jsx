@@ -119,7 +119,7 @@ const News = () => {
 				</div>
 				<div className="col-md-7">
 					<div className="card-block">
-						<h2 className="card-title"><a href="#">từ ngày 25/12/2022 dodoris hợp tác với Honda triển khai dịch vụ sửa tất cả các dòng xe được phân phối bởi Honda, với phụ tùng thay thế chính hãng và không thu thêm bất cứ khoản phí trung gian nào</a></h2>
+						<h2 className="card-title"><a href="#">từ ngày 25/12/2022 Dodoris hợp tác với Honda triển khai dịch vụ sửa tất cả các dòng xe được phân phối bởi Honda, với phụ tùng thay thế chính hãng và không thu thêm bất cứ khoản phí trung gian nào</a></h2>
 						<h4 className="card-text">Khách hàng có thể mang xe tới bất kỳ đại lý ủy nhiệm nào của honda trên toàn quốc để thực hiện bảo dưỡng định kỳ cho chiếc xe của mình (bao gồm hệ thống cửa hàng 2S Dịch vụ – Phụ tùng của honda).</h4>
 						<div className="metafooter">
 							<div className="wrapfooter">
@@ -154,7 +154,7 @@ const News = () => {
 				<img className="img-fluid" src="../../../public/images/Cac-tieu-chuan-ve-nhot-xe-tay-ga.jpg.webp" alt=""/>
 			</a>
 			<div className="card-block">
-				<h2 className="card-title"><a href="#">từ ngày 25/12/2022 dodoris hợp tác với Honda triển khai dịch vụ sửa tất cả các dòng xe được phân phối bởi Honda, với phụ tùng thay thế chính hãng và không thu thêm bất cứ khoản phí trung gian nào</a></h2>
+				<h2 className="card-title"><a href="#">từ ngày 25/12/2022 Dodoris hợp tác với Honda triển khai dịch vụ sửa tất cả các dòng xe được phân phối bởi Honda, với phụ tùng thay thế chính hãng và không thu thêm bất cứ khoản phí trung gian nào</a></h2>
 				<h4 className="card-text">Các chi tiết đã được thay thế bằng chi tiết mới theo điều kiện bảo hành này sẽ trở thành tài sản của Công ty Honda hợp tác với dodoris. Công ty Honda Việt Nam sẽ đưa ra quyết định cuối cùng về sửa chữa hoặc thay thế.</h4>
 				<div className="metafooter">
 					<div className="wrapfooter">
