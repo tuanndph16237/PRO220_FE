@@ -395,10 +395,11 @@ const BookingPage = () => {
                         <Form.Item wrapperCol={{ offset: 8, span: 8 }}>
                             <Button
                                 htmlType="submit"
+                                type="primary"
                                 disabled={creatingBooking}
                                 loading={creatingBooking}
-                                className="btn-primary text-white bg-[#02b875] w-full hover:!bg-[#09915f] mb-8 mt-8 h-12 hover:text-white focus:ring-4 focus:outline-none
-                                font-medium rounded-lg text-sm text-center mr-3 md:mr-0"
+                                className="btn-primary text-white bg-[#02b875] w-full hover:!bg-[#09915f] mb-8 mt-8 h-12 hover:!text-white hover:out
+                        font-medium rounded-lg text-sm text-center mr-3 md:mr-0"
                             >
                                 Đặt lịch
                             </Button>
@@ -689,6 +690,7 @@ const BookingPage = () => {
                     <Form.Item wrapperCol={{ offset: 8, span: 8 }}>
                         <Button
                             htmlType="submit"
+                            type="primary"
                             disabled={creatingBooking}
                             loading={creatingBooking}
                             className="btn-primary text-white bg-[#02b875] w-full hover:!bg-[#09915f] mb-8 mt-8 h-12 hover:!text-white hover:out

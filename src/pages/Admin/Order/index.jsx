@@ -16,23 +16,7 @@ const OrderManage = () => {
     const showrooms = useSelector((state) => state.showroom.showrooms.values);
     const orders = useSelector((state) => state.order.orders.values);
     const loading = useSelector((state) => state.order.orders.loading);
-
-    useEffect(() => {
-        dispatch(getOrdersAsync());
-    }, []);
-
-    useEffect(() => {
-        if (_.isEmpty(showrooms)) {
-            dispatch(getAllShowroomAsync());
-        }
-    }, [showrooms]);
-
     const columns = [
-        {
-            title: 'Cửa hàng sửa chữa',
-            dataIndex: 'showroomId',
-            render: (showroomId) => _.get(_.find(showrooms, ['_id', showroomId]), 'name', ''),
-        },
         {
             title: 'Mã đơn hàng',
             dataIndex: '_id',
@@ -41,6 +25,11 @@ const OrderManage = () => {
                     # {_id.substring(18)}
                 </Link>
             ),
+        },
+        {
+            title: 'Trạng thái',
+            dataIndex: 'status',
+            render: (status, data) => ORDER_STATUS[status],
         },
         {
             title: 'Tên khách hàng',
@@ -103,10 +92,11 @@ const OrderManage = () => {
             title: 'Tổng tiền',
             dataIndex: 'total',
         },
+
         {
-            title: 'Trạng thái',
-            dataIndex: 'status',
-            render: (status, data) => ORDER_STATUS[status],
+            title: 'Cửa hàng sửa chữa',
+            dataIndex: 'showroomId',
+            render: (showroomId) => _.get(_.find(showrooms, ['_id', showroomId]), 'name', ''),
         },
         {
             title: '',
@@ -119,6 +109,15 @@ const OrderManage = () => {
             },
         },
     ];
+    useEffect(() => {
+        dispatch(getOrdersAsync());
+    }, []);
+
+    useEffect(() => {
+        if (_.isEmpty(showrooms)) {
+            dispatch(getAllShowroomAsync());
+        }
+    }, [showrooms]);
     return (
         <div className="banner-content">
             {loading ? (
@@ -128,12 +127,15 @@ const OrderManage = () => {
             ) : (
                 <>
                     <div className="flex justify-between align-center pb-4">
-                        <button className="h-10 w-20  text-white bg-[#02b875] hover:bg-[#09915f] hover:!text-white font-medium rounded-lg text-base ">
+                        <Link
+                            to="/admin/them-don-hang"
+                            className="h-10 w-20 py-2 text-white bg-[#02b875] hover:bg-[#09915f] hover:!text-white font-medium rounded-lg text-base "
+                        >
                             <span>
-                                <PlusOutlined className="pr-2 text-white " />
+                                <PlusOutlined className="px-2 text-white " />
                             </span>
-                            <Link to="/admin/them-don-hang">Thêm</Link>
-                        </button>
+                            <span>Thêm</span>
+                        </Link>
                     </div>
                     <Table
                         scroll={{
