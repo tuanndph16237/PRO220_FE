@@ -61,7 +61,7 @@ const DrawerCreateShowroom = ({ open, onClose, reloading}) => {
 			let coordinates = item.center
             coordinate.current.latitude = coordinates[1]
             coordinate.current.longitude = coordinates[0]
-            setAddress(item.place_name_vi)
+            setAddress(item.place_name_en)
         })
     },[])
 
