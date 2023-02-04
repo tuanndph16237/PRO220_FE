@@ -44,8 +44,18 @@ const items = [
             { key: 'Thêm vai trò', path: 'them-vai-tro', label: 'Thêm vai trò' },
         ],
     },
-    { key: 'Quản lý cửa hàng', path: 'quan-ly-cua-hang', icon: <FileDoneOutlined />, label: 'Quản lý cửa hàng' },
-    { key: 'Quản lý kho', path: 'quan-ly-kho', icon: <FileDoneOutlined />, label: 'Quản lý kho' },
+
+    { 
+        label: 'Quản lý cửa hàng', 
+        key: 'Quản lý cửa hàng', 
+        icon: <FileDoneOutlined />, 
+        children: [
+            {key: 'Cửa hàng', path: 'quan-ly-cua-hang', label: 'Cửa hàng' },
+            {key: 'Thêm cửa hàng', path: 'them-cua-hang', label: 'Thêm cửa hàng' }
+        ]
+    },
+
+
 ];
 
 const AdminLayout = () => {
