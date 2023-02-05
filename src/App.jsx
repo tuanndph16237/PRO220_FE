@@ -11,7 +11,6 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import BannerManage from './pages/Admin/Banner';
 import ShowRoom from './pages/Admin/showRoom';
-import DrawerCreateShowroom from './pages/Admin/showRoom/DrawerCreateShowroom';
 import PrivateLayout from './components/Private/PrivateLayout';
 import PageNotFound from './pages/PageNotFound';
 import UpdateBanner from './pages/Admin/Banner/UpdateBanner';
@@ -67,7 +66,6 @@ function App() {
                 <Route path="dang-ky" element={<Register />} />
                 <Route path="quan-ly-banner" element={<BannerManage />} />
                 <Route path="quan-ly-cua-hang" element={<ShowRoom />} />
-                <Route path="them-cua-hang" element={<DrawerCreateShowroom />} />
                 <Route path="quan-ly-banner/:id" element={<UpdateBanner />} />
                 <Route path="don-hang" element={<OrderManage />} />
                 <Route path="them-don-hang" element={<CreateOrder />} />
