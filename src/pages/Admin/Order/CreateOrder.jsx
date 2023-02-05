@@ -80,16 +80,16 @@ const CreateOrder = () => {
                                 <Form.Item
                                     label={<p className="text-base font-semibold">Email</p>}
                                     name="email"
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: 'Quý khách vui lòng không để trống trường thông tin này.',
-                                        },
-                                        {
-                                            pattern: R_EMAIL,
-                                            message: 'Email không đúng định dạng.',
-                                        },
-                                    ]}
+                                    // rules={[
+                                    //     {
+                                    //         required: true,
+                                    //         message: 'Quý khách vui lòng không để trống trường thông tin này.',
+                                    //     },
+                                    //     {
+                                    //         pattern: R_EMAIL,
+                                    //         message: 'Email không đúng định dạng.',
+                                    //     },
+                                    // ]}
                                 >
                                     <Input
                                         type="email"
@@ -228,12 +228,12 @@ const CreateOrder = () => {
                                 <Form.Item
                                     label={<p className="text-base font-semibold">Biển số xe</p>}
                                     name="licensePlates"
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: 'Quý khách vui lòng không để trống trường thông tin này.',
-                                        },
-                                    ]}
+                                    // rules={[
+                                    //     {
+                                    //         required: true,
+                                    //         message: 'Quý khách vui lòng không để trống trường thông tin này.',
+                                    //     },
+                                    // ]}
                                 >
                                     <Input className="h-10 text-base border-[#02b875]" placeholder="XX-XX/12345" />
                                 </Form.Item>

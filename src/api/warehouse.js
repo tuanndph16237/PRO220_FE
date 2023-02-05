@@ -6,5 +6,9 @@ export const getWarehouseByShowroomId = (idShowroom) => {
 };
 
 export const updateQuantityOnePart = (dataUpdate) => {
-    return instance.patch(`${URL}/update-one`,dataUpdate);
+    return instance.patch(`${URL}/update-one`, dataUpdate);
+};
+
+export const warehouseSearch = (name) => {
+    return instance.post(`/warehouse/search?`, { name });
 };

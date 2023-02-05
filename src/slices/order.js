@@ -45,6 +45,10 @@ export const OrderSlice = createSlice({
             errors: null,
             loading: false,
         },
+        updateOrder: {
+            loading: false,
+            errors: null,
+        },
     },
     reducers: {},
     extraReducers: {
@@ -61,7 +65,17 @@ export const OrderSlice = createSlice({
         [createOrderAsync.fulfilled.type]: (state, action) => {
             state.orders.values.push(action.payload.data);
         },
+        [updateOrderAsync.pending.type]: (state, action) => {
+            state.updateOrder.loading = true;
+        },
+        [updateOrderAsync.rejected.type]: (state, action) => {
+            console.log('update-async-error', action);
+            state.updateOrder.loading = false;
+            state.updateOrder.errors = action.payload;
+        },
         [updateOrderAsync.fulfilled.type]: (state, action) => {
+            state.updateOrder.loading = false;
+            state.updateOrder.errors = false;
             state.orders.values = state.orders.values.map((order) => {
                 if (order._id !== action.payload.data._id) return order;
                 return action.payload.data;
