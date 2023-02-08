@@ -1,7 +1,7 @@
 import React, { useState, useEffect, Fragment, useRef } from 'react';
 import _ from 'lodash';
 import { useSelector } from 'react-redux';
-import { warehouseSearch } from '../../../api/warehouse';
+import { updateWarehouseByMaterials, warehouseSearch } from '../../../api/warehouse';
 import { InputNumber, Select, Tooltip } from 'antd';
 import ModalCustomize from '../../../components/Customs/ModalCustomize';
 
@@ -38,13 +38,41 @@ const SelectMaterials = (props) => {
             setMaterials(data);
         }, 300);
     };
+
+    const checkMaterial = (materials) => {
+        const equalLength = _.get(props.order.materials, 'length', 0) === _.get(materials, 'length', 0);
+        if (!equalLength) return false;
+        const rs = materials.every((material) => {
+            return props.order.materials.find(
+                (item) => item.materialId === material.materialId && item.qty === material.qty,
+            );
+        });
+        return rs;
+    };
     return (
         <ModalCustomize
             title="Chuyển trạng thái: Đang xử lý"
             showModal={props.showModal}
             setShowModal={props.setShowModal}
             value={materialIds}
-            onSubmit={() => props.handleOkCancel({ materials: selectedMaterials, materialIds, reasons: [] })}
+            onSubmit={() => {
+                if (!props.isChangeMaterials) {
+                    console.log(22222222);
+                    updateWarehouseByMaterials({
+                        showroomId: props.order.showroomId,
+                        materials: selectedMaterials,
+                    });
+                }
+                const isNotChangeMaterial = checkMaterial(selectedMaterials);
+                if (!isNotChangeMaterial) {
+                    props.handleOkCancel({
+                        materials: selectedMaterials,
+                        materialIds,
+                        reasons: [],
+                    });
+                }
+                props.setShowModal();
+            }}
             disabled={true}
         >
             <Fragment>
@@ -68,12 +96,12 @@ const SelectMaterials = (props) => {
                                 0,
                             );
                             const qty = _.get(
-                                _.find(selectedMaterials, (item) => item.marterialId === marterial, {}),
+                                _.find(selectedMaterials, (item) => item.materialId === marterial, {}),
                                 'qty',
                                 1,
                             );
                             return {
-                                marterialId: marterial,
+                                materialId: marterial,
                                 qty,
                                 price,
                             };
@@ -85,9 +113,11 @@ const SelectMaterials = (props) => {
                     onSearch={handleSearch}
                     filterOption={false}
                 >
-                    {_.map(materials, ({ materialId: material }) => {
+                    {_.map(materials, (item) => {
+                        const { quantity, materialId: material } = item;
                         return (
                             <Select.Option
+                                disabled={!quantity}
                                 key={material._id}
                                 value={material._id}
                                 label={
@@ -100,7 +130,7 @@ const SelectMaterials = (props) => {
                                         <InputNumber
                                             size="small"
                                             value={_.get(
-                                                _.find(selectedMaterials, (item) => item.marterialId === material._id),
+                                                _.find(selectedMaterials, (item) => item.materialId === material._id),
                                                 'qty',
                                                 1,
                                             )}
@@ -111,9 +141,9 @@ const SelectMaterials = (props) => {
                                                 const materialsWithQuantity = _.map(
                                                     selectedMaterials,
                                                     (materialSeleted) => {
-                                                        if (materialSeleted.marterialId === material._id) {
+                                                        if (materialSeleted.materialId === material._id) {
                                                             return {
-                                                                marterialId: materialSeleted.marterialId,
+                                                                materialId: materialSeleted.materialId,
                                                                 qty: value,
                                                                 price: materialSeleted.price,
                                                             };
@@ -127,7 +157,9 @@ const SelectMaterials = (props) => {
                                     </div>
                                 }
                             >
-                                {material.name} - {material.price}
+                                <Tooltip title={`${material.name} - ${material.price} - Số lượng: ${quantity}`}>
+                                    {material.name} - {material.price} - SL: {quantity}
+                                </Tooltip>
                             </Select.Option>
                         );
                     })}

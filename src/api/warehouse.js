@@ -12,3 +12,7 @@ export const updateQuantityOnePart = (dataUpdate) => {
 export const warehouseSearch = (name) => {
     return instance.post(`/warehouse/search?`, { name });
 };
+
+export const updateWarehouseByMaterials = (data) => {
+    return instance.patch('/warehouses', data);
+};

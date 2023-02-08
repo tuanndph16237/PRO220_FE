@@ -45,6 +45,8 @@ const StatusOrder = (props) => {
     const [current, setCurrent] = useState(props.status);
     const [showModal, setShowModal] = useState(null);
     const [disabled, setDisabled] = useState(true);
+    const [isChangeMaterials, setIsChangeMaterials] = useState(false);
+
     const [reasons, setReasons] = useState(['Khác']);
 
     const onSubmitStatus = () => {
@@ -164,6 +166,7 @@ const StatusOrder = (props) => {
                     <Button
                         onClick={() => {
                             setShowModal('selectMaterials');
+                            setIsChangeMaterials(true);
                         }}
                         disabled={false}
                         loading={props.loading}
@@ -221,11 +224,12 @@ const StatusOrder = (props) => {
             {showModal === 'selectMaterials' && (
                 <SelectMaterials
                     order={props.order}
+                    isChangeMaterials={isChangeMaterials}
                     showModal={showModal}
                     setShowModal={setShowModal}
                     handleOkCancel={(data) => {
-                        setShowModal(null);
                         props.onSubmit(current, data);
+                        setIsChangeMaterials(false);
                     }}
                 />
             )}
