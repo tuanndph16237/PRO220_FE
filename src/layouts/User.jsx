@@ -13,8 +13,8 @@ const User = (props) => {
     const [isAdmin, setIsAdmin] = useState(false);
     const dispatch = useDispatch();
     const user = useSelector((state) => state.user.currentUser.values);
-    const isLogged = useSelector((state) => state.user.isLogged);
     const accessToken = useSelector((state) => state.user.currentUser.accessToken);
+    const isLogged = useSelector((state) => state.user.isLogged);
 
     useEffect(() => {
         const userDecode = JwtDecode();
