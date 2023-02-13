@@ -44,3 +44,15 @@ a:hover {
     font-weight: 500;
     color: var(--primary-color);
 }
+.ant-image-preview-img-wrapper {
+    display: flex;
+    justify-content: center;
+}
+.ant-image-preview-img {
+    position: absolute;
+    top: 0px;
+    padding: 5% 0px;
+}
+.ant-image-mask {
+    border-radius: 50%;
+}

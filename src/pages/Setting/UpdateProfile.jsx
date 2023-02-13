@@ -10,7 +10,7 @@ import { NOTIFICATION_TYPE, UPLOAD_IMAGES_STATUS } from '../../constants/status'
 import { getUser } from '../../api/account';
 const prefixSelector = (
     <Form.Item noStyle>
-        <span>+85</span>
+        <span>+84</span>
     </Form.Item>
 );
 const UpdateProfile = () => {
@@ -109,58 +109,64 @@ const UpdateProfile = () => {
                             className="flex flex-col justify-center"
                         >
                             <UploadImage onChangeUrl={handleChangeUrl} defaultFileList={defaultList} />
-                            <Form.Item
-                                label="name"
-                                name="name"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Please input your name!',
-                                    },
-                                ]}
-                            >
-                                <Input />
-                            </Form.Item>
+                            <div>
+                                <Form.Item
+                                    label="name"
+                                    name="name"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Please input your name!',
+                                        },
+                                    ]}
+                                    className="updateProfile"
+                                >
+                                    <Input/>
+                                </Form.Item>
 
-                            <Form.Item
-                                label="email"
-                                name="email"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Please input your Email!',
-                                    },
-                                ]}
-                            >
-                                <Input />
-                            </Form.Item>
-                            <Form.Item
-                                name="number_phone"
-                                label="Phone"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Please input your phone number phone!',
-                                    },
-                                ]}
-                            >
-                                <Input
-                                    addonBefore={prefixSelector}
-                                    style={{
-                                        width: '100%',
+                                <Form.Item
+                                    label="email"
+                                    name="email"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Please input your Email!',
+                                        },
+                                    ]}
+                                    className="updateProfile"
+                                >
+                                    <Input />
+                                </Form.Item>
+                                <Form.Item
+                                    name="number_phone"
+                                    label="Phone"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Please input your phone number phone!',
+                                        },
+                                    ]}
+                                    className="updateProfile"
+                                >
+                                    <Input
+                                        addonBefore={prefixSelector}
+                                        style={{
+                                            width: '100%',
+                                        }}
+                                    />
+                                </Form.Item>
+                                <Form.Item
+                                    wrapperCol={{
+                                        offset: 8,
+                                        span: 16,
                                     }}
-                                />
-                            </Form.Item>
-                            <Form.Item
-                                wrapperCol={{
-                                    offset: 8,
-                                    span: 16,
-                                }}
-                            >
-                                <Button type="primary" htmlType="submit">
-                                    Submit
-                                </Button>
-                            </Form.Item>
+                                    className="updateProfile"
+                                >
+                                    <Button type="primary" htmlType="submit">
+                                        Submit
+                                    </Button>
+                                </Form.Item>
+                            </div>
                         </Form>
                     </div>
                 </>

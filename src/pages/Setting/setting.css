@@ -2,22 +2,6 @@
     background-color: var(--primary-color) !important;
     color: var(--white-color) !important;
 }
-.ant-row {
+.updateProfile>.ant-row {
     display: inline;
-}
-.ant-image-preview-img-wrapper {
-    display: flex;
-    justify-content: center;
-}
-.ant-image-preview-img {
-    position: absolute;
-    top: 0px;
-    padding: 5% 0px;
-}
-.ant-image-mask {
-    border-radius: 50%;
-}
-.ant-btn.ant-btn-sm,
-.btn-primary {
-    background: none;
 }
