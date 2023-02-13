@@ -1,25 +1,25 @@
-import React, { useEffect, useState, useRef} from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useDocumentTitle from '../../../hooks/useDocumentTitle';
 import { Button, Drawer, Form, Input, notification, Spin } from 'antd';
-import {  updateShowroomAsync } from '../../../slices/showroom';
+import { updateShowroomAsync } from '../../../slices/showroom';
 import { NOTIFICATION_TYPE } from '../../../constants/status';
 import _ from 'lodash';
 import './showroom.css';
 import UploadImage from '../../../components/UploadImage';
 import { getShowroomById } from '../../../api/showroom';
 
-const DrawerUpdateShowroom = ({ open, onClose, reloading, id}) => {
-    useDocumentTitle('Cập nhật cửa hàng')
+const DrawerUpdateShowroom = ({ open, onClose, reloading, id }) => {
+    useDocumentTitle('Cập nhật cửa hàng');
     const dispatch = useDispatch();
-    const loading = useSelector((state) => state.showroom.showroomUpdate.loading)
+    const loading = useSelector((state) => state.showroom.showroomUpdate.loading);
     const [defaultList, setDefaultList] = useState([]);
     const [url, setUrl] = useState(null);
-    const [address,setAddress] = useState('')
+    const [address, setAddress] = useState('');
     const coordinate = useRef({
-        latitude:"",
-        longitude:""
-    })
+        latitude: '',
+        longitude: '',
+    });
 
     const handleClose = () => {
         onClose(false);
@@ -33,24 +33,24 @@ const DrawerUpdateShowroom = ({ open, onClose, reloading, id}) => {
     };
 
     const dataUpdate = useRef({
-        name:"",
-        phone:"",
-        images:[],
-        location:{
-            coordinates:[]
-        }
-    })
+        name: '',
+        phone: '',
+        images: [],
+        location: {
+            coordinates: [],
+        },
+    });
     const formRef = useRef(null);
 
     useEffect(() => {
-     handleChangeUrl(dataUpdate.current.images[0])
-     coordinate.current.latitude=dataUpdate.current.location.coordinates[1]
-     coordinate.current.longitude=dataUpdate.current.location.coordinates[0]
-     formRef.current?.setFieldsValue({
-        address: address,
-        name:dataUpdate.current.name,
-        phone:dataUpdate.current.phone
-     });
+        handleChangeUrl(dataUpdate.current.images[0]);
+        coordinate.current.latitude = dataUpdate.current.location.coordinates[1];
+        coordinate.current.longitude = dataUpdate.current.location.coordinates[0];
+        formRef.current?.setFieldsValue({
+            address: address,
+            name: dataUpdate.current.name,
+            phone: dataUpdate.current.phone,
+        });
     }, [address]);
 
     const handleChangeUrl = (value) => {
@@ -66,68 +66,60 @@ const DrawerUpdateShowroom = ({ open, onClose, reloading, id}) => {
         ]);
     };
 
-    useEffect(()=>{
+    useEffect(() => {
         var geocoder = new maptiler.Geocoder({
-			input: 'search',
-			key: 'CKlzQ1LLayVnG9v67Xs3'
-		});
-        geocoder.on('select', (item)=> {
-			let coordinates = item.center
-            coordinate.current.latitude = coordinates[1]
-            coordinate.current.longitude = coordinates[0]
-            setAddress(item.place_name_vi)
-        })
-        getShowroomById(id).then((res)=>{
-            dataUpdate.current = res.data
-            setAddress(res.data.address)
-        })
-       
-    },[])
+            input: 'search',
+            key: 'CKlzQ1LLayVnG9v67Xs3',
+        });
+        geocoder.on('select', (item) => {
+            let coordinates = item.center;
+            coordinate.current.latitude = coordinates[1];
+            coordinate.current.longitude = coordinates[0];
+            setAddress(item.place_name_vi);
+        });
+        getShowroomById(id).then((res) => {
+            dataUpdate.current = res.data;
+            setAddress(res.data.address);
+        });
+    }, []);
 
-    
-    const onFinish = async(values) => {
-        const data = { id,...values, images:[url],longitude: _.toString(coordinate.current.longitude),latitude: _.toString(coordinate.current.latitude)};
-        dispatch(updateShowroomAsync(data)).then((res)=>{
+    const onFinish = async (values) => {
+        const data = {
+            id,
+            ...values,
+            images: [url],
+            longitude: _.toString(coordinate.current.longitude),
+            latitude: _.toString(coordinate.current.latitude),
+        };
+        dispatch(updateShowroomAsync(data)).then((res) => {
             try {
-                if(res.payload.status == 200){
-                    noti(
-                        NOTIFICATION_TYPE.SUCCESS,
-                        'Cập nhật showroom thành công!',
-                    );
-                    setTimeout(()=>{
-                        handleClose()
+                if (res.payload.status == 200) {
+                    noti(NOTIFICATION_TYPE.SUCCESS, 'Cập nhật showroom thành công!');
+                    setTimeout(() => {
+                        handleClose();
                         reloading({
-                        reload:false
-                        })
-                    },1000)
-                }else{
-                    noti(
-                        NOTIFICATION_TYPE.ERROR,
-                        'Cập nhật showroom thất bại!',
-                    );
+                            reload: false,
+                        });
+                    }, 1000);
+                } else {
+                    noti(NOTIFICATION_TYPE.ERROR, 'Cập nhật showroom thất bại!');
                 }
             } catch (error) {
-                noti(
-                    NOTIFICATION_TYPE.ERROR,
-                    'Cập nhật showroom thất bại!',
-                    `${err}`,
-                );
+                noti(NOTIFICATION_TYPE.ERROR, 'Cập nhật showroom thất bại!', `${err}`);
             }
-            
-        })
-        
+        });
     };
 
     return (
         <>
             <Drawer title="thay đổi thông tin cửa hàng" placement="right" width="40%" onClose={handleClose} open={open}>
-
-                {loading && <div className="absolute top-1/2 left-1/2">
-                    <Spin tip="" size="large">
-                        <div className="content" />
-                    </Spin>
-                </div>
-                }
+                {loading && (
+                    <div className="absolute top-1/2 left-1/2">
+                        <Spin tip="" size="large">
+                            <div className="content" />
+                        </Spin>
+                    </div>
+                )}
                 <Form
                     ref={formRef}
                     id="form-add-banner"
@@ -177,7 +169,11 @@ const DrawerUpdateShowroom = ({ open, onClose, reloading, id}) => {
                             },
                         ]}
                     >
-                        <Input className="h-10 text-base border-[#02b875] w-full"  placeholder="Nhập địa chỉ" id='search'/>
+                        <Input
+                            className="h-10 text-base border-[#02b875] w-full"
+                            placeholder="Nhập địa chỉ"
+                            id="search"
+                        />
                     </Form.Item>
                     <p className="text-base font-semibold">
                         <span className="text-[#ff4d4f]">*</span> Ảnh
