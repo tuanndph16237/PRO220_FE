@@ -31,6 +31,7 @@ const Personal = () => {
     const [collapsed, setCollapsed] = useState(false);
     const [path, setPath] = useState('tai-khoan');
     const { pathname } = useLocation();
+
     const {
         token: { colorBgContainer },
     } = theme.useToken();
@@ -43,7 +44,9 @@ const Personal = () => {
     };
     useEffect(() => {
         const subString = pathname.substring(9);
-        if (subString) {
+        if(pathname.substring(9,26)=='quan-ly-don-hang/'){
+            setPath('quan-ly-don-hang');
+        }else{
             setPath(subString);
         }
     }, [pathname]);
