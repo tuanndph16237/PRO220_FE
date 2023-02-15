@@ -55,9 +55,9 @@ const SelectMaterials = (props) => {
             showModal={props.showModal}
             setShowModal={props.setShowModal}
             value={materialIds}
+            footer={true}
             onSubmit={() => {
                 if (!props.isChangeMaterials) {
-                    console.log(22222222);
                     updateWarehouseByMaterials({
                         showroomId: props.order.showroomId,
                         materials: selectedMaterials,
