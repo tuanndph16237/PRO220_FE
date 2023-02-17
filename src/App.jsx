@@ -26,11 +26,12 @@ import Warehouse from './pages/Admin/Warehouse/Warehouse';
 import CreateOrder from './pages/Admin/Order/CreateOrder';
 import OrderDetail from './pages/Setting/Order/OrderDetail';
 import MaterialManage from './pages/Admin/Material/index';
-import UpdateMaterial from './pages/Admin/Material/DrawerUpdateMaterial'
+import UpdateMaterial from './pages/Admin/Material/UpdateMaterial';
 import ListOrder from './pages/Setting/Order/ListOrder';
 import DrawerCreateShowroom from './pages/Admin/showRoom/DrawerCreateShowroom';
+import CreateMaterial from './pages/Admin/Material/CreateMaterial';
 
-function App () {
+function App() {
     return (
         <Routes>
             <Route path="/" element={<MainLayout />}>
@@ -55,23 +56,22 @@ function App () {
                 >
                     <Route index path="tai-khoan" element={<UpdateProfile />} />
                     <Route index path="doi-mat-khau" element={<ChangePassword />} />
-                    <Route path="quan-ly-don-hang" element={<Orders />} >
-                        <Route path=''  element={<ListOrder status={''}/>}/>
-                        <Route path='da-xac-nhan-lich'  element={<ListOrder status={2}/>}/>
-                        <Route path='cho-xac-nhan-lich'  element={<ListOrder status={1}/>}/>
-                        <Route path='dang-xu-ly'  element={<ListOrder status={3}/>}/>
-                        <Route path='thanh-toan'  element={<ListOrder status={4}/>}/>
-                        <Route path='hoan-thanh'  element={<ListOrder status={5}/>}/>
-                        <Route path='huy'  element={<ListOrder status={0}/>}/>
-                        <Route path=":id" element={<OrderDetail/>} />
-                        <Route path="da-xac-nhan-lich/:id" element={<OrderDetail/>} />
-                        <Route path="cho-xac-nhan-lich/:id" element={<OrderDetail/>} />
-                        <Route path="dang-xu-ly/:id" element={<OrderDetail/>} />
-                        <Route path="thanh-toan/:id" element={<OrderDetail/>} />
-                        <Route path="hoan-thanh/:id" element={<OrderDetail/>} />
-                        <Route path="huy/:id" element={<OrderDetail/>} />
+                    <Route path="quan-ly-don-hang" element={<Orders />}>
+                        <Route path="" element={<ListOrder status={''} />} />
+                        <Route path="da-xac-nhan-lich" element={<ListOrder status={2} />} />
+                        <Route path="cho-xac-nhan-lich" element={<ListOrder status={1} />} />
+                        <Route path="dang-xu-ly" element={<ListOrder status={3} />} />
+                        <Route path="thanh-toan" element={<ListOrder status={4} />} />
+                        <Route path="hoan-thanh" element={<ListOrder status={5} />} />
+                        <Route path="huy" element={<ListOrder status={0} />} />
+                        <Route path=":id" element={<OrderDetail />} />
+                        <Route path="da-xac-nhan-lich/:id" element={<OrderDetail />} />
+                        <Route path="cho-xac-nhan-lich/:id" element={<OrderDetail />} />
+                        <Route path="dang-xu-ly/:id" element={<OrderDetail />} />
+                        <Route path="thanh-toan/:id" element={<OrderDetail />} />
+                        <Route path="hoan-thanh/:id" element={<OrderDetail />} />
+                        <Route path="huy/:id" element={<OrderDetail />} />
                     </Route>
-                    
                 </Route>
                 <Route path="dang-ky" element={<Register />} />
             </Route>
@@ -94,6 +94,7 @@ function App () {
                 <Route path="them-don-hang" element={<CreateOrder />} />
                 <Route path="don-hang/:id" element={<UpdateOrder />} />
                 <Route path="quan-ly-kho" element={<Warehouse />} />
+                <Route path="them-vat-tu" element={<CreateMaterial />} />
             </Route>
             <Route path="*" element={<PageNotFound />} />
         </Routes>

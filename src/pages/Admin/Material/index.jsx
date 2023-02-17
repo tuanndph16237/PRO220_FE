@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import _ from 'lodash';
-import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
-import { notification, Popconfirm, Switch, Table, Row, Button, Spin } from 'antd';
-import { getAllMaterialAsync, removeMaterialByIdsAsync, updateMaterialAsync } from '../../../slices/material';
-import { NOTIFICATION_TYPE } from '../../../constants/status';
+import { EditOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
+import { notification, Table, Row, Select, Input, Space, Button, Tooltip } from 'antd';
 import useDocumentTitle from '../../../hooks/useDocumentTitle';
-import DrawerCreateMaterial from './DrawerCreateMaterial';
+import { searchMaterial } from '../../../api/material';
+import { NOTIFICATION_TYPE } from '../../../constants/status';
 
 const noti = (type, message, description) => {
     notification[type]({
@@ -18,60 +17,145 @@ const noti = (type, message, description) => {
 
 const MaterialManage = () => {
     useDocumentTitle('Quản lý material');
-    const dispatch = useDispatch();
-    const materials = useSelector((state) => state.material.materials.values);
-    const loadding = useSelector((state) => state.material.materials.loading);
-    const messageCreated = useSelector((state) => state.material.create.message);
-    const statusNotiCreated = useSelector((state) => state.material.create.status);
-
-    const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-    const [open, setOpen] = useState(false);
-    const data = materials.map((material) => ({ ...material, key: material._id }));
-    useEffect(() => {
-        dispatch(getAllMaterialAsync());
-    }, []);
+    const [optionFilter, setOptionFilter] = useState(1);
+    const [data, setData] = useState([]);
+    let searchInput = useRef(null);
+    const [searchText, setSearchText] = useState('');
+    const [searchedColumn, setSearchedColumn] = useState('');
+    const navigate = useNavigate();
 
     useEffect(() => {
-        if (messageCreated && statusNotiCreated) return noti(statusNotiCreated, messageCreated);
-    }, [messageCreated, statusNotiCreated]);
+        filterMaterial(optionFilter);
+    }, [optionFilter]);
 
-    const onSelectChange = (newSelectedRowKeys) => {
-        setSelectedRowKeys(newSelectedRowKeys);
-    };
-    const rowSelection = {
-        selectedRowKeys,
-        onChange: onSelectChange,
-    };
-
-    const handleUpdateMaterial = (data) => {
-        dispatch(
-            updateMaterialAsync({
-                _id: data._id,
-                data: _.pick(data, ['name', 'image', 'price']),
-            }),
-        );
+    const handleSearch = (selectedKeys, confirm, dataIndex) => {
+        confirm();
+        console.log(dataIndex, selectedKeys);
+        setSearchText(selectedKeys[0]);
+        setSearchedColumn(dataIndex);
     };
 
-    const handleRemoveMaterialByIdsAsync = (ids) => {
-        dispatch(removeMaterialByIdsAsync(ids)).then((res) => {
-            const materialsRemove = _.get(res, 'payload.data.dataDeleted', null);
-            if (materialsRemove) {
-                noti(NOTIFICATION_TYPE.SUCCESS, 'Xóa thành công!', `Bạn đã xóa ${materialsRemove.name}  thành công!`);
-            } else {
-                const ids = _.get(res, 'payload.data.ids', null);
-                noti(
-                    NOTIFICATION_TYPE.SUCCESS,
-                    'Xóa thành vật tư công!',
-                    `Bạn đã xóa ${ids.length} vật tư  thành công!`,
-                );
+    const handleReset = (clearFilters) => {
+        clearFilters();
+        setSearchText('');
+    };
+
+    const filterMaterial = async (value) => {
+        try {
+            const { data } = await searchMaterial({ value: value });
+            setData(data.map((item, index) => ({ ...item, key: index })));
+        } catch (error) {
+            noti(NOTIFICATION_TYPE.ERROR, `tìm kiếm dữ liệu lỗi`);
+        }
+    };
+
+    const dataFilter = [
+        {
+            value: 2,
+            label: 'dưới 100,000 VNĐ',
+        },
+        {
+            value: 3,
+            label: 'giá giảm dần',
+        },
+        {
+            value: 7,
+            label: 'giá tăng dần',
+        },
+        {
+            value: 6,
+            label: 'từ 100,000 VNĐ - 500,000 VNĐ',
+        },
+        {
+            value: 4,
+            label: 'dưới 1,000,000 VNĐ',
+        },
+        {
+            value: 5,
+            label: 'trên 1,000,000 VNĐ',
+        },
+        {
+            value: 1,
+            label: 'tất cả vật tư',
+        },
+    ];
+
+    const getColumnSearchProps = (dataIndex) => ({
+        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }) => (
+            <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
+                <Input
+                    ref={searchInput}
+                    placeholder={`tìm kiếm tên vật tư`}
+                    value={selectedKeys[0]}
+                    onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+                    onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+                    style={{ marginBottom: 8, display: 'block' }}
+                />
+                <Space>
+                    <Button
+                        type="primary"
+                        onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+                        icon={<SearchOutlined />}
+                        size="small"
+                        style={{ width: 90 }}
+                    >
+                        Search
+                    </Button>
+                    <Button
+                        onClick={() => clearFilters && handleReset(clearFilters)}
+                        size="small"
+                        style={{ width: 90 }}
+                    >
+                        Reset
+                    </Button>
+                    <Button
+                        type="link"
+                        size="small"
+                        onClick={() => {
+                            clearFilters();
+                            handleSearch(selectedKeys, confirm, dataIndex);
+                        }}
+                    >
+                        close
+                    </Button>
+                </Space>
+            </div>
+        ),
+
+        filterIcon: (filtered) => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
+
+        onFilter: (value, record) => record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+
+        onFilterDropdownOpenChange: (visible) => {
+            if (visible) {
+                setTimeout(() => searchInput.current?.select(), 100);
             }
-        });
-    };
+        },
+
+        render: (text) =>
+            searchedColumn === dataIndex ? (
+                <Highlighter
+                    highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+                    searchWords={[searchText]}
+                    autoEscape
+                    textToHighlight={text ? text.toString() : ''}
+                />
+            ) : (
+                text
+            ),
+    });
 
     const columns = [
         {
             title: 'Tên',
             dataIndex: 'name',
+            key: 'name',
+            ...getColumnSearchProps('name'),
+            render: (name) => (
+                <Tooltip placement="topLeft" title={name}>
+                    {name}
+                </Tooltip>
+            ),
         },
         {
             title: 'Giá thành',
@@ -97,16 +181,6 @@ const MaterialManage = () => {
                         <Link to={data._id}>
                             <EditOutlined className="text-xl pr-4" />
                         </Link>
-                        <Popconfirm
-                            title={`Bạn chắc chắn muốn xóa ${data.name} không?`}
-                            onConfirm={() => {
-                                handleRemoveMaterialByIdsAsync([data._id]);
-                            }}
-                            okText="Đồng ý"
-                            cancelText="Hủy"
-                        >
-                            <DeleteOutlined className="text-xl" />
-                        </Popconfirm>
                     </Row>
                 );
             },
@@ -114,38 +188,41 @@ const MaterialManage = () => {
     ];
 
     return (
-        <div>
-            {loadding ? (
-                <div className="absolute top-1/2 left-1/2">
-                    <Spin tip="" size="large">
-                        <div className="content" />
-                    </Spin>
-                </div>
-            ) : (
-                <>
-                    <div className="flex justify-between align-center pb-4">
-                        <Button
-                            size="large"
-                            onClick={() => handleRemoveMaterialByIdsAsync(selectedRowKeys)}
-                            className="focus:outline-none text-base text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2"
-                            disabled={_.isEmpty(selectedRowKeys) ? true : false}
-                        >
-                            Xóa {_.isEmpty(selectedRowKeys) ? '' : _.get(selectedRowKeys, 'length', '') + ' material'}
-                        </Button>
-                        <button
-                            type="button"
-                            onClick={() => setOpen(true)}
-                            className="focus:outline-none h-10 text-white bg-[#02b875] hover:bg-[#09915f] focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-base px-5 py-2.5"
-                        >
-                            <PlusOutlined className="pr-2 text-white " />
-                            Thêm
-                        </button>
+        <>
+            <div className="flex items-center justify-between mb-4 ">
+                <div className="flex">
+                    <button
+                        type="button"
+                        onClick={() => navigate('/admin/them-vat-tu')}
+                        className="focus:outline-none p-2 text-white bg-[#02b875] hover:bg-[#09915f] focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-base px-2"
+                    >
+                        <PlusOutlined className="pr-2 text-white " />
+                        Thêm
+                    </button>
+                    <div className="px-3">
+                        <Select
+                            showSearch
+                            style={{
+                                width: 300,
+                            }}
+                            size={'large'}
+                            placeholder="bộ lọc theo giá"
+                            optionFilterProp="children"
+                            filterOption={(input, option) => (option?.label ?? '').includes(input)}
+                            filterSort={(optionA, optionB) =>
+                                (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                            }
+                            onSelect={(value) => setOptionFilter(value)}
+                            options={dataFilter}
+                        />
                     </div>
-                    <Table rowSelection={rowSelection} columns={columns} dataSource={data} />
-                </>
-            )}
-            {open && <DrawerCreateMaterial open={open} onClose={setOpen} />}
-        </div>
+                </div>
+                <p>
+                    Số lượng: <span className="font-bold">{data.length}</span>
+                </p>
+            </div>
+            <Table columns={columns} dataSource={data} />
+        </>
     );
 };
 

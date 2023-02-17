@@ -117,10 +117,9 @@ const UpdateMaterial = () => {
                         <InputNumber
                             min={0}
                             size="large"
-                            style={{ width: 400 }}
                             formatter={(value) => `${value}`.replace(new RegExp(/\B(?=(\d{3})+(?!\d))/g), ',')}
                             parser={(value) => value.replace(new RegExp(/\$\s?|(,*)/g), '')}
-                            className="h-10 text-base border-[#02b875]"
+                            className="h-10 text-base border-[#02b875] w-full"
                         />
                     </Form.Item>
                     <p className="text-base font-semibold">
@@ -128,18 +127,17 @@ const UpdateMaterial = () => {
                     </p>
                     <UploadImage onChangeUrl={handleChangeUrl} defaultFileList={defaultList} />
                     {!url && <div className="text-[#ff4d4f]">Vui lòng tải ảnh lên!</div>}
-                    <div className="">
-                        <Form.Item>
-                            <Button
-                                htmlType="submit"
-                                disabled={!url ? true : false}
-                                loading={loading}
-                                className="btn-submit mr-4 h-10 text-white bg-[#02b875] hover:bg-[#09915f] hover:text-white focus:ring-4 font-medium rounded-lg text-base px-5 py-2"
-                            >
-                                Cập nhật
-                            </Button>
-                        </Form.Item>
-                    </div>
+
+                    <Form.Item>
+                        <Button
+                            htmlType="submit"
+                            disabled={!url ? true : false}
+                            loading={loading}
+                            className="btn-submit mr-4 h-10 text-white bg-[#02b875] hover:bg-[#09915f] hover:text-white focus:ring-4 font-medium rounded-lg text-base px-5 py-2 w-full"
+                        >
+                            Cập nhật
+                        </Button>
+                    </Form.Item>
                 </Form>
             )}
         </div>

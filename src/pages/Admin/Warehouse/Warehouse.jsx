@@ -7,8 +7,14 @@ import ListShowroom from './ListShowrom';
 import { getShowrooms } from '../../../api/showroom';
 import { NOTIFICATION_TYPE } from '../../../constants/status';
 import useDocumentTitle from '../../../hooks/useDocumentTitle';
-
 import _ from 'lodash';
+
+const noti = (type, message, description) => {
+    notification[type]({
+        message,
+        description,
+    });
+};
 
 const EditableCell = ({ editing, dataIndex, title, inputType, record, index, children, ...restProps }) => {
     const inputNode = inputType === 'number' ? <InputNumber /> : <Input />;
@@ -54,13 +60,6 @@ const Warehouse = () => {
     let searchInput = useRef(null);
 
     const isEditing = (record) => record.key === editingKey;
-
-    const noti = (type, message, description) => {
-        notification[type]({
-            message,
-            description,
-        });
-    };
 
     const fetchApiWarehouse = async (idShowroom) => {
         try {
@@ -211,7 +210,7 @@ const Warehouse = () => {
                         </Popconfirm>
                     </span>
                 ) : (
-                    role !== 2 && (
+                    role == 1 || (
                         <Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)}>
                             Edit
                         </Typography.Link>
@@ -299,7 +298,7 @@ const Warehouse = () => {
                 <div>{!showroomId ? <ListShowroom options={listShowroom} setIdShowrooms={setIdShowroom} /> : ''}</div>
                 <div className="flex justify-end pr-4">
                     <p className="text-[18px]">
-                        Tổng số linh kiện: <span className="font-bold">{totals}</span>
+                        Số lượng: <span className="font-bold">{totals}</span>
                     </p>
                 </div>
             </div>
