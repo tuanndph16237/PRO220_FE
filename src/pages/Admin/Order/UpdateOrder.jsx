@@ -1,5 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { Avatar, Button, Col, DatePicker, Form, Input, InputNumber, Row, Select, Tooltip } from 'antd';
+import {
+    Avatar,
+    Button,
+    Col,
+    DatePicker,
+    Form,
+    Input,
+    InputNumber,
+    Row,
+    Select,
+    Tooltip,
+    Radio,
+    Space,
+    Modal,
+    Alert,
+} from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { getOrderById, updateOrderStatus } from '../../../api/order';
@@ -17,6 +32,10 @@ import { Notification } from '../../../utils/notifications';
 import { NOTIFICATION_TYPE } from '../../../constants/status';
 import { getMaterialsWarehouseAsync } from '../../../slices/warehouse';
 import { updateOrderAsync } from '../../../slices/order';
+import { useGetParam } from '../../../utils/param';
+import { paymentVNPay, sendMail, updateStatusBill } from '../../../api/payment';
+import { WalletOutlined } from '@ant-design/icons';
+import { SolutionOutlined } from '@ant-design/icons/lib/icons';
 
 const UpdateOrder = (props) => {
     useDocumentTitle('Cập nhật đơn hàng');
@@ -26,7 +45,7 @@ const UpdateOrder = (props) => {
     const showroomId = useSelector((state) => state.user.currentUser.values.showroomId);
     const updating = useSelector((state) => state.order.updateOrder.loading);
     const errors = useSelector((state) => state.order.updateOrder.errors);
-
+    const [values, setValues] = useState(0);
     const { id } = useParams();
     const [order, setOrder] = useState({});
     const [initialValues, setInitialValues] = useState({});
@@ -34,6 +53,76 @@ const UpdateOrder = (props) => {
     const [date, setDate] = useState(new Date());
     const [loadingUpdateStatus, setLoadingUpdateStatus] = useState(false);
     const [form] = Form.useForm();
+    const [responseCode] = useGetParam('vnp_ResponseCode');
+    const [loading, setLoading] = useState(false);
+    const [openModal, setOpenModal] = useState(false);
+    const [statusPayment, setStatusPayment] = useState(false);
+    const payment = async () => {
+        if (values == 1) {
+            setOpenModal(true);
+        } else {
+            const valuePayment = {
+                idOrder: id,
+                amount: order.total,
+                bankCode: 'NCB',
+                orderInfo: 'Sửa Xe Tại Cửa Hàng Dodoris',
+                orderType: 'billpayment',
+            };
+            const { data } = await paymentVNPay(valuePayment);
+            window.location.href = `${data}`;
+        }
+    };
+    const handleOk = async () => {
+        setLoading(true);
+        const data = await updateStatusOrder();
+        if (data) {
+            setLoading(false);
+            setOpenModal(false);
+        }
+    };
+    const handleCancel = () => {
+        setOpenModal(false);
+    };
+    const onChange = (e) => {
+        setValues(e.target.value);
+    };
+    useEffect(() => {
+        if (statusPayment) {
+            Notification(NOTIFICATION_TYPE.SUCCESS, 'Thanh toán thành công');
+        }
+    }, [statusPayment]);
+    useEffect(() => {
+        (async () => {
+            if (responseCode) {
+                const data = await updateStatusOrder();
+            }
+        })();
+    }, [responseCode]);
+    const updateStatusOrder = async () => {
+        const value = {
+            id: id,
+            status: 5,
+        };
+        const { data } = await updateStatusBill(value);
+        if (data) {
+            setStatusPayment(true);
+            setOrder(data);
+            if (data.email) {
+                const valueEmail = _.omit(data, [
+                    'accountId',
+                    'appointmentSchedule',
+                    'createdAt',
+                    'deleted',
+                    'description',
+                    'materialIds',
+                    'reasons',
+                    'showroomId',
+                ]);
+                const reponsive = sendMail(valueEmail);
+            }
+        }
+        return data;
+    };
     useEffect(() => {
         if (showroomId && _.isEmpty(materials)) {
             dispatch(getMaterialsWarehouseAsync(showroomId));
@@ -50,7 +139,6 @@ const UpdateOrder = (props) => {
             setOrder(data);
         })();
     }, [id]);
-
     useEffect(() => {
         if (!_.isEmpty(errors)) {
             Notification(NOTIFICATION_TYPE.ERROR, 'Đã có lỗi xảy ra vui lòng thử lại!', errors.message || '');
@@ -89,7 +177,6 @@ const UpdateOrder = (props) => {
             setIsShowroom(order.serviceType);
         }
     }, [order]);
-
     const handleChangeSubPrice = (value) => {
         const { appointmentSchedule, ...orderOther } = order;
         const price = totalPriceMaterials();
@@ -101,7 +188,6 @@ const UpdateOrder = (props) => {
             total,
         });
     };
-
     const onFinish = (data) => {
         const _id = order._id;
         dispatch(updateOrderAsync({ _id, data }));
@@ -462,18 +548,60 @@ const UpdateOrder = (props) => {
                             <Form.Item label={<p className="text-base font-semibold">Tổng đơn hàng</p>} name="total">
                                 <Input className="h-10 text-base border-[#02b875]" type="number" disabled />
                             </Form.Item>
+                            {order.status == 4 && (
+                                <Form.Item label={<p className="text-base font-semibold">Phương Thức Thanh Toán :</p>}>
+                                    <Radio.Group onChange={onChange} value={values}>
+                                        <Space direction="vertical">
+                                            <Radio value={1}>
+                                                Thanh toán tiền mặt <SolutionOutlined />
+                                            </Radio>
+                                            <Radio value={2}>
+                                                Thanh toán online <WalletOutlined />
+                                            </Radio>
+                                        </Space>
+                                    </Radio.Group>
+                                </Form.Item>
+                            )}
                         </Col>
                     </Row>
+                    <Modal
+                        open={openModal}
+                        title="Thanh Toán"
+                        onOk={handleOk}
+                        onCancel={handleCancel}
+                        footer={[
+                            <Button key="back" onClick={handleCancel}>
+                                Cancel
+                            </Button>,
+                            <Button key="submit" type="primary" loading={loading} onClick={handleOk}>
+                                Xác Nhận
+                            </Button>,
+                        ]}
+                    >
+                        <Alert message="Notes :" description="Xác nhận thanh toán tiền mặt." type="info" showIcon />
+                    </Modal>
                     <Form.Item wrapperCol={{ offset: 8, span: 8 }}>
-                        <Button
-                            loading={updating || loadingUpdateStatus}
-                            type="primary"
-                            htmlType="submit"
-                            className="btn-primary text-white bg-[#02b875] w-full mb-8 mt-8 h-12 hover:out
+                        {order.status == 4 ? (
+                            <Button
+                                type="primary"
+                                className="btn-primary text-white bg-[#02b875] w-full mb-8 mt-8 h-12 hover:out
                         font-medium rounded-lg text-sm text-center mr-3 md:mr-0"
-                        >
-                            Cập nhật
-                        </Button>
+                                disabled={values !== 0 ? false : true}
+                                onClick={() => payment()}
+                            >
+                                Thanh Toán
+                            </Button>
+                        ) : (
+                            <Button
+                                loading={updating || loadingUpdateStatus}
+                                type="primary"
+                                htmlType="submit"
+                                className="btn-primary text-white bg-[#02b875] w-full mb-8 mt-8 h-12 hover:out
+                        font-medium rounded-lg text-sm text-center mr-3 md:mr-0"
+                            >
+                                Cập nhật
+                            </Button>
+                        )}
                     </Form.Item>
                 </Form>
             )}
