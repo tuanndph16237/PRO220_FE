@@ -37,16 +37,15 @@ const DistrictManage = () => {
     ];
 
     return (
-        <div >
+        <div>
             <Link to="them">
-                <Button className="focus:outline-none h-10 text-white bg-[#02b875] hover:bg-[#09915f] focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-base px-5 py-2">
+                <Button className="focus:outline-none mb-2 h-10 text-white bg-[#02b875] hover:bg-[#09915f] focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-base px-5 py-2">
                     Thêm
                 </Button>
             </Link>
-            <div >
-              <Table columns={columns} dataSource={districtUser}/>
+            <div>
+                <Table columns={columns} dataSource={districtUser} />
             </div>
-            
         </div>
     );
 };

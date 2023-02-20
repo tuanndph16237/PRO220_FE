@@ -1,13 +1,26 @@
 import React from 'react';
-import { Button,  Form, Input } from 'antd';
+import { Button, Form, Input, notification } from 'antd';
 import { createDistricts } from '../../../api/district';
+import { NOTIFICATION_TYPE } from '../../../constants/status';
+import { useNavigate } from 'react-router-dom';
+const noti = (type, message, description) => {
+    notification[type]({
+        message,
+        description,
+    });
+};
 
 const DrawerCreateDistrict = () => {
-    const onFinish = async(data) => {
-      const dataDrawer =  await createDistricts(data);
+    const navigate = useNavigate();
+    const onFinish = async (data) => {
+        const dataDrawer = await createDistricts(data);
+        noti(NOTIFICATION_TYPE.SUCCESS, `thêm mới địa chỉ thành công`);
+        setTimeout(() => {
+            navigate('/admin/province');
+        }, 1000);
     };
     const onFinishFailed = (errorInfo) => {
-        console.log('Failed:', errorInfo);
+        noti(NOTIFICATION_TYPE.ERROR, `thêm mới địa chỉ thất bại!`);
     };
     return (
         <div>
@@ -28,7 +41,7 @@ const DrawerCreateDistrict = () => {
                 onFinish={onFinish}
                 onFinishFailed={onFinishFailed}
                 autoComplete="off"
-                className='ml-auto mr-auto mt-20'
+                className="ml-auto mr-auto mt-20"
             >
                 <Form.Item
                     label="Tên tỉnh"
@@ -36,11 +49,11 @@ const DrawerCreateDistrict = () => {
                     rules={[
                         {
                             required: true,
-                            message: 'Please input your username!',
+                            message: 'nhập vào địa chỉ tỉnh thành!',
                         },
                     ]}
                 >
-                    <Input />
+                    <Input className="capitalize" />
                 </Form.Item>
                 <Form.Item
                     wrapperCol={{
@@ -48,7 +61,7 @@ const DrawerCreateDistrict = () => {
                         span: 16,
                     }}
                 >
-                    <Button className='bg-[#02b875] hover:bg-[#09915f] text-white ml-40' htmlType="submit">
+                    <Button className="bg-[#02b875] hover:bg-[#09915f] text-white ml-40" htmlType="submit">
                         Submit
                     </Button>
                 </Form.Item>

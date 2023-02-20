@@ -34,7 +34,7 @@ import ListOrder from './pages/Setting/Order/ListOrder';
 import DrawerCreateShowroom from './pages/Admin/showRoom/DrawerCreateShowroom';
 import CreateMaterial from './pages/Admin/Material/CreateMaterial';
 
-function App () {
+function App() {
     return (
         <Routes>
             <Route path="/" element={<MainLayout />}>
@@ -97,9 +97,9 @@ function App () {
                 <Route path="them-don-hang" element={<CreateOrder />} />
                 <Route path="don-hang/:id" element={<UpdateOrder />} />
                 <Route path="quan-ly-kho" element={<Warehouse />} />
-                <Route path='tinh' element={<DistrictManage/>}/>
-                <Route path='tinh/them' element={<DrawerCreateDistrict/>}/>
-                <Route path='tinh/:id' element={<UpdateDistrict/>}/>
+                <Route path="province" element={<DistrictManage />} />
+                <Route path="province/them" element={<DrawerCreateDistrict />} />
+                <Route path="province/:id" element={<UpdateDistrict />} />
                 <Route path="them-vat-tu" element={<CreateMaterial />} />
             </Route>
             <Route path="*" element={<PageNotFound />} />
