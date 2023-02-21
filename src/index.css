@@ -24,10 +24,19 @@ a:hover {
 .ant-btn.ant-btn-sm,
 .btn-primary {
     background-color: var(--primary-color) !important;
+    color: var(--white-color) !important;
+    border: none;
+    outline: none;
 }
 
 .btn-primary:disabled {
     background-color: var(--disabled-color) !important;
+}
+.btn-primary:hover {
+    background-color: var(--primary-color-hover) !important;
+    color: var(--white-color) !important;
+    border: none;
+    outline: none;
 }
 
 .ant-btn.ant-btn-sm:hover,

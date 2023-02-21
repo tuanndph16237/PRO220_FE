@@ -10,6 +10,10 @@ export const getOrders = (filter) => {
     });
 };
 
+export const getOrdersFilter = (filter) => {
+    return instance.post('/orders-filter', filter);
+};
+
 export const getOrderById = (id) => {
     return instance.get(`${URL}/${id}`);
 };

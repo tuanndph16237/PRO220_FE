@@ -1,18 +1,20 @@
 import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import _ from 'lodash';
 import moment from 'moment';
 import { getOrdersAsync } from '../../../slices/order';
 import { getAllShowroomAsync } from '../../../slices/showroom';
-import { EditOutlined, PlusOutlined } from '@ant-design/icons';
-import { Table } from 'antd';
+import { EditOutlined, SyncOutlined } from '@ant-design/icons';
+import { Button, Space, Table, Tooltip } from 'antd';
 import { HOUR_DATE_TIME } from '../../../constants/format';
 import { ORDER_STATUS, VEHICLE_TYPE } from '../../../constants/order';
 import SpinCustomize from '../../../components/Customs/Spin';
+import Filter from '../../../components/Filter/Filter';
 
 const OrderManage = () => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const showrooms = useSelector((state) => state.showroom.showrooms.values);
     const orders = useSelector((state) => state.order.orders.values);
     const loading = useSelector((state) => state.order.orders.loading);
@@ -79,20 +81,22 @@ const OrderManage = () => {
         {
             title: 'Giá',
             dataIndex: 'price',
+            render: (value) => value && value.toLocaleString('en') + ' VNĐ',
         },
         {
             title: 'Phụ giá',
             dataIndex: 'subPrice',
+            render: (value) => value && value.toLocaleString('en') + ' VNĐ',
         },
-        {
-            title: 'VAT',
-            render: () => '10%',
-        },
+        // {
+        //     title: 'VAT',
+        //     render: () => '10%',
+        // },
         {
             title: 'Tổng tiền',
             dataIndex: 'total',
+            render: (value) => value && value.toLocaleString('en') + ' VNĐ',
         },
-
         {
             title: 'Cửa hàng sửa chữa',
             dataIndex: 'showroomId',
@@ -110,7 +114,7 @@ const OrderManage = () => {
         },
     ];
     useEffect(() => {
-        dispatch(getOrdersAsync());
+        handleFilter();
     }, []);
 
     useEffect(() => {
@@ -118,24 +122,90 @@ const OrderManage = () => {
             dispatch(getAllShowroomAsync());
         }
     }, [showrooms]);
+
+    const handleFilter = (values = {}) => {
+        dispatch(getOrdersAsync(values));
+    };
     return (
         <div className="banner-content">
-            {loading ? (
-                <div className="absolute top-1/2 left-1/2">
-                    <SpinCustomize />
-                </div>
-            ) : (
-                <>
+            {
+                <div>
                     <div className="flex justify-between align-center pb-4">
-                        <Link
-                            to="/admin/them-don-hang"
-                            className="h-10 w-20 py-2 text-white bg-[#02b875] hover:bg-[#09915f] hover:!text-white font-medium rounded-lg text-base "
+                        <div>
+                            <button className="pr-6" onClick={handleFilter}>
+                                <Tooltip title="Làm mới đơn hàng">
+                                    <SyncOutlined style={{ fontSize: '18px', color: '#000' }} />
+                                </Tooltip>
+                            </button>
+
+                            <Filter
+                                items={[
+                                    {
+                                        label: <Space align="center">Mã đơn hàng</Space>,
+                                        key: '_id',
+                                        name: 'Mã đơn hàng',
+                                    },
+                                    {
+                                        label: <Space align="center">Trạng thái</Space>,
+                                        key: 'status',
+                                        type: 'select',
+                                        mode: 'multiple',
+                                        values: [
+                                            {
+                                                label: 'Hủy',
+                                                value: 0,
+                                            },
+                                            {
+                                                label: 'Chờ xác nhận',
+                                                value: 1,
+                                            },
+                                            {
+                                                label: 'Đã xác nhận',
+                                                value: 2,
+                                            },
+                                            {
+                                                label: 'Đang xử lý',
+                                                value: 3,
+                                            },
+                                            {
+                                                label: 'Thanh toán',
+                                                value: 4,
+                                            },
+                                            {
+                                                label: 'Hoàn thành',
+                                                value: 5,
+                                            },
+                                        ],
+                                        name: 'Trạng thái',
+                                    },
+                                    {
+                                        label: <Space align="center">Tên khách hàng</Space>,
+                                        key: 'name',
+                                        type: 'string',
+                                    },
+                                    {
+                                        label: <Space align="center">Số điện thoại</Space>,
+                                        key: 'number_phone',
+                                        name: 'Số điện thoại',
+                                    },
+                                    {
+                                        label: <Space align="center">Biển kiểm soát</Space>,
+                                        key: 'licensePlates',
+                                        name: 'Biển kiểm soát',
+                                    },
+                                ]}
+                                onFilter={handleFilter}
+                            />
+                        </div>
+                        <Button
+                            onClick={() => {
+                                navigate('/admin/them-don-hang');
+                            }}
+                            className="btn-primary text-white"
+                            type="primary"
                         >
-                            <span>
-                                <PlusOutlined className="px-2 text-white " />
-                            </span>
-                            <span>Thêm</span>
-                        </Link>
+                            Thêm đơn hàng
+                        </Button>
                     </div>
                     <Table
                         scroll={{
@@ -144,8 +214,8 @@ const OrderManage = () => {
                         columns={columns}
                         dataSource={orders}
                     />
-                </>
-            )}
+                </div>
+            }
         </div>
     );
 };
