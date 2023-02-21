@@ -33,6 +33,7 @@ import UpdateMaterial from './pages/Admin/Material/UpdateMaterial';
 import ListOrder from './pages/Setting/Order/ListOrder';
 import DrawerCreateShowroom from './pages/Admin/showRoom/DrawerCreateShowroom';
 import CreateMaterial from './pages/Admin/Material/CreateMaterial';
+import OrderStatistical from './pages/Admin/Statistical/OrderStatistical';
 
 function App() {
     return (
@@ -87,6 +88,7 @@ function App() {
                 }
             >
                 <Route path="dang-ky" element={<Register />} />
+                <Route path="thong-ke-don-hang" element={<OrderStatistical />} />
                 <Route path="quan-ly-banner" element={<BannerManage />} />
                 <Route path="quan-ly-cua-hang" element={<ShowRoom />} />
                 <Route path="quan-ly-vat-tu" element={<MaterialManage />} />

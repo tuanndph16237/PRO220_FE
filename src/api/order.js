@@ -48,4 +48,8 @@ export const getUserOrder = (accountId) => {
 
 export const updateOrderUser = (data) => {
     return instance.patch(`orders-customer/${data._id}`, { status: 0 });
-}
+};
+
+export const getTotalOrderByOptions = (data) => {
+    return instance.post('statistical/order-total', data);
+};
