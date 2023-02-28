@@ -25,7 +25,7 @@ const index = () => {
             render: (text) => <a>{text}</a>,
         },
         {
-            title: 'Tags',
+            title: 'status',
             key: 'tags',
             dataIndex: 'tags',
             render: (_, { tags }) => (
@@ -53,7 +53,7 @@ const index = () => {
                         onClick={() => {
                             setAction('Edit');
                             setOpen(true);
-                            setId(record.name);
+                            setId(record);
                         }}
                     />
                 </Space>
@@ -82,7 +82,7 @@ const index = () => {
             <button
                 type="button"
                 onClick={() => OpenShowDrawer()}
-                className="focus:outline-none h-10 text-white bg-[#02b875] hover:bg-[#09915f] focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-base px-5 py-2.5"
+                className="focus:outline-none h-10 text-white bg-[#02b875] hover:bg-[#09915f] focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-base px-5 py-2.5 my-5"
             >
                 <PlusOutlined className="pr-2 text-white " />
                 Thêm

@@ -20,3 +20,7 @@ export const getRole = async()=>{
 export const getRolePermission = async(data)=>{
     return instance.get(URLRolePermission,{params:{q:data}});
 }
+
+export const updateRolePermission = async(data)=>{
+    return instance.patch(URLRole,data);
+}

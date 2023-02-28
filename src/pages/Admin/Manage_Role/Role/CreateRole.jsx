@@ -5,7 +5,7 @@ import { getPermission } from '../../../../api/permission';
 import _ from 'lodash';
 import { useDispatch } from 'react-redux';
 import { CreateRoleAsync } from '../../../../slices/role';
-const CreateRole = (props) => {
+const CreateRole = ({ onClose }) => {
     const [expandedKeys, setExpandedKeys] = useState([]);
     const [checkedKeys, setCheckedKeys] = useState();
     const [selectedKeys, setSelectedKeys] = useState([]);
@@ -17,7 +17,7 @@ const CreateRole = (props) => {
         let parent = {};
         let valueKey = '';
         let child = [];
-        let ExpandedKey = []
+        let ExpandedKey = [];
         parent = permission.map((element, index) => {
             valueKey = `${index}-${element._id}`;
             child = element.listPermissions.map((item, index) => {
@@ -26,23 +26,23 @@ const CreateRole = (props) => {
                     key: `${valueKey}-${index}-${item._id}`,
                 };
             });
-            ExpandedKey.push(valueKey)
+            ExpandedKey.push(valueKey);
             return {
                 title: element.nameCate,
                 key: valueKey,
                 children: child,
             };
         });
-        return [parent,ExpandedKey];
+        return [parent, ExpandedKey];
     };
     useEffect(() => {
         (async () => {
             const { data } = await getPermission();
             if (data) {
-                const result = find(data)
+                const result = find(data);
                 setTreeData(result[0]);
                 setLoading(false);
-                setExpandedKeys(result[1])
+                setExpandedKeys(result[1]);
             }
         })();
     }, []);
@@ -63,6 +63,12 @@ const CreateRole = (props) => {
             permissions,
         };
         dispatch(CreateRoleAsync(value));
+        setTimeout(() => {
+            onClose({
+                open: false,
+                action: '',
+            });
+        }, 2000);
     };
     const onFinishFailed = (errorInfo) => {
         console.log('Failed:', errorInfo);
@@ -111,19 +117,30 @@ const CreateRole = (props) => {
                 >
                     <Input />
                 </Form.Item>
-                {/* <p style={{padding:"5px"}}>Lựa Chọn Quyền Trong Hệ Thống :</p> */}
                 <Spin spinning={loading}>
-                    <Tree
-                        checkable
-                        onExpand={onExpand}
-                        expandedKeys={expandedKeys}
-                        autoExpandParent={autoExpandParent}
-                        onCheck={onCheck}
-                        checkedKeys={checkedKeys}
-                        onSelect={onSelect}
-                        selectedKeys={selectedKeys}
-                        treeData={treeData}
-                    />
+                    <Form.Item
+                        label="Lựa Chọn Quyền:"
+                        name="name"
+                        className="aaa"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'không được bỏ trống tên Quyền!',
+                            },
+                        ]}
+                    >
+                        <Tree
+                            checkable
+                            onExpand={onExpand}
+                            expandedKeys={expandedKeys}
+                            autoExpandParent={autoExpandParent}
+                            onCheck={onCheck}
+                            checkedKeys={checkedKeys}
+                            onSelect={onSelect}
+                            selectedKeys={selectedKeys}
+                            treeData={treeData}
+                        />
+                    </Form.Item>
                 </Spin>
                 <Form.Item
                     wrapperCol={{

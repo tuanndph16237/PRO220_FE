@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { notification } from 'antd';
 import _ from 'lodash';
-import { createRole, getRole } from '../api/permission';
+import { createRole, getRole, updateRolePermission } from '../api/permission';
 import { NOTIFICATION_TYPE } from '../constants/status';
 import { Notification } from '../utils/notifications';
 
@@ -22,9 +22,9 @@ export const CreateRoleAsync = createAsyncThunk('CreateRoleAsync', async (values
         }
         const valuess = _.omit(data, ['updatedAt', 'permissions', 'createdAt', '__v']);
         return {
-            name:valuess.name,
-            id:valuess._id
-        }
+            name: valuess.name,
+            id: valuess._id,
+        };
     } catch (error) {
         return rejectWithValue(error);
     }
@@ -46,7 +46,7 @@ export const roleSlice = createSlice({
             state.valueRole = action.payload.data;
         },
         [CreateRoleAsync.fulfilled.type]: (state, action) => {
-            state.valueRole = [...state.valueRole,action.payload];
+            state.valueRole = [...state.valueRole, action.payload];
         },
     },
 });
