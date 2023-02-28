@@ -5,6 +5,7 @@ import UserReducer from '../slices/user';
 import MaterialReducer from '../slices/material';
 import OrderSlice from '../slices/order';
 import WarehouseReducer from '../slices/warehouse';
+import role from '../slices/role';
 const store = configureStore({
     reducer: {
         banner: BannerReducer,
@@ -13,6 +14,7 @@ const store = configureStore({
         material: MaterialReducer,
         order: OrderSlice,
         warehouse: WarehouseReducer,
+        role: role,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({

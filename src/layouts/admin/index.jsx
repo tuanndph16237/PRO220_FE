@@ -40,8 +40,9 @@ const items = [
         key: 'Quản lý vai trò',
         icon: <ContactsOutlined />,
         children: [
-            { key: 'Vai trò', path: 'vai-tro', label: 'Vai trò' },
-            { key: 'Thêm vai trò', path: 'them-vai-tro', label: 'Thêm vai trò' },
+            { key: 'Vai trò', path: 'quan-ly-vai-tro', label: 'Vai trò' },
+            { key: 'Quyền', path: 'quan-ly-quyen', label: 'Quản lý quyền' },
+            { key: 'Quyền và vai trò', path: 'quan-ly-quyen', label: 'Quản lý PermissionRole' },
         ],
     },
     {

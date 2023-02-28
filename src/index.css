@@ -68,6 +68,9 @@ a:hover {
 .ant-image-mask {
     border-radius: 50%;
 }
+.aaa>.ant-row{
+    display: inherit;
+}
 
 /* cusomize color antd selector datepicker */
 .ant-select .ant-select-selector:focus-within,

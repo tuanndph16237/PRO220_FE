@@ -33,6 +33,8 @@ import UpdateMaterial from './pages/Admin/Material/UpdateMaterial';
 import ListOrder from './pages/Setting/Order/ListOrder';
 import DrawerCreateShowroom from './pages/Admin/showRoom/DrawerCreateShowroom';
 import CreateMaterial from './pages/Admin/Material/CreateMaterial';
+import Role from './pages/Admin/Manage_Role/Role'
+import Permission from './pages/Admin/Manage_Role/Permission'
 
 import DrawerUpdateShowroom from './pages/Admin/showRoom/DrawerUpdateShowroom';
 
@@ -108,6 +110,8 @@ function App() {
                 <Route path="province/them" element={<DrawerCreateDistrict />} />
                 <Route path="province/:id" element={<UpdateDistrict />} />
                 <Route path="them-vat-tu" element={<CreateMaterial />} />
+                <Route path="quan-ly-vai-tro" element={<Role />} />
+                <Route path="quan-ly-quyen" element={<Permission />} />
             </Route>
             <Route path="*" element={<PageNotFound />} />
         </Routes>
