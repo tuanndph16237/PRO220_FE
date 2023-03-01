@@ -39,10 +39,7 @@ a:hover {
     outline: none;
 }
 
-.ant-btn.ant-btn-sm:hover,
-.ant-picker-range .ant-picker-active-bar,
-.ant-picker-dropdown .ant-picker-cell-range-start .ant-picker-cell-inner,
-.ant-picker-dropdown .ant-picker-cell-range-end .ant-picker-cell-inner {
+.ant-btn.ant-btn-sm:hover {
     background-color: var(--primary-color-hover) !important;
 }
 
@@ -81,4 +78,14 @@ a:hover {
 }
 .ant-picker-today-btn {
     color: var(--primary-color) !important;
+}
+/* css btn datepicker */
+
+.ant-picker-range .ant-picker-active-bar,
+.ant-picker-dropdown .ant-picker-cell-range-start .ant-picker-cell-inner,
+.ant-picker-dropdown .ant-picker-cell-range-end .ant-picker-cell-inner,
+.ant-picker-dropdown .ant-picker-cell-selected .ant-picker-cell-inner,
+.ant-picker-dropdown .ant-picker-week-panel-row-selected td {
+    background-color: var(--primary-color) !important;
+    color: var(--white-color) !important;
 }

@@ -162,11 +162,11 @@ const StatusOrder = (props) => {
                 </div>
             ) : null}
             <div className="pt-4 flex justify-end">
-                {props.status === 3 && (
+                {/* {props.status === 3 && (
                     <Button
                         onClick={() => {
-                            setShowModal('selectMaterials');
                             setIsChangeMaterials(true);
+                            setShowModal('selectMaterials');
                         }}
                         disabled={false}
                         loading={props.loading}
@@ -175,7 +175,7 @@ const StatusOrder = (props) => {
                     >
                         Chỉnh sửa vật tư
                     </Button>
-                )}
+                )} */}
                 <Button
                     onClick={handleChangeStatus}
                     disabled={disabled}
@@ -188,12 +188,13 @@ const StatusOrder = (props) => {
             </div>
             {showModal === 'cancel' && (
                 <ModalCustomize
+                    footer={true}
                     title="Chuyển trạng thái: Hủy đơn hàng"
                     showModal={showModal}
                     setShowModal={setShowModal}
                     value={reasons}
                     onSubmit={() => {
-                        props.onSubmit(current, { reasons });
+                        props.onSubmit(0, { reasons });
                         setShowModal(null);
                     }}
                     disabled={true}

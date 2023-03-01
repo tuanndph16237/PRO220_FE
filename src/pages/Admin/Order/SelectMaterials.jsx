@@ -1,12 +1,14 @@
 import React, { useState, useEffect, Fragment, useRef } from 'react';
 import _ from 'lodash';
-import { useSelector } from 'react-redux';
-import { updateWarehouseByMaterials, warehouseSearch } from '../../../api/warehouse';
+import { useDispatch, useSelector } from 'react-redux';
+import { giveBackMaterial, warehouseSearch } from '../../../api/warehouse';
 import { InputNumber, Select, Tooltip } from 'antd';
 import ModalCustomize from '../../../components/Customs/ModalCustomize';
+import { updateWarehouseByMaterialsAsync } from '../../../slices/warehouse';
 
 const SelectMaterials = (props) => {
     const materialsDefault = useSelector((state) => state.warehouse.materials.value);
+    const dispatch = useDispatch();
     const [materials, setMaterials] = useState([]);
     const [materialIds, setMaterialIds] = useState([]);
     const [selectedMaterials, setSelectedMaterials] = useState([]);
@@ -49,31 +51,82 @@ const SelectMaterials = (props) => {
         });
         return rs;
     };
+
+    const handleRemoveMaterial = (id) => {
+        //handle setMaterial
+        if (props.isChangeMaterials) {
+            handleGiveBackMaterial(id);
+        }
+        const otherMaterialIds = materialIds.filter((materialId) => materialId !== id);
+        handleOnChangeMaterial(otherMaterialIds);
+        //check is change material
+    };
+    const handleGiveBackMaterial = (id) => {
+        const data = order.materials.find((value) => value.materialId === id);
+        const dataPost = {
+            idShowroom: props.order.showroomId,
+            material: {
+                materialId: id,
+                quantity: data.qty,
+            },
+        };
+        //tra laij vat tu
+        giveBackMaterial(dataPost);
+        //luu lai order
+    };
+
+    const handleOnChangeMaterial = (marterials) => {
+        setMaterialIds(marterials);
+        const materialsWithQuantity = _.map(marterials, (marterial) => {
+            const price = _.get(
+                _.find(materialsDefault, (value) => value.materialId._id === marterial),
+                'materialId.price',
+                0,
+            );
+            const qty = _.get(
+                _.find(selectedMaterials, (item) => item.materialId === marterial, {}),
+                'qty',
+                1,
+            );
+            return {
+                materialId: marterial,
+                qty,
+                price,
+            };
+        });
+        setSelectedMaterials(materialsWithQuantity);
+    };
+
     return (
         <ModalCustomize
-            title="Chuyển trạng thái: Đang xử lý"
+            title={!props.isChangeMaterials ? 'Chuyển trạng thái: Đang xử lý' : 'Chỉnh sửa vật tư'}
             showModal={props.showModal}
             setShowModal={props.setShowModal}
             value={materialIds}
             footer={true}
             onSubmit={() => {
-                if (!props.isChangeMaterials) {
-                    updateWarehouseByMaterials({
+                // neu khp chinh sua vat tu thi call api tru cac vat tu da chon
+                // if (!props.isChangeMaterials) {
+                dispatch(
+                    updateWarehouseByMaterialsAsync({
                         showroomId: props.order.showroomId,
                         materials: selectedMaterials,
-                    });
-                }
-                const isNotChangeMaterial = checkMaterial(selectedMaterials);
-                if (!isNotChangeMaterial) {
-                    props.handleOkCancel({
-                        materials: selectedMaterials,
-                        materialIds,
-                        reasons: [],
-                    });
-                }
+                    }),
+                );
+                // }
+                // const isNotChangeMaterial = checkMaterial(selectedMaterials);
+                // if (!isNotChangeMaterial) {
+                props.handleOkCancel({
+                    materials: selectedMaterials,
+                    materialIds,
+                    reasons: [],
+                });
+                // }
                 props.setShowModal();
             }}
             disabled={true}
+            width={'60%'}
+            top={50}
         >
             <Fragment>
                 <p className="text-base font-semibold py-2">
@@ -87,29 +140,10 @@ const SelectMaterials = (props) => {
                     className="w-full text-base border-[#02b875]"
                     mode="multiple"
                     value={materialIds}
-                    onChange={(marterials, option) => {
-                        setMaterialIds(marterials);
-                        const materialsWithQuantity = _.map(marterials, (marterial) => {
-                            const price = _.get(
-                                _.find(option, (item) => item.value === marterial, {}),
-                                'children.[2]',
-                                0,
-                            );
-                            const qty = _.get(
-                                _.find(selectedMaterials, (item) => item.materialId === marterial, {}),
-                                'qty',
-                                1,
-                            );
-                            return {
-                                materialId: marterial,
-                                qty,
-                                price,
-                            };
-                        });
-                        setSelectedMaterials(materialsWithQuantity);
-                    }}
+                    onChange={handleOnChangeMaterial}
                     optionLabelProp="label"
                     showSearch
+                    // removeIcon={null}
                     onSearch={handleSearch}
                     filterOption={false}
                 >
@@ -125,9 +159,10 @@ const SelectMaterials = (props) => {
                                         <Tooltip title={material.name}>
                                             {material.name.length > 40
                                                 ? material.name.slice(0, 40) + '...'
-                                                : material.name}{' '}
+                                                : material.name}
                                         </Tooltip>
                                         <InputNumber
+                                            className="mx-2"
                                             size="small"
                                             value={_.get(
                                                 _.find(selectedMaterials, (item) => item.materialId === material._id),
@@ -154,6 +189,9 @@ const SelectMaterials = (props) => {
                                                 setSelectedMaterials(materialsWithQuantity);
                                             }}
                                         />
+                                        {/* <button onClick={() => handleRemoveMaterial(material._id)}>
+                                            <CloseCircleOutlined />
+                                        </button> */}
                                     </div>
                                 }
                             >

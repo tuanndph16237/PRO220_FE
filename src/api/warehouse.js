@@ -16,3 +16,7 @@ export const warehouseSearch = (name) => {
 export const updateWarehouseByMaterials = (data) => {
     return instance.patch('/warehouses', data);
 };
+
+export const giveBackMaterial = (data) => {
+    return instance.patch('/warehouses/take-part-out', data);
+};

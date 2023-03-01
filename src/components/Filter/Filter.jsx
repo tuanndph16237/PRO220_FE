@@ -3,6 +3,7 @@ import { Button, Dropdown, Space } from 'antd';
 import { CloseCircleOutlined } from '@ant-design/icons';
 import TextStringFilter from './TextStringFilter';
 import SelectFilter from './SelectFilter';
+import DatePickerByOptions from '../Customs/DatePickerByOptions';
 
 const Filter = ({ items, onFilter }) => {
     const [selectedKeys, setSelectedKeys] = useState([]);
@@ -58,6 +59,20 @@ const Filter = ({ items, onFilter }) => {
                                     </button>
                                 </Space>
                             );
+                        case 'date': {
+                            return (
+                                <Space>
+                                    <span>{values.name} :</span>
+                                    <DatePickerByOptions
+                                        getTypeWhenOnChangeTime={true}
+                                        onChange={(time, type) => handleMergeValuesSearch(values.key, { type, time })}
+                                    />
+                                    <button onClick={() => handleClick({ key: values.key })}>
+                                        <CloseCircleOutlined />
+                                    </button>
+                                </Space>
+                            );
+                        }
                         default:
                             return (
                                 <Space>

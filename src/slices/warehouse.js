@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { getWarehouseByShowroomId } from '../api/warehouse';
+import { getWarehouseByShowroomId, updateWarehouseByMaterials } from '../api/warehouse';
 
 export const getMaterialsWarehouseAsync = createAsyncThunk(
     'getMaterialsWarehouseAsync',
@@ -12,6 +12,15 @@ export const getMaterialsWarehouseAsync = createAsyncThunk(
         }
     },
 );
+
+export const updateWarehouseByMaterialsAsync = createAsyncThunk('updateWarehouseByMaterialsAsync', async (data) => {
+    try {
+        const res = await updateWarehouseByMaterials(data);
+        return data;
+    } catch (error) {
+        return rejectWithValue(error);
+    }
+});
 
 export const WarehouseSlice = createSlice({
     name: 'warehouse',
@@ -35,6 +44,17 @@ export const WarehouseSlice = createSlice({
         [getMaterialsWarehouseAsync.fulfilled]: (state, action) => {
             state.materials.loading = false;
             state.materials.value = action.payload.handleData;
+        },
+        [updateWarehouseByMaterialsAsync.fulfilled]: (state, action) => {
+            const newMaterials = state.materials.value.map((material) => {
+                const id = material.materialId._id;
+                const materialUpdate = action.payload.materials.find((item) => item.materialId === id);
+                return {
+                    ...material,
+                    quantity: materialUpdate ? material.quantity - materialUpdate.qty : material.quantity,
+                };
+            });
+            state.materials.value = newMaterials;
         },
     },
 });

@@ -132,12 +132,11 @@ const OrderManage = () => {
                 <div>
                     <div className="flex justify-between align-center pb-4">
                         <div>
-                            <button className="pr-6" onClick={handleFilter}>
+                            <button className="pr-6" onClick={() => handleFilter()}>
                                 <Tooltip title="Làm mới đơn hàng">
                                     <SyncOutlined style={{ fontSize: '18px', color: '#000' }} />
                                 </Tooltip>
                             </button>
-
                             <Filter
                                 items={[
                                     {
@@ -193,6 +192,18 @@ const OrderManage = () => {
                                         key: 'licensePlates',
                                         name: 'Biển kiểm soát',
                                     },
+                                    {
+                                        label: <Space align="center">Ngày tạo</Space>,
+                                        key: 'createdAt',
+                                        type: 'date',
+                                        name: 'Ngày tạo',
+                                    },
+                                    {
+                                        label: <Space align="center">Thời gian sửa chữa</Space>,
+                                        key: 'appointmentSchedule',
+                                        type: 'date',
+                                        name: 'Thời gian sửa chữa',
+                                    },
                                 ]}
                                 onFilter={handleFilter}
                             />
@@ -207,13 +218,20 @@ const OrderManage = () => {
                             Thêm đơn hàng
                         </Button>
                     </div>
-                    <Table
-                        scroll={{
-                            x: 3000,
-                        }}
-                        columns={columns}
-                        dataSource={orders}
-                    />
+
+                    {loading ? (
+                        <div className="absolute top-1/2 left-1/2">
+                            <SpinCustomize />
+                        </div>
+                    ) : (
+                        <Table
+                            scroll={{
+                                x: 3000,
+                            }}
+                            columns={columns}
+                            dataSource={orders}
+                        />
+                    )}
                 </div>
             }
         </div>

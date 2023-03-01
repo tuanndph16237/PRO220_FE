@@ -11,8 +11,12 @@ const ModalCustomize = (props) => {
     };
     return (
         <Modal
+            style={{
+                top: props.top,
+            }}
+            width={props.width}
             title={props.title}
-            centered={true}
+            centered={props.top ? false : true}
             open={props.showModal}
             onOk={handleOkCancel}
             onCancel={handleCancel}

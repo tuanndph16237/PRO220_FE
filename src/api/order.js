@@ -55,5 +55,9 @@ export const updateOrderUser = (data) => {
 };
 
 export const getTotalOrderByOptions = (data) => {
-    return instance.post('statistical/order-total', data);
+    return instance.post('/order/statistical-total', data);
+};
+
+export const getOrderRevenue = (data) => {
+    return instance.post('/order/statistical-revenue', data);
 };

@@ -39,6 +39,7 @@ import Permission from './pages/Admin/Manage_Role/Permission'
 import DrawerUpdateShowroom from './pages/Admin/showRoom/DrawerUpdateShowroom';
 
 import OrderStatistical from './pages/Admin/Statistical/OrderStatistical';
+import RevenueOrderStatistical from './pages/Admin/Statistical/Order/RevenueOrderStatistical';
 
 
 function App() {
@@ -95,6 +96,7 @@ function App() {
             >
                 <Route path="dang-ky" element={<Register />} />
                 <Route path="thong-ke-don-hang" element={<OrderStatistical />} />
+                <Route path="thong-ke-doanh-thu" element={<RevenueOrderStatistical />} />
                 <Route path="quan-ly-banner" element={<BannerManage />} />
                 <Route path="quan-ly-cua-hang" element={<ShowRoom />} />
                 <Route path="quan-ly-vat-tu" element={<MaterialManage />} />

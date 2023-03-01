@@ -178,6 +178,7 @@ const UpdateOrder = (props) => {
         }
     }, [order]);
     const handleChangeSubPrice = (value) => {
+        console.log('value', value);
         const { appointmentSchedule, ...orderOther } = order;
         const price = totalPriceMaterials();
         const total = price + value;
@@ -492,61 +493,62 @@ const UpdateOrder = (props) => {
                                     optionLabelProp="label"
                                     // filterOption={false}
                                 >
-                                    {_.map(materials, ({ materialId: material }) => {
+                                    {_.map(order.materials, ({ materialId, qty, price }) => {
+                                        const material = _.find(
+                                            materials,
+                                            (material) => material.materialId._id === materialId,
+                                        );
                                         return (
                                             <Select.Option
-                                                key={material._id}
-                                                value={material._id}
+                                                key={materialId}
+                                                value={materialId}
                                                 label={
                                                     <div>
-                                                        <Tooltip title={material.name}>
-                                                            {material.name.length > 40
-                                                                ? material.name.slice(0, 40) + '...'
-                                                                : material.name}{' '}
+                                                        <Tooltip title={_.get(material, 'materialId.name', '') || ''}>
+                                                            {_.get(material, 'materialId.name', '').length > 40
+                                                                ? _.get(material, 'materialId.name', '').slice(0, 40) +
+                                                                  '...'
+                                                                : _.get(material, 'materialId.name', '')}
                                                         </Tooltip>
-                                                        <InputNumber
-                                                            size="small"
-                                                            value={_.get(
-                                                                _.find(
-                                                                    order.materials,
-                                                                    (item) => item.marterialId === material._id,
-                                                                ),
-                                                                'qty',
-                                                                1,
-                                                            )}
-                                                            min={1}
-                                                            disabled
-                                                            defaultValue={1}
-                                                        />
+                                                        - <span>SL: {qty}</span>
                                                     </div>
                                                 }
                                             >
-                                                {material.name} - {material.price}
+                                                {_.get(material, 'materialId.name', '') || ''} -{price}
                                             </Select.Option>
                                         );
                                     })}
                                 </Select>
                             </Form.Item>
                             <Form.Item label={<p className="text-base font-semibold">Giá vật tư</p>} name="price">
-                                <Input className="h-10 text-base border-[#02b875]" type="number" disabled />
-                            </Form.Item>
-                            <Form.Item
-                                label={<p className="text-base font-semibold">Phụ phí</p>}
-                                name="subPrice"
-                                rules={[
-                                    {
-                                        pattern: R_NUMBER,
-                                        message: 'Phụ phí không đúng định dạng.',
-                                    },
-                                ]}
-                            >
                                 <InputNumber
                                     className="h-10 w-full text-base border-[#02b875]"
+                                    formatter={(value) => `VNĐ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                    parser={(value) => {
+                                        return value.replace(/\VNĐ\s?|(,*)/g, '');
+                                    }}
+                                    disabled
+                                />
+                            </Form.Item>
+                            <Form.Item label={<p className="text-base font-semibold">Phụ phí</p>} name="subPrice">
+                                <InputNumber
+                                    className="h-10 w-full text-base border-[#02b875]"
+                                    formatter={(value) => `VNĐ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                    parser={(value) => {
+                                        return value.replace(/\VNĐ\s?|(,*)/g, '');
+                                    }}
                                     onChange={handleChangeSubPrice}
                                 />
                             </Form.Item>
                             <Form.Item label={<p className="text-base font-semibold">Tổng đơn hàng</p>} name="total">
-                                <Input className="h-10 text-base border-[#02b875]" type="number" disabled />
+                                <InputNumber
+                                    className="h-10 w-full text-base border-[#02b875]"
+                                    formatter={(value) => `VNĐ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                    parser={(value) => {
+                                        return value.replace(/\VNĐ\s?|(,*)/g, '');
+                                    }}
+                                    disabled
+                                />
                             </Form.Item>
                             {order.status == 4 && (
                                 <Form.Item label={<p className="text-base font-semibold">Phương Thức Thanh Toán :</p>}>

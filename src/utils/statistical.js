@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import { DATE_FORMAT } from '../constants/format';
 
 export const setCategoriesByType = (type, time, cb) => {
     switch (type) {
@@ -62,5 +63,8 @@ export const setCategoriesByType = (type, time, cb) => {
             cb(['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', '1T0', 'T11', 'T12']);
             break;
         default:
+            const startAtFormat = dayjs(time[0]).format(DATE_FORMAT);
+            const endAtFormat = dayjs(time[1]).format(DATE_FORMAT);
+            cb([`${startAtFormat} - ${endAtFormat}`]);
     }
 };
