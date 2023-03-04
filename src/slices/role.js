@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { notification } from 'antd';
 import _ from 'lodash';
-import { createRole, getRole, updateRolePermission } from '../api/permission';
+import { createRole, getPermission, getRole, createPermission } from '../api/permission';
 import { NOTIFICATION_TYPE } from '../constants/status';
 import { Notification } from '../utils/notifications';
 
@@ -29,9 +28,32 @@ export const CreateRoleAsync = createAsyncThunk('CreateRoleAsync', async (values
         return rejectWithValue(error);
     }
 });
+
+export const getPermissions = createAsyncThunk('getPermissions', async (values, { rejectWithValue }) => {
+    try {
+        const { data } = await getPermission();
+        return data;
+    } catch (error) {
+        return rejectWithValue(error);
+    }
+});
+
+export const CreatePermissions = createAsyncThunk('CreatePermissions', async (values, { rejectWithValue }) => {
+    try {
+        const { data } = await createPermission(values);
+        if (data) {
+            Notification(NOTIFICATION_TYPE.SUCCESS, 'Thêm thành công!');
+        }
+        return data;
+    } catch (error) {
+        return rejectWithValue(error);
+    }
+});
+
 const initialState = {
     loading: true,
     valueRole: [],
+    valuePermission: [],
 };
 
 export const roleSlice = createSlice({
@@ -47,6 +69,15 @@ export const roleSlice = createSlice({
         },
         [CreateRoleAsync.fulfilled.type]: (state, action) => {
             state.valueRole = [...state.valueRole, action.payload];
+        },
+        [getPermissions.pending.type]: (state, action) => {
+            state.loading = false;
+        },
+        [getPermissions.fulfilled.type]: (state, action) => {
+            state.valuePermission = action.payload;
+        },
+        [CreatePermissions.fulfilled.type]: (state, action) => {
+            state.valuePermission = action.payload;
         },
     },
 });

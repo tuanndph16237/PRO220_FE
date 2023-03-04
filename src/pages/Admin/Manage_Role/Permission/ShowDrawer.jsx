@@ -1,7 +1,8 @@
-import { Button, Drawer } from 'antd';
-import { useEffect, useState } from 'react';
+import { Drawer } from 'antd';
+import CreatePermission from './CreatePermission';
+import EditPermission from './EditPermission';
 
-const ShowDrawer = ({ open, onClose, action }) => {
+const ShowDrawer = ({ open, onClose, action, id }) => {
     const HanldClose = () => {
         onClose({
             open: false,
@@ -10,9 +11,9 @@ const ShowDrawer = ({ open, onClose, action }) => {
     };
     return (
         <div>
-            <Drawer title="dá" placement="right" width="40%" onClose={HanldClose} open={open}>
-                {/* {(action === 'Created' && '') || (action === 'Edit' &&'')} */}
-                ok
+            <Drawer title={action} placement="right" width="40%" onClose={HanldClose} open={open}>
+                {(action === 'Create' && <CreatePermission action onClose={onClose} />) ||
+                    (action === 'Edit' && <EditPermission id={id} onClose={onClose} />)}
             </Drawer>
         </div>
     );

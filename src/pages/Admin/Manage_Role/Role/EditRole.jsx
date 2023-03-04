@@ -5,6 +5,7 @@ import { getPermission, getRolePermission, updateRolePermission } from '../../..
 import _ from 'lodash';
 import { Notification } from '../../../../utils/notifications';
 import { NOTIFICATION_TYPE } from '../../../../constants/status';
+import { hanldInput } from '../../../../slices/capotaliieFirstLetter';
 
 const EditRole = ({ id, onClose }) => {
     const [expandedKeys, setExpandedKeys] = useState();
@@ -14,9 +15,10 @@ const EditRole = ({ id, onClose }) => {
     const [treeData, setTreeData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [open, setOpen] = useState(true);
+    const [form] = Form.useForm();
     const opens = useRef(0);
     const initialValues = {
-        name: id.name,
+        nameRole: id.name,
     };
     const filterData = (permission, filter) => {
         let parent = {};
@@ -124,9 +126,16 @@ const EditRole = ({ id, onClose }) => {
             }
         })();
     }, []);
+    const onChage = (event) => {
+        const resual = hanldInput(event);
+        form.setFieldsValue({
+            nameRole: resual,
+        });
+    };
     return (
         <div>
             <Form
+                form={form}
                 name="basic"
                 labelCol={{
                     span: 8,
@@ -143,7 +152,7 @@ const EditRole = ({ id, onClose }) => {
             >
                 <Form.Item
                     label="Tên Vai Trò"
-                    name="name"
+                    name="nameRole"
                     className="aaa"
                     rules={[
                         {
@@ -152,20 +161,10 @@ const EditRole = ({ id, onClose }) => {
                         },
                     ]}
                 >
-                    <Input />
+                    <Input onChange={(event) => onChage(event)} />
                 </Form.Item>
                 <Spin spinning={loading}>
-                    <Form.Item
-                        label="Lựa Chọn Quyền:"
-                        name="name"
-                        className="aaa"
-                        rules={[
-                            {
-                                required: true,
-                                message: 'không được bỏ trống tên Quyền!',
-                            },
-                        ]}
-                    >
+                    <Form.Item label="Lựa Chọn Quyền:" name="name" className="aaa">
                         <Tree
                             checkable
                             onExpand={onExpand}

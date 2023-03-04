@@ -5,6 +5,7 @@ import { getPermission } from '../../../../api/permission';
 import _ from 'lodash';
 import { useDispatch } from 'react-redux';
 import { CreateRoleAsync } from '../../../../slices/role';
+import { hanldInput } from '../../../../slices/capotaliieFirstLetter';
 const CreateRole = ({ onClose }) => {
     const [expandedKeys, setExpandedKeys] = useState([]);
     const [checkedKeys, setCheckedKeys] = useState();
@@ -12,6 +13,7 @@ const CreateRole = ({ onClose }) => {
     const [autoExpandParent, setAutoExpandParent] = useState(true);
     const [treeData, setTreeData] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [form] = Form.useForm();
     const dispatch = useDispatch();
     const find = (permission) => {
         let parent = {};
@@ -84,9 +86,16 @@ const CreateRole = ({ onClose }) => {
         });
         return box;
     };
+    const onChage = (event) => {
+        const resual = hanldInput(event);
+        form.setFieldsValue({
+            nameRole: resual,
+        });
+    };
     return (
         <div>
             <Form
+                form={form}
                 name="basic"
                 labelCol={{
                     span: 8,
@@ -106,7 +115,7 @@ const CreateRole = ({ onClose }) => {
             >
                 <Form.Item
                     label="Tên Vai Trò"
-                    name="name"
+                    name="nameRole"
                     className="aaa"
                     rules={[
                         {
@@ -115,19 +124,13 @@ const CreateRole = ({ onClose }) => {
                         },
                     ]}
                 >
-                    <Input />
+                    <Input onChange={(event) => onChage(event)}/>
                 </Form.Item>
                 <Spin spinning={loading}>
                     <Form.Item
                         label="Lựa Chọn Quyền:"
                         name="name"
                         className="aaa"
-                        rules={[
-                            {
-                                required: true,
-                                message: 'không được bỏ trống tên Quyền!',
-                            },
-                        ]}
                     >
                         <Tree
                             checkable

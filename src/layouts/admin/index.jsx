@@ -42,7 +42,6 @@ const items = [
         children: [
             { key: 'Vai trò', path: 'quan-ly-vai-tro', label: 'Vai trò' },
             { key: 'Quyền', path: 'quan-ly-quyen', label: 'Quản lý quyền' },
-            { key: 'Quyền và vai trò', path: 'quan-ly-quyen', label: 'Quản lý PermissionRole' },
         ],
     },
     {
