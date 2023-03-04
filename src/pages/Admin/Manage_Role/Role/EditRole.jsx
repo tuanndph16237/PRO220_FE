@@ -129,7 +129,7 @@ const EditRole = ({ id, onClose }) => {
     const onChage = (event) => {
         const resual = hanldInput(event);
         form.setFieldsValue({
-            nameRole: resual,
+            name: resual,
         });
     };
     return (
@@ -152,7 +152,7 @@ const EditRole = ({ id, onClose }) => {
             >
                 <Form.Item
                     label="Tên Vai Trò"
-                    name="nameRole"
+                    name="name"
                     className="aaa"
                     rules={[
                         {

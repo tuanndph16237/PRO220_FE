@@ -13,6 +13,7 @@ const CreateRole = ({ onClose }) => {
     const [autoExpandParent, setAutoExpandParent] = useState(true);
     const [treeData, setTreeData] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [open, setOpen] = useState(false);
     const [form] = Form.useForm();
     const dispatch = useDispatch();
     const find = (permission) => {
@@ -65,6 +66,7 @@ const CreateRole = ({ onClose }) => {
             permissions,
         };
         dispatch(CreateRoleAsync(value));
+        setOpen(true)
         setTimeout(() => {
             onClose({
                 open: false,
@@ -89,7 +91,7 @@ const CreateRole = ({ onClose }) => {
     const onChage = (event) => {
         const resual = hanldInput(event);
         form.setFieldsValue({
-            nameRole: resual,
+            name: resual,
         });
     };
     return (
@@ -115,7 +117,7 @@ const CreateRole = ({ onClose }) => {
             >
                 <Form.Item
                     label="Tên Vai Trò"
-                    name="nameRole"
+                    name="name"
                     className="aaa"
                     rules={[
                         {
@@ -151,7 +153,7 @@ const CreateRole = ({ onClose }) => {
                         span: 16,
                     }}
                 >
-                    <Button type="primary" htmlType="submit">
+                    <Button type="primary" htmlType="submit" disabled={open}>
                         Submit
                     </Button>
                 </Form.Item>
