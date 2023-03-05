@@ -12,10 +12,9 @@ const OrderProcessing = ({status}) => {
                 items={[
                     {
                         title: 'Chờ xác nhận',
-                       
                     },
                     {
-                        title: 'Tiếp nhận lịch',
+                        title: 'Đã xác nhận lịch',
                     },
                     {
                         title: 'Đang xử lý',

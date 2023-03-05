@@ -3,8 +3,6 @@ import React from 'react';
 import { ORDER_STATUS } from '../../../../constants/order';
 
 const OrderCancel = ({ status }) => {
-    console.log(status);
-
     return (
         <div>
             <Steps

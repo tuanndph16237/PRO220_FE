@@ -51,7 +51,7 @@ export const getUserOrder = (accountId) => {
 };
 
 export const updateOrderUser = (data) => {
-    return instance.patch(`orders-customer/${data._id}`, { status: 0 });
+    return instance.patch(`orders-customer/${data.idOrder}`, { status: 0 });
 };
 
 export const getTotalOrderByOptions = (data) => {

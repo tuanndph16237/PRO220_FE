@@ -32,21 +32,34 @@ const OrderDetail = () => {
         },
         {
             title: 'Số lượng',
-            dataIndex: 'qyt'
+            dataIndex: 'qty'
         },
         {
             title: 'Giá tiền',
-            dataIndex:'price'
+            dataIndex:'price',
+            render: (value) => {
+                return value.toLocaleString('en');
+            },
         },
     ];
     const { id } = useParams();
     const [dataOrderDetail, setDataOrderDetail] = useState({
         status: '',
+        listMaterials:[],
+        appointmentSchedule:'',
+        number_phone:'',
+        serviceType:'',
+        description:'',
+        totals:0
+
     });
     useEffect(() => {
         (async () => {
             const { data } = await getOrderById(id);
-            setDataOrderDetail(data);
+            const listMaterials = data.listMaterials.map((order,index)=>{
+                return{key:++index,...order}
+            })
+            setDataOrderDetail({...data,listMaterials});
         })();
     }, [id]);
     return (
@@ -71,9 +84,13 @@ const OrderDetail = () => {
                     </div>
                     <div >
                         <div className="">
-                            <div className="my-px text-lg uppercase ml-3 mb-1	">
-                                <UserOutlined className='mr-2'/>
-                                {dataOrderDetail.name}
+                            <div className="my-px text-lg uppercase ml-3 mb-1 flex		">
+                                <div>
+                                    <UserOutlined className='mr-2'/>
+                                </div>
+                                <div>
+                                    {dataOrderDetail.name}
+                                </div>
                             </div>
                             <div className="my-px text-lg ml-3	 mb-1">
                                 <EnvironmentOutlined className='mr-2'/>
@@ -109,11 +126,11 @@ const OrderDetail = () => {
                         <div>
                             <Table
                                 columns={columns}
-                                // dataSource={data}
+                                dataSource={dataOrderDetail.listMaterials}
                             />
                         </div>
                     </div>
-                    <div className='font-bold mt-2'>Tổng tiền: </div>
+                    <div className='font-bold mt-2 text-red-600	'>Tổng tiền: {dataOrderDetail.totals.toLocaleString('en') + ' VNĐ'} </div>
                 </div>
             </div>
         </div>

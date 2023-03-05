@@ -23,7 +23,8 @@ const ListOrder = (props) => {
     const fetchOrderUser = async (id) => {
         try {
             const dataOrderUser = await getUserOrder(id);
-            const handleOrderUser = dataOrderUser.data.map((order, index) => ({ key: index, ...order }));
+            console.log(dataOrderUser);
+            const handleOrderUser = dataOrderUser.data.map((order, index) => ({ key: index,name:order.showroom.name,...order}));
             if(props.status === ""){
                 setOrderUser(handleOrderUser);
             }else{
@@ -53,9 +54,8 @@ const ListOrder = (props) => {
     const columns = [
         {
             title: 'Cơ sở',
-            dataIndex: '',
-            width: 150,
-            render: ()=> <p>api chưa hoàn thiện</p>
+            dataIndex: 'name',
+            width: 300,
         },
         {
             title: 'Thời gian',
@@ -75,7 +75,7 @@ const ListOrder = (props) => {
             render: (data) => {
                 return (
                     <Row>
-                        <Link to={`${data._id}`}>
+                        <Link to={`${data.idOrder}`}>
                             <Button className='bg-[#02b875] text-white w-20	'>Chi tiết</Button>
                         </Link>
                         <Popconfirm
@@ -131,9 +131,6 @@ const ListOrder = (props) => {
             <Table
                 columns={columns}
                 dataSource={orderUser}
-                // scroll={{
-                //     x: 1300,
-                // }}
             />
         </div>
     );
