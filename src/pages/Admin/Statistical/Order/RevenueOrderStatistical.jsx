@@ -47,14 +47,16 @@ const RevenueOrderStatistical = () => {
     }, [data]);
 
     useEffect(() => {
-        getOrderRevenue({ type, time, showroomId: showroomIdSeleted })
-            .then(({ data: res }) => {
-                setData(res);
-            })
-            .catch((err) => {
-                console.log('getOrderRevenue', err);
-            });
-    }, [time, showroomIdSeleted]);
+        if (time && showroomIdSeleted) {
+            getOrderRevenue({ type, time, showroomId: showroomIdSeleted })
+                .then(({ data: res }) => {
+                    setData(res);
+                })
+                .catch((err) => {
+                    console.log('getOrderRevenue', err);
+                });
+        }
+    }, [time, showroomIdSeleted, type]);
     const handleChange = (value) => {
         setShowroomIdSeleted(value);
     };

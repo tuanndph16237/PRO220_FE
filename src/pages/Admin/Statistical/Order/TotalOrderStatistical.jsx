@@ -257,7 +257,7 @@ const TotalOrderStatistical = (props) => {
                     console.log('filtererr,er', err);
                 });
         }
-    }, [time, props.showroomId]);
+    }, [time, props.showroomId, type]);
     return (
         <div className="rounded border border-solid border-inherit p-6 my-4">
             <div className="flex justify-between items-center pb-4">
