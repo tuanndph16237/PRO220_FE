@@ -2,8 +2,10 @@ import { Button, Form, Input, Tree } from 'antd';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { dataPermission } from '../../../../constants/permission';
-import { hanldInput } from '../../../../slices/capotaliieFirstLetter';
+import { hanldInput } from '../../../../utils/capotaliieFirstLetter';
 import { CreatePermissions } from '../../../../slices/role';
+import { NOTIFICATION_TYPE } from '../../../../constants/status';
+import { isEmpty } from 'lodash';
 const CreatePermission = ({ onClose }) => {
     const [expandedKeys, setExpandedKeys] = useState([]);
     const [checkedKeys, setCheckedKeys] = useState([]);
@@ -11,6 +13,7 @@ const CreatePermission = ({ onClose }) => {
     const [autoExpandParent, setAutoExpandParent] = useState(true);
     const [treeData, setTreeData] = useState([]);
     const [status, setStatus] = useState(false);
+    const [validate, setValidate] = useState({});
     const [form] = Form.useForm();
     const dispatch = useDispatch();
     const onExpand = (expandedKeysValue) => {
@@ -24,19 +27,24 @@ const CreatePermission = ({ onClose }) => {
         setSelectedKeys(selectedKeysValue);
     };
     const onFinish = async (values) => {
-        const valueCheckKey = Split(checkedKeys);
-        const senData = {
-            name: values.namePermission,
-            listPermissions: valueCheckKey,
-        };
-        setStatus(true);
-        dispatch(CreatePermissions(senData));
-        setTimeout(() => {
-            onClose({
-                open: false,
-                action: '',
-            });
-        }, 1500);
+        if (isEmpty(checkedKeys)) {
+            setValidate({ validateStatus: NOTIFICATION_TYPE.ERROR, help: 'Chưa chọn quyền!' });
+        } else {
+            const valueCheckKey = Split(checkedKeys);
+            const senData = {
+                name: values.namePermission,
+                listPermissions: valueCheckKey,
+            };
+            setStatus(true);
+            setValidate({ validateStatus: NOTIFICATION_TYPE.SUCCESS });
+            dispatch(CreatePermissions(senData));
+            setTimeout(() => {
+                onClose({
+                    open: false,
+                    action: '',
+                });
+            }, 1500);
+        }
     };
     useEffect(() => {
         const dataTree = dataPermission.map((item, index) => {
@@ -57,6 +65,13 @@ const CreatePermission = ({ onClose }) => {
             }
         });
         return dataPermission.filter((item) => box.includes(item.code));
+    };
+    const onFinishFailed = (errorInfo) => {
+        if (isEmpty(checkedKeys)) {
+            setValidate({ validateStatus: NOTIFICATION_TYPE.ERROR, help: 'Chưa chọn quyền!' });
+        } else {
+            setValidate({ validateStatus: NOTIFICATION_TYPE.SUCCESS });
+        }
     };
     const onChage = (event) => {
         const resual = hanldInput(event);
@@ -79,6 +94,7 @@ const CreatePermission = ({ onClose }) => {
                     maxWidth: 600,
                 }}
                 onFinish={onFinish}
+                onFinishFailed={onFinishFailed}
                 autoComplete="off"
             >
                 <Form.Item
@@ -88,13 +104,13 @@ const CreatePermission = ({ onClose }) => {
                     rules={[
                         {
                             required: true,
-                            message: 'Please input your username!',
+                            message: 'Không được bỏ trống tên!',
                         },
                     ]}
                 >
                     <Input onChange={(e) => onChage(e)} placeholder="Name Role" />
                 </Form.Item>
-                <Form.Item label="Lựa Chọn Chức Năng :" name="name" className="aaa">
+                <Form.Item label="Lựa Chọn Chức Năng :" name="name" className="aaa" {...validate}>
                     <Tree
                         checkable
                         onExpand={onExpand}

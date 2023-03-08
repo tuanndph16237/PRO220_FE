@@ -1,9 +1,9 @@
 import { Button, Form, Input, Spin, Tree } from 'antd';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { getOnegetPermission, updatePermission } from '../../../../api/permission';
 import { arrayPermission, dataPermission } from '../../../../constants/permission';
 import { NOTIFICATION_TYPE } from '../../../../constants/status';
-import { hanldInput } from '../../../../slices/capotaliieFirstLetter';
+import { hanldInput } from '../../../../utils/capotaliieFirstLetter';
 import { Notification } from '../../../../utils/notifications';
 
 const EditPermission = ({ id, onClose }) => {
@@ -15,6 +15,7 @@ const EditPermission = ({ id, onClose }) => {
     const [status, setStatus] = useState(true);
     const [open, setOpen] = useState(false);
     const [form] = Form.useForm();
+    const opens = useRef(0);
     const initialValues = {
         namePermission: id.name,
     };
@@ -23,6 +24,11 @@ const EditPermission = ({ id, onClose }) => {
         setAutoExpandParent(false);
     };
     const onCheck = (checkedKeysValue) => {
+        if (opens.current !== Split(checkedKeysValue).length) {
+            setOpen(false);
+        } else {
+            setOpen(true);
+        }
         setCheckedKeys(checkedKeysValue);
     };
     const onSelect = (selectedKeysValue, info) => {
@@ -65,6 +71,8 @@ const EditPermission = ({ id, onClose }) => {
             setTreeData(dataTree);
             setCheckedKeys(object);
             setStatus(false);
+            setOpen(true);
+            opens.current = object.length;
         })();
     }, []);
     const Split = (arr) => {
@@ -121,7 +129,7 @@ const EditPermission = ({ id, onClose }) => {
                             },
                         ]}
                     >
-                        <Input onChange={(event) => onChage(event)} />
+                        <Input onChange={(event) => onChage(event)} disabled />
                     </Form.Item>
                     <Form.Item label="Lựa Chọn Chức Năng :" name="name" className="aaa">
                         <Spin spinning={status}>

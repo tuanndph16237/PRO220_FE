@@ -2,10 +2,11 @@ import React from 'react';
 import { Button, Form, Input, Tree, Spin } from 'antd';
 import { useState, useEffect } from 'react';
 import { getPermission } from '../../../../api/permission';
-import _ from 'lodash';
+import _, { isEmpty } from 'lodash';
 import { useDispatch } from 'react-redux';
 import { CreateRoleAsync } from '../../../../slices/role';
-import { hanldInput } from '../../../../slices/capotaliieFirstLetter';
+import { hanldInput } from '../../../../utils/capotaliieFirstLetter';
+import { NOTIFICATION_TYPE } from '../../../../constants/status';
 const CreateRole = ({ onClose }) => {
     const [expandedKeys, setExpandedKeys] = useState([]);
     const [checkedKeys, setCheckedKeys] = useState();
@@ -14,6 +15,7 @@ const CreateRole = ({ onClose }) => {
     const [treeData, setTreeData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [open, setOpen] = useState(false);
+    const [validate, setValidate] = useState({});
     const [form] = Form.useForm();
     const dispatch = useDispatch();
     const find = (permission) => {
@@ -60,22 +62,31 @@ const CreateRole = ({ onClose }) => {
         setSelectedKeys(selectedKeysValue);
     };
     const onFinish = async (values) => {
-        const permissions = Split(checkedKeys);
-        const value = {
-            ...values,
-            permissions,
-        };
-        dispatch(CreateRoleAsync(value));
-        setOpen(true)
-        setTimeout(() => {
-            onClose({
-                open: false,
-                action: '',
-            });
-        }, 2000);
+        if (isEmpty(checkedKeys)) {
+            setValidate({ validateStatus: NOTIFICATION_TYPE.ERROR, help: 'Chưa chọn quyền!' });
+        } else {
+            const permissions = Split(checkedKeys);
+            const value = {
+                ...values,
+                permissions,
+            };
+            dispatch(CreateRoleAsync(value));
+            setOpen(true);
+            setValidate({ validateStatus: NOTIFICATION_TYPE.SUCCESS });
+            setTimeout(() => {
+                onClose({
+                    open: false,
+                    action: '',
+                });
+            }, 2000);
+        }
     };
     const onFinishFailed = (errorInfo) => {
-        console.log('Failed:', errorInfo);
+        if (isEmpty(checkedKeys)) {
+            setValidate({ validateStatus: NOTIFICATION_TYPE.ERROR, help: 'Chưa chọn quyền!' });
+        } else {
+            setValidate({ validateStatus: NOTIFICATION_TYPE.SUCCESS });
+        }
     };
     const Split = (arr) => {
         let box = [];
@@ -122,18 +133,14 @@ const CreateRole = ({ onClose }) => {
                     rules={[
                         {
                             required: true,
-                            message: 'không được bỏ trống tên Quyền!',
+                            message: 'không được bỏ trống tên!',
                         },
                     ]}
                 >
-                    <Input onChange={(event) => onChage(event)}/>
+                    <Input onChange={(event) => onChage(event)} />
                 </Form.Item>
                 <Spin spinning={loading}>
-                    <Form.Item
-                        label="Lựa Chọn Quyền:"
-                        name="name"
-                        className="aaa"
-                    >
+                    <Form.Item label="Lựa Chọn Quyền:" name="name" className="aaa" {...validate}>
                         <Tree
                             checkable
                             onExpand={onExpand}

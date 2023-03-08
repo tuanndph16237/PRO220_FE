@@ -48,7 +48,7 @@ const UpdateProfile = () => {
             setUrl(data.image);
             setDefaultList([
                 {
-                    name: a.name,
+                    name: 'Avatar',
                     url: data.image,
                     status: 'done',
                     thumbUrl: data.image,
@@ -121,7 +121,7 @@ const UpdateProfile = () => {
                                     ]}
                                     className="updateProfile"
                                 >
-                                    <Input/>
+                                    <Input />
                                 </Form.Item>
 
                                 <Form.Item
