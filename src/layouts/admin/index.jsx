@@ -163,7 +163,7 @@ const AdminLayout = () => {
                     bottom: 0,
                 }}
             >
-                <img src="/images/admin-logo.png" className="mx-auto my-4 sm:h-16" alt="Dodoris Logo" />
+               <Link to={'/'}><img src="/images/admin-logo.png" className="mx-auto my-4 sm:h-16" alt="Dodoris Logo"/></Link>
                 <Menu
                     style={{ backgroundColor: '#17274e' }}
                     theme="dark"

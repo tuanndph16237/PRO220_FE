@@ -11,6 +11,7 @@ import jwtDecode from 'jwt-decode';
 const User = (props) => {
     const items = [];
     const [isAdmin, setIsAdmin] = useState(false);
+    const [url, setUrl] = useState('');
     const dispatch = useDispatch();
     const user = useSelector((state) => state.user.currentUser.values);
     const accessToken = useSelector((state) => state.user.currentUser.accessToken);
@@ -24,6 +25,11 @@ const User = (props) => {
             setIsAdmin(!!Jwt.role);
         }
     }, [isLogged]);
+    useEffect(() => {
+        const url = window.location.href;
+        const split = url.split('/')[3];
+        setUrl(split);
+    }, []);
     const hanldelogout = () => {
         dispatch(logout());
         localStorage.removeItem(Token.accessToken);
@@ -82,7 +88,7 @@ focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-3 
                                     </span>
                                 </div>
                                 <ul className="py-1" aria-labelledby="user-menu-button">
-                                    {isAdmin && (
+                                    {isAdmin && url !== 'admin' && (
                                         <li>
                                             <Link
                                                 to="/admin"
@@ -100,15 +106,16 @@ focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-3 
                                             Tài khoản
                                         </Link>
                                     </li>
-                                    <li>
-                                        <Link
-                                            to="/cai-dat/quan-ly-don-hang"
-                                            className="block py-2 px-4 text-sm text-gray-700 hover:bg-[#02b875] hover:text-white"
-                                        >
-                                            Đơn hàng
-                                        </Link>
-                                    </li>
-
+                                    {!isAdmin && (
+                                        <li>
+                                            <Link
+                                                to="/cai-dat/quan-ly-don-hang"
+                                                className="block py-2 px-4 text-sm text-gray-700 hover:bg-[#02b875] hover:text-white"
+                                            >
+                                                Đơn hàng
+                                            </Link>
+                                        </li>
+                                    )}
                                     <li>
                                         <Link
                                             onClick={hanldelogout}
