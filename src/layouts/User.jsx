@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Dropdown, Space } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout, saveUserValues } from '../slices/user';
-import { JwtDecode } from '../utils/auth';
-import { ROLE, Token } from '../constants/auth';
+import { isTokenExpired, JwtDecode } from '../utils/auth';
+import { Token } from '../constants/auth';
 import { isEmpty } from 'lodash';
 import jwtDecode from 'jwt-decode';
 
@@ -16,6 +16,7 @@ const User = (props) => {
     const user = useSelector((state) => state.user.currentUser.values);
     const accessToken = useSelector((state) => state.user.currentUser.accessToken);
     const isLogged = useSelector((state) => state.user.isLogged);
+    const { pathname } = useLocation();
 
     useEffect(() => {
         const userDecode = JwtDecode();
@@ -30,6 +31,18 @@ const User = (props) => {
         const split = url.split('/')[3];
         setUrl(split);
     }, []);
+
+    useEffect(() => {
+        (() => {
+            {
+                const roleLogin = JwtDecode();
+                if (roleLogin && isTokenExpired(roleLogin)) {
+                    dispatch(logout());
+                    localStorage.removeItem(Token.accessToken);
+                }
+            }
+        })();
+    }, [pathname]);
     const hanldelogout = () => {
         dispatch(logout());
         localStorage.removeItem(Token.accessToken);
