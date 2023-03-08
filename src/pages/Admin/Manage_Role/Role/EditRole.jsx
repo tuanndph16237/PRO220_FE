@@ -18,7 +18,7 @@ const EditRole = ({ id, onClose }) => {
     const [form] = Form.useForm();
     const opens = useRef(0);
     const initialValues = {
-        nameRole: id.name,
+        name: id.name,
     };
     const filterData = (permission, filter) => {
         let parent = {};
