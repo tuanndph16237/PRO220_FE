@@ -210,11 +210,12 @@ const Warehouse = () => {
                         </Popconfirm>
                     </span>
                 ) : (
-                    role == 1 || (
-                        <Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)}>
-                            Edit
-                        </Typography.Link>
-                    )
+                    <></>
+                    // role == 1 || (
+                    //     <Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)}>
+                    //         Edit
+                    //     </Typography.Link>
+                    // )
                 );
             },
         },
