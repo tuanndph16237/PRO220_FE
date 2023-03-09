@@ -8,6 +8,8 @@ import { getShowrooms } from '../../../api/showroom';
 import { NOTIFICATION_TYPE } from '../../../constants/status';
 import useDocumentTitle from '../../../hooks/useDocumentTitle';
 import _ from 'lodash';
+import PermissionCheck from '../../../components/permission/PermissionCheck';
+import { PERMISSION_LABLEL, PERMISSION_TYPE } from '../../../constants/permission';
 
 const noti = (type, message, description) => {
     notification[type]({
@@ -191,7 +193,7 @@ const Warehouse = () => {
             editable: true,
         },
         {
-            title: role == 2 ? 'Lấy vật tư' : 'Cập nhật',
+            title: 'Cập nhật',
             dataIndex: 'operation',
             render: (_, record) => {
                 const editable = isEditing(record);
@@ -210,12 +212,13 @@ const Warehouse = () => {
                         </Popconfirm>
                     </span>
                 ) : (
-                    <></>
-                    // role == 1 || (
-                    //     <Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)}>
-                    //         Edit
-                    //     </Typography.Link>
-                    // )
+                    <PermissionCheck
+                        permissionHas={{ label: PERMISSION_LABLEL.WAREHOUSE_MANAGE, code: PERMISSION_TYPE.UPDATE }}
+                    >
+                        <Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)}>
+                            Edit
+                        </Typography.Link>
+                    </PermissionCheck>
                 );
             },
         },
