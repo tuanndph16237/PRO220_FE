@@ -5,7 +5,7 @@ const OrderProcessing = ({status}) => {
   return (
     <div>
         <Steps
-                current={status}
+                current={status==5?5:--status}
                 percent={60}
                 labelPlacement="vertical"
                 className="site-navigation-steps"
