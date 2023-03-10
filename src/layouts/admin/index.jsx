@@ -93,6 +93,13 @@ const siderBarItems = [
         code: PERMISSION_TYPE.CONFIRM,
         label: 'Quản Lý Địa Chỉ',
     },
+    {
+        key: 'Quản lý tin tức',
+        path: 'quan-ly-tin-tuc',
+        code: PERMISSION_TYPE.CONFIRM,
+        icon: <FileDoneOutlined />,
+        label: 'Quản Lý Tin Tức',
+    },
 ];
 
 const AdminLayout = () => {
@@ -163,7 +170,9 @@ const AdminLayout = () => {
                     bottom: 0,
                 }}
             >
-               <Link to={'/'}><img src="/images/admin-logo.png" className="mx-auto my-4 sm:h-16" alt="Dodoris Logo"/></Link>
+                <Link to={'/'}>
+                    <img src="/images/admin-logo.png" className="mx-auto my-4 sm:h-16" alt="Dodoris Logo" />
+                </Link>
                 <Menu
                     style={{ backgroundColor: '#17274e' }}
                     theme="dark"

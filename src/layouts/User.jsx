@@ -71,7 +71,7 @@ focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-3 
                         >
                             <Link
                                 to="dang-ky"
-                                className="text-white bg-[#02b875] hover:bg-[#02B875] hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-3 md:mr-0"
+                                className="text-white bg-[#02b875] hover:bg-[#09915f] hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-3 md:mr-0"
                             >
                                 <span className="text-base">Đăng ký miễn phí</span>
                             </Link>

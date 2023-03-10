@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
-import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { Popconfirm, Table, Row, Space, Avatar, Button } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { DeleteOutlined, EditOutlined, SyncOutlined } from '@ant-design/icons';
+import { Popconfirm, Table, Row, Space, Avatar, Button, Tooltip } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import useDocumentTitle from '../../../hooks/useDocumentTitle';
-import { useEffect } from 'react';
 import { getAccounts, removeAccount } from '../../../api/account';
 import { getAllShowroomAsync } from '../../../slices/showroom';
 import CreateAccount from './CreateAccount';
@@ -11,6 +10,7 @@ import { Notification } from '../../../utils/notifications';
 import { NOTIFICATION_TYPE } from '../../../constants/status';
 import { getAllRoleAsync } from '../../../slices/role';
 import UpdateAccount from './UpdateAccount';
+import Filter from '../../../components/Filter/Filter';
 
 const AccountManager = () => {
     useDocumentTitle('Quản lý thành viên');
@@ -21,6 +21,8 @@ const AccountManager = () => {
     const [open, setOpen] = useState(false);
     const [idUpdate, setIdUpdate] = useState();
     const [data, setData] = useState([]);
+    const [roleFilter, setRoleFilter] = useState([]);
+    const [showroomsFilter, setShowroomsFilter] = useState([]);
 
     const handleRefetch = async () => {
         setOpen(false);
@@ -48,8 +50,8 @@ const AccountManager = () => {
             });
     };
 
-    const getAllAccount = () => {
-        getAccounts()
+    const getAllAccount = (filter) => {
+        getAccounts(filter)
             .then(({ data: res }) => {
                 const newData = res.map((item, index) => {
                     return {
@@ -71,12 +73,17 @@ const AccountManager = () => {
     useEffect(() => {
         if (showrooms.length === 0) {
             dispatch(getAllShowroomAsync());
+            return;
         }
+        setShowroomsFilter(showrooms.map((showroom) => ({ label: showroom.name, value: showroom._id })));
     }, [showrooms]);
     useEffect(() => {
         if (roles.length === 0) {
             dispatch(getAllRoleAsync());
+            return;
         }
+
+        setRoleFilter(roles.map((role) => ({ label: role.name, value: role.id })));
     }, [roles]);
 
     const columns = [
@@ -142,85 +149,55 @@ const AccountManager = () => {
         },
     ];
 
+    const handleFilter = async (filter) => {
+        await getAllAccount(filter);
+    };
+
     return (
         <div className="banner-content">
             <div className="flex justify-between align-center pb-4">
                 <div>
-                    {/* <button className="pr-6" onClick={() => handleFilter()}>
-                                <Tooltip title="Làm mới đơn hàng">
-                                    <SyncOutlined style={{ fontSize: '18px', color: '#000' }} />
-                                </Tooltip>
-                            </button>
-                            <Filter
-                                items={[
-                                    {
-                                        label: <Space align="center">Mã đơn hàng</Space>,
-                                        key: '_id',
-                                        name: 'Mã đơn hàng',
-                                    },
-                                    {
-                                        label: <Space align="center">Trạng thái</Space>,
-                                        key: 'status',
-                                        type: 'select',
-                                        mode: 'multiple',
-                                        values: [
-                                            {
-                                                label: 'Hủy',
-                                                value: 0,
-                                            },
-                                            {
-                                                label: 'Chờ xác nhận',
-                                                value: 1,
-                                            },
-                                            {
-                                                label: 'Đã xác nhận',
-                                                value: 2,
-                                            },
-                                            {
-                                                label: 'Đang xử lý',
-                                                value: 3,
-                                            },
-                                            {
-                                                label: 'Thanh toán',
-                                                value: 4,
-                                            },
-                                            {
-                                                label: 'Hoàn thành',
-                                                value: 5,
-                                            },
-                                        ],
-                                        name: 'Trạng thái',
-                                    },
-                                    {
-                                        label: <Space align="center">Tên khách hàng</Space>,
-                                        key: 'name',
-                                        type: 'string',
-                                    },
-                                    {
-                                        label: <Space align="center">Số điện thoại</Space>,
-                                        key: 'number_phone',
-                                        name: 'Số điện thoại',
-                                    },
-                                    {
-                                        label: <Space align="center">Biển kiểm soát</Space>,
-                                        key: 'licensePlates',
-                                        name: 'Biển kiểm soát',
-                                    },
-                                    {
-                                        label: <Space align="center">Ngày tạo</Space>,
-                                        key: 'createdAt',
-                                        type: 'date',
-                                        name: 'Ngày tạo',
-                                    },
-                                    {
-                                        label: <Space align="center">Thời gian sửa chữa</Space>,
-                                        key: 'appointmentSchedule',
-                                        type: 'date',
-                                        name: 'Thời gian sửa chữa',
-                                    },
-                                ]}
-                                onFilter={handleFilter}
-                            /> */}
+                    <button className="pr-6" onClick={() => handleFilter()}>
+                        <Tooltip title="Làm mới đơn hàng">
+                            <SyncOutlined style={{ fontSize: '18px', color: '#000' }} />
+                        </Tooltip>
+                    </button>
+                    <Filter
+                        items={[
+                            {
+                                label: <Space align="center">Tên</Space>,
+                                key: 'name',
+                                name: 'Tên',
+                            },
+                            {
+                                label: <Space align="center">Số điện thoại</Space>,
+                                key: 'number_phone',
+                                name: 'Số điện thoại',
+                            },
+                            {
+                                label: <Space align="center">Email</Space>,
+                                key: 'email',
+                                name: 'Email',
+                            },
+                            {
+                                label: <Space align="center">Vai trò</Space>,
+                                key: 'roleId',
+                                type: 'select',
+                                mode: 'multiple',
+                                values: roleFilter,
+                                name: 'Vai trò',
+                            },
+                            {
+                                label: <Space align="center">Cửa hàng</Space>,
+                                key: 'showroomId',
+                                type: 'select',
+                                mode: 'multiple',
+                                values: showroomsFilter,
+                                name: 'Cửa hàng',
+                            },
+                        ]}
+                        onFilter={handleFilter}
+                    />
                 </div>
                 <Button onClick={() => setOpen(true)} className="btn-primary text-white" type="primary">
                     Thêm thành viên

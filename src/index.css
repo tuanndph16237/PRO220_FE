@@ -12,7 +12,15 @@
 a:hover {
     color: var(--primary-color);
 }
-
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-size: revert;
+    font-weight: revert;
+}
 /* customize btn checkbox checked */
 .ant-checkbox-checked .ant-checkbox-inner {
     background-color: var(--primary-color) !important;
@@ -29,9 +37,9 @@ a:hover {
     outline: none;
 }
 
-.btn-primary:disabled {
+/* .btn-primary:disabled {
     background-color: var(--disabled-color) !important;
-}
+} */
 .btn-primary:hover {
     background-color: var(--primary-color-hover) !important;
     color: var(--white-color) !important;
@@ -65,7 +73,7 @@ a:hover {
 .ant-image-mask {
     border-radius: 50%;
 }
-.aaa>.ant-row{
+.aaa > .ant-row {
     display: inherit;
 }
 

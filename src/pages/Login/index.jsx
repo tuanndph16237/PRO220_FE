@@ -6,6 +6,7 @@ import { Token } from '../../constants/auth';
 import { NOTIFICATION_TYPE } from '../../constants/status';
 import { loginAsync } from '../../slices/user';
 import { Notification } from '../../utils/notifications';
+import './login.css';
 const Login = () => {
     const user = useSelector((state) => state.user);
     const isLogged = useSelector((state) => state.user.isLogged);
@@ -39,17 +40,17 @@ const Login = () => {
     };
 
     return (
-        <>
+        <div className="login-page">
             <Spin tip="Loading" spinning={user.loading} size="large">
                 <div>
-                    <div className=" flex h-[580px] items-center font-sans font-semibold text-2xl">
+                    <div className="login-content flex items-center font-sans font-semibold text-2xl">
                         <Form
                             name="normal_login"
-                            className="login-form w-[360px] m-auto"
-                            initialValues={{ remember: false }}
+                            id="login-form"
+                            className="login-form w-[380px] m-auto"
                             onFinish={onFinish}
                         >
-                            <h1 className="text-[28px] mb-6">Đăng nhập</h1>
+                            <h1 className="title-login">Đăng nhập</h1>
                             <Form.Item
                                 name="number_phone"
                                 rules={[
@@ -83,23 +84,23 @@ const Login = () => {
                                 <Button
                                     type="primary"
                                     htmlType="submit"
-                                    className="login-form-button text-base bg-[#02b875] w-full h-10"
+                                    className="btn-primary w-full h-10 font-medium rounded-lg text-sm my-8"
                                 >
                                     Đăng nhập
                                 </Button>
-                                <p className="my-5 text-center">Chưa có tài khoản?</p>
-                                <Link
-                                    to="/dang-ky"
-                                    className="inline-block leading-10 text-base h-10 w-full rounded text-[#1464f4] text-center border border-[#1464f4] hover:text-[#fff] hover:bg-[#02b875] hover:border-none"
-                                >
-                                    Đăng ký tài khoản
-                                </Link>
+                                <p className="my-5 pb-6 text-center">
+                                    Chưa có tài khoản?
+                                    <Link to="/dang-ky" className="text-base rounded text-[#02b875] text-underline">
+                                        {' '}
+                                        Đăng ký
+                                    </Link>
+                                </p>
                             </Form.Item>
                         </Form>
                     </div>
                 </div>
             </Spin>
-        </>
+        </div>
     );
 };
 

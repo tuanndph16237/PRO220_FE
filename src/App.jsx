@@ -42,6 +42,10 @@ import OrderStatistical from './pages/Admin/Statistical/OrderStatistical';
 import RevenueOrderStatistical from './pages/Admin/Statistical/Order/RevenueOrderStatistical';
 import AccountManager from './pages/Admin/Account';
 
+import PostManager from './pages/Admin/Post';
+import Posts from './pages/Post';
+import Post from './pages/Post/Post';
+
 function App() {
     return (
         <Routes>
@@ -49,6 +53,8 @@ function App() {
                 <Route index element={<HomePage />} />
                 <Route path="about" element={<AboutPage />} />
                 <Route path="dat-lich" element={<BookingPage />} />
+                <Route path="tin-tuc" element={<Posts />} />
+                <Route path="tin-tuc/*" element={<Post />} />
                 <Route
                     path="dang-nhap"
                     element={
@@ -115,6 +121,7 @@ function App() {
                 <Route path="quan-ly-vai-tro" element={<Role />} />
                 <Route path="quan-ly-quyen" element={<Permission />} />
                 <Route path="quan-ly-tai-khoan" element={<AccountManager />} />
+                <Route path="quan-ly-tin-tuc" element={<PostManager />} />
             </Route>
             <Route path="*" element={<PageNotFound />} />
         </Routes>
