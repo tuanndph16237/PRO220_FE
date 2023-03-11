@@ -13,13 +13,13 @@ import {
 import './admin-layout.css';
 import User from '../User';
 import _ from 'lodash';
-import { PERMISSION_TYPE } from '../../constants/permission';
+import { PERMISSION_TYPE, PERMISSION_LABLEL } from '../../constants/permission';
 
 const { Header, Sider, Content } = Layout;
 
 const siderBarItems = [
     {
-        label: 'Thống kê',
+        label: PERMISSION_LABLEL.STATISTICS,
         key: 'thong-ke',
         code: PERMISSION_TYPE.CONFIRM,
         icon: <PieChartOutlined />,
@@ -29,7 +29,7 @@ const siderBarItems = [
         ],
     },
     {
-        label: 'Quản Lý Đơn Hàng',
+        label: PERMISSION_LABLEL.ORDER_MANAGE,
         key: 'Quản lý đơn hàng',
         code: PERMISSION_TYPE.NULL,
         icon: <FileTextOutlined />,
@@ -39,21 +39,21 @@ const siderBarItems = [
         ],
     },
     {
-        key: 'Quản lý vật tư',
+        key: PERMISSION_LABLEL.PART_MANAGE,
         code: PERMISSION_TYPE.CONFIRM,
         path: 'quan-ly-vat-tu',
         icon: <FileDoneOutlined />,
         label: 'Quản Lý Vật Tư',
     },
     {
-        key: 'Quản lý banner',
+        key: PERMISSION_LABLEL.BANNER_MANAGE,
         code: PERMISSION_TYPE.CONFIRM,
         path: 'quan-ly-banner',
         icon: <FileDoneOutlined />,
         label: 'Quản Lý Banner',
     },
     {
-        label: 'Quản Lý Vai Trò',
+        label: PERMISSION_LABLEL.ROLE_MANAGE,
         key: 'Quản lý vai trò',
         code: PERMISSION_TYPE.CONFIRM,
         icon: <ContactsOutlined />,
@@ -63,14 +63,14 @@ const siderBarItems = [
         ],
     },
     {
-        key: 'Quản lý tài khoản',
+        key: PERMISSION_LABLEL.ACCOUNT_MANAGE,
         path: 'quan-ly-tai-khoan',
         code: PERMISSION_TYPE.CONFIRM,
         icon: <FileDoneOutlined />,
         label: 'Quản Lý Thành Viên',
     },
     {
-        key: 'Quản Lý Cửa Hàng',
+        key: PERMISSION_LABLEL.SHOWROOM_MANAGE,
         label: 'Quản Lý Cửa Hàng',
         code: PERMISSION_TYPE.NULL,
         icon: <FileDoneOutlined />,
@@ -80,14 +80,14 @@ const siderBarItems = [
         ],
     },
     {
-        key: 'Quản lý kho',
+        key: PERMISSION_LABLEL.WAREHOUSE_MANAGE,
         path: 'quan-ly-kho',
         icon: <FileDoneOutlined />,
         code: PERMISSION_TYPE.CONFIRM,
         label: 'Quản Lý Kho',
     },
     {
-        key: 'Quản lý tỉnh',
+        key: PERMISSION_LABLEL.LOCATION_MANAGE,
         path: 'province',
         icon: <FileDoneOutlined />,
         code: PERMISSION_TYPE.CONFIRM,
@@ -98,7 +98,7 @@ const siderBarItems = [
         path: 'quan-ly-tin-tuc',
         code: PERMISSION_TYPE.CONFIRM,
         icon: <FileDoneOutlined />,
-        label: 'Quản Lý Tin Tức',
+        label: PERMISSION_LABLEL.NEWS_MANAGE,
     },
 ];
 
