@@ -15,16 +15,7 @@ const Login = () => {
     const notificationRef = useRef('');
     const navigate = useNavigate();
     useEffect(() => {
-        if (user.error !== '') {
-            notificationRef.current = user.error;
-            if (notificationRef.current !== '') {
-                Notification(NOTIFICATION_TYPE.ERROR, 'Đã có lỗi xảy ra vui lòng thử lại.', notificationRef.current);
-            }
-        }
-    }, [user.error]);
-    useEffect(() => {
         if (user.currentUser.accessToken !== '') {
-            Notification(NOTIFICATION_TYPE.SUCCESS, 'Đăng Nhập Thành Công!');
             localStorage.setItem(Token.accessToken, user.currentUser.accessToken);
         }
     }, [user.currentUser.accessToken]);
