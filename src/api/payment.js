@@ -13,5 +13,5 @@ export const sendMail = (data) => {
 };
 
 export const updateStatusBill = (data) => {
-    return instance.put(`orders/${data.id}`, _.omit(data, ['id']));
+    return instance.patch(`order-status/${data.id}`, _.omit(data, ['id']));
 };

@@ -60,16 +60,6 @@ const UpdateOrder = (props) => {
     const payment = async () => {
         if (values == 1) {
             setOpenModal(true);
-        } else {
-            const valuePayment = {
-                idOrder: id,
-                amount: order.total,
-                bankCode: 'NCB',
-                orderInfo: 'Sửa Xe Tại Cửa Hàng Dodoris',
-                orderType: 'billpayment',
-            };
-            const { data } = await paymentVNPay(valuePayment);
-            window.location.href = `${data}`;
         }
     };
     const handleOk = async () => {
@@ -178,7 +168,6 @@ const UpdateOrder = (props) => {
         }
     }, [order]);
     const handleChangeSubPrice = (value) => {
-        console.log('value', value);
         const { appointmentSchedule, ...orderOther } = order;
         const price = totalPriceMaterials();
         const total = price + value;
@@ -219,7 +208,6 @@ const UpdateOrder = (props) => {
                 setOrder(data);
             })
             .catch((error) => {
-                console.log('update-status-error', error);
                 Notification(NOTIFICATION_TYPE.ERROR, 'Đã có lỗi xảy ra vui lòng thử lại!', error.message || '');
             })
             .finally(() => {
@@ -557,9 +545,6 @@ const UpdateOrder = (props) => {
                                             <Radio value={1}>
                                                 Thanh toán tiền mặt <SolutionOutlined />
                                             </Radio>
-                                            <Radio value={2}>
-                                                Thanh toán online <WalletOutlined />
-                                            </Radio>
                                         </Space>
                                     </Radio.Group>
                                 </Form.Item>
@@ -586,9 +571,10 @@ const UpdateOrder = (props) => {
                         {order.status == 4 ? (
                             <Button
                                 type="primary"
-                                className="btn-primary text-white bg-[#02b875] w-full mb-8 mt-8 h-12 hover:out
-                        font-medium rounded-lg text-sm text-center mr-3 md:mr-0"
-                                disabled={values !== 0 ? false : true}
+                                className={`${
+                                    values == 0 ? '' : 'btn-primary'
+                                } text-white bg-[#02b875] w-full mb-8 mt-8 h-12 hover:out font-medium rounded-lg text-sm text-center mr-3 md:mr-0`}
+                                disabled={values == 0 ? true : false}
                                 onClick={() => payment()}
                             >
                                 Thanh Toán
