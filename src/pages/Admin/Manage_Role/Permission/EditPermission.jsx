@@ -1,4 +1,4 @@
-import { Button, Form, Input, Spin, Tree } from 'antd';
+import { Alert, Button, Form, Input, Modal, Spin, Tree } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import { getOnegetPermission, updatePermission } from '../../../../api/permission';
 import { arrayPermission, dataPermission } from '../../../../constants/permission';
@@ -14,8 +14,10 @@ const EditPermission = ({ id, onClose }) => {
     const [treeData, setTreeData] = useState([]);
     const [status, setStatus] = useState(true);
     const [open, setOpen] = useState(false);
+    const [openModal, setOpenModal] = useState(false);
     const [form] = Form.useForm();
     const opens = useRef(0);
+    const values = useRef();
     const initialValues = {
         namePermission: id.name,
     };
@@ -35,22 +37,7 @@ const EditPermission = ({ id, onClose }) => {
         setSelectedKeys(selectedKeysValue);
     };
     const onFinish = async (values) => {
-        const valueCheckKey = Split(checkedKeys);
-        const sendData = {
-            idCate: id.key,
-            listPermissions: valueCheckKey,
-        };
-        const { data } = await updatePermission(sendData);
-        if (data) {
-            Notification(NOTIFICATION_TYPE.SUCCESS, 'Cập nhập thành công!');
-            setOpen(true);
-            setTimeout(() => {
-                onClose({
-                    open: false,
-                    action: '',
-                });
-            }, 1500);
-        }
+        setOpenModal(true);
     };
     useEffect(() => {
         (async () => {
@@ -97,6 +84,28 @@ const EditPermission = ({ id, onClose }) => {
         form.setFieldsValue({
             namePermission: resual,
         });
+    };
+    const updatedataPermission = async () => {
+        setOpenModal(false);
+        const valueCheckKey = Split(checkedKeys);
+        const sendData = {
+            idCate: id.key,
+            listPermissions: valueCheckKey,
+        };
+        const { data } = await updatePermission(sendData);
+        if (data) {
+            Notification(NOTIFICATION_TYPE.SUCCESS, 'Cập nhập thành công!');
+            setOpen(true);
+            setTimeout(() => {
+                onClose({
+                    open: false,
+                    action: '',
+                });
+            }, 1500);
+        }
+    };
+    const hideModal = () => {
+        setOpenModal(false);
     };
     return (
         <div>
@@ -146,6 +155,20 @@ const EditPermission = ({ id, onClose }) => {
                             />
                         </Spin>
                     </Form.Item>
+                    <Modal
+                        title="Thông Báo"
+                        open={openModal}
+                        onOk={updatedataPermission}
+                        onCancel={hideModal}
+                        okText="Xác nhận"
+                        cancelText="Hủy"
+                    >
+                        <Alert
+                            message="Nếu bạn chỉnh sửa quyền việc này sẽ ảnh đến các vai trò (Role) đang tồn tại trong hệ thống. Cân nhắc kỹ trước khi chỉnh sửa"
+                            type="warning"
+                            showIcon
+                        />
+                    </Modal>
                     <Form.Item
                         wrapperCol={{
                             offset: 8,
