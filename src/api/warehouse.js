@@ -20,3 +20,11 @@ export const updateWarehouseByMaterials = (data) => {
 export const giveBackMaterial = (data) => {
     return instance.patch('/warehouses/take-part-out', data);
 };
+
+export const getExchangePart = (value) => {
+    return instance.get(`/warehouse-exchange`, { params: value });
+};
+
+export const exchangePart = (value) => {
+    return instance.patch(`/warehouse-exchange`, value);
+};

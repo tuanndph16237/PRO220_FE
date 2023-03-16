@@ -1,8 +1,8 @@
 import { Form, Input, InputNumber, Popconfirm, Table, Typography, Space, Button, Tooltip, notification } from 'antd';
 import { JwtDecode } from '../../../utils/auth';
 import { SearchOutlined } from '@ant-design/icons';
-import React, { useEffect, useRef, useState, useMemo } from 'react';
-import { getWarehouseByShowroomId, updateQuantityOnePart } from '../../../api/warehouse';
+import React, { useEffect, useRef, useState, useMemo, useReducer } from 'react';
+import { exchangePart, getWarehouseByShowroomId, updateQuantityOnePart } from '../../../api/warehouse';
 import ListShowroom from './ListShowrom';
 import { getShowrooms } from '../../../api/showroom';
 import { NOTIFICATION_TYPE } from '../../../constants/status';
@@ -10,6 +10,8 @@ import useDocumentTitle from '../../../hooks/useDocumentTitle';
 import _ from 'lodash';
 import PermissionCheck from '../../../components/permission/PermissionCheck';
 import { PERMISSION_LABLEL, PERMISSION_TYPE } from '../../../constants/permission';
+import Exchange from './Exchange';
+import ModalCustomize from '../../../components/Customs/ModalCustomize';
 
 const noti = (type, message, description) => {
     notification[type]({
@@ -55,17 +57,46 @@ const Warehouse = () => {
     const [editingKey, setEditingKey] = useState('');
     const [searchText, setSearchText] = useState('');
     const [searchedColumn, setSearchedColumn] = useState('');
+    const [keyExchange, setKeyChange] = useState({});
+    const [open, setOpenModal] = useState(false);
     const [totals, setTotals] = useState(0);
-    const { showroomId, role } = JwtDecode();
-    const [idShowroom, setIdShowroom] = useState(showroomId);
+    const { showroomId } = JwtDecode();
     const [listShowroom, setListShowroom] = useState([]);
+    const initialState = {
+        idCurrentShowroom: showroomId,
+        idShowroomExchange: '',
+        max: 0,
+        quantityCurrentChange: 0,
+        quantityCurrent: 0,
+        idPart: '',
+    };
+
+    const reducer = (state, action) => {
+        switch (action.type) {
+            case 'UPDATE_CURRENT_SHOWROOM':
+                return { ...state, idCurrentShowroom: action.payload };
+            case 'UPDATE_SHOWROOM_EXCHANGE':
+                return { ...state, ...action.payload };
+            case 'UPDATE_QUANTITY_CHANGE':
+                return { ...state, ...action.payload };
+            case 'UPDATE_ID_PART':
+                return { ...state, ...action.payload };
+            case 'RESET':
+                return { ...initialState, idCurrentShowroom: state.idCurrentShowroom };
+            default:
+                return state;
+        }
+    };
+
+    const [state, dispatch] = useReducer(reducer, initialState);
+
     let searchInput = useRef(null);
 
     const isEditing = (record) => record.key === editingKey;
 
-    const fetchApiWarehouse = async (idShowroom) => {
+    const fetchApiWarehouse = async () => {
         try {
-            const dataWarehouse = await getWarehouseByShowroomId(idShowroom);
+            const dataWarehouse = await getWarehouseByShowroomId(state.idCurrentShowroom);
             const data = dataWarehouse.data.handleData.map((item) => {
                 return {
                     key: item.materialId._id,
@@ -88,6 +119,19 @@ const Warehouse = () => {
                 label: showroom.name,
             }));
             setListShowroom(handleDataShowroom);
+        } catch (res) {
+            noti(NOTIFICATION_TYPE.ERROR, `${res.response.data.error}`);
+        }
+    };
+
+    const updateApiPartQuantity = async (obj) => {
+        try {
+            const dataUpdatePart = await exchangePart(obj);
+            await fetchApiWarehouse(state.idCurrentShowroom);
+            setKeyChange({});
+            dispatch({
+                type: 'RESET',
+            });
         } catch (res) {
             noti(NOTIFICATION_TYPE.ERROR, `${res.response.data.error}`);
         }
@@ -174,7 +218,7 @@ const Warehouse = () => {
             key: 'name',
             title: 'Tên linh kiện',
             dataIndex: 'name',
-            width: '70%',
+            width: '60%',
             editable: false,
             ellipsis: {
                 showTitle: false,
@@ -189,11 +233,11 @@ const Warehouse = () => {
         {
             title: 'Số lượng',
             dataIndex: 'quantity',
-            width: '15%',
+            width: '20%',
             editable: true,
         },
         {
-            title: 'Cập nhật',
+            title: '',
             dataIndex: 'operation',
             render: (_, record) => {
                 const editable = isEditing(record);
@@ -207,18 +251,43 @@ const Warehouse = () => {
                         >
                             Save
                         </Typography.Link>
-                        <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
+                        <Popconfirm title="Xác nhận hủy?" onConfirm={cancel}>
                             <a>Cancel</a>
                         </Popconfirm>
                     </span>
                 ) : (
-                    <PermissionCheck
-                        permissionHas={{ label: PERMISSION_LABLEL.WAREHOUSE_MANAGE, code: PERMISSION_TYPE.UPDATE }}
-                    >
-                        <Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)}>
-                            Edit
-                        </Typography.Link>
-                    </PermissionCheck>
+                    <>
+                        <PermissionCheck
+                            permissionHas={{ label: PERMISSION_LABLEL.WAREHOUSE_MANAGE, code: PERMISSION_TYPE.UPDATE }}
+                        >
+                            <div className="flex justify-center items-center gap-x-4">
+                                <Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)}>
+                                    Edit
+                                </Typography.Link>
+                                <div
+                                    onClick={() => {
+                                        setOpenModal(true);
+                                        setKeyChange({ id: record.key });
+                                        dispatch({
+                                            type: 'UPDATE_ID_PART',
+                                            payload: { idPart: record.key, quantityCurrent: record.quantity },
+                                        });
+                                    }}
+                                >
+                                    <img
+                                        src="/images/exchangeswap.png"
+                                        alt="logo-exchange"
+                                        className="bg-black cursor-pointer rounded-sm p-1 active:bg-slate-300"
+                                    />
+                                </div>
+                            </div>
+                        </PermissionCheck>
+                        <PermissionCheck
+                            permissionHas={{ label: PERMISSION_LABLEL.WAREHOUSE_MANAGE, code: PERMISSION_TYPE.SHOW }}
+                        >
+                            <Button type="primary">Yêu cầu vật</Button>
+                        </PermissionCheck>
+                    </>
                 );
             },
         },
@@ -244,7 +313,7 @@ const Warehouse = () => {
             if (index > -1) {
                 const item = newData[index];
                 const saveDataToDB = {
-                    idShowroom,
+                    idShowroom: state.idCurrentShowroom,
                     material: {
                         materialId: item.key,
                         ...row,
@@ -286,20 +355,27 @@ const Warehouse = () => {
         };
     });
 
+    const handleExchangePartQuantity = () => {
+        setOpenModal(false);
+        if (state.idShowroomExchange) {
+            updateApiPartQuantity(state);
+        }
+    };
+
     useMemo(() => {
         fetchApiShowroom();
     }, []);
 
     useEffect(() => {
-        if (idShowroom) {
-            fetchApiWarehouse(idShowroom);
+        if (state.idCurrentShowroom !== '' && state.idCurrentShowroom != null) {
+            fetchApiWarehouse(state.idCurrentShowroom);
         }
-    }, [idShowroom]);
+    }, [state.idCurrentShowroom]);
 
     return (
         <>
             <div className="my-3 grid grid-cols-2">
-                <div>{!showroomId ? <ListShowroom options={listShowroom} setIdShowrooms={setIdShowroom} /> : ''}</div>
+                <div>{!showroomId ? <ListShowroom options={listShowroom} selectShowroom={dispatch} /> : ''}</div>
                 <div className="flex justify-end pr-4">
                     <p className="text-[18px]">
                         Số lượng: <span className="font-bold">{totals}</span>
@@ -323,6 +399,19 @@ const Warehouse = () => {
                     }}
                 />
             </Form>
+            <ModalCustomize
+                showModal={open}
+                footer={true}
+                setShowModal={() => setOpenModal(false)}
+                onSubmit={handleExchangePartQuantity}
+            >
+                <Exchange
+                    idShowroom={state.idCurrentShowroom}
+                    materialId={keyExchange}
+                    getValueShowroom={dispatch}
+                    getInputValue={dispatch}
+                />
+            </ModalCustomize>
         </>
     );
 };

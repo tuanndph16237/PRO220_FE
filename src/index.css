@@ -97,3 +97,8 @@ h6 {
     background-color: var(--primary-color) !important;
     color: var(--white-color) !important;
 }
+/* css .ant-slider-track */
+
+.ant-slider-track {
+    background-color: #02b875 !important;
+}
