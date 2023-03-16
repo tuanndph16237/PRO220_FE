@@ -8,7 +8,7 @@ import { NOTIFICATION_TYPE } from '../../../constants/status';
 import { R_EMAIL, R_NUMBER_PHONE } from '../../../constants/regex';
 import useDocumentTitle from '../../../hooks/useDocumentTitle';
 import SpinCustomize from '../../../components/Customs/Spin';
-import { isEmpty } from 'lodash';
+import _, { isEmpty } from 'lodash';
 
 const UpdateAccount = ({ idUpdate, onClose, onRefetch, checkShowroom }) => {
     useDocumentTitle('Cập nhật thành viên');
@@ -18,12 +18,17 @@ const UpdateAccount = ({ idUpdate, onClose, onRefetch, checkShowroom }) => {
     const [loading, setLoading] = useState(true);
     const [updating, setUpdating] = useState(false);
     const [checked, setChecked] = useState([]);
-
+    const [openSelect, setOpenSelect] = useState(false);
     const [data, setData] = useState({});
 
     useEffect(() => {
         getUser(idUpdate)
             .then(({ data: res }) => {
+                if (res.roleId.name == 'Quản Lý') {
+                    setOpenSelect(true);
+                } else {
+                    setOpenSelect(false);
+                }
                 setData({
                     ...res,
                     roleId: res.roleId._id,
@@ -35,9 +40,12 @@ const UpdateAccount = ({ idUpdate, onClose, onRefetch, checkShowroom }) => {
     }, [idUpdate]);
     useEffect(() => {
         if (!isEmpty(data)) {
-            console.log('data', data);
-            let filter = showrooms.find((item) => item._id === data.showroomId);
-            setChecked([...checkShowroom, filter]);
+            if (data.showroomId) {
+                let filter = showrooms.find((item) => item._id === data.showroomId);
+                setChecked([...checkShowroom, filter]);
+            } else {
+                setChecked([...checkShowroom]);
+            }
         }
     }, [data]);
     useEffect(() => {
@@ -46,13 +54,16 @@ const UpdateAccount = ({ idUpdate, onClose, onRefetch, checkShowroom }) => {
                 dispatch(getAllRoleAsync());
             })();
         }
-        console.log('roles', roles);
     }, [roles]);
     const handleClose = () => {
         onClose(false);
     };
     const onFinish = (values) => {
-        const update = { ...data, ...values };
+        let update = { ...data, ...values };
+        const name = roles.find((item) => item.id == update.roleId);
+        if (name.name !== 'Quản Lý') {
+            update = _.omit({ ...data, ...values, showroomId: null });
+        }
         setUpdating(true);
         updateAccount(update)
             .then(({ data: res }) => {
@@ -63,6 +74,14 @@ const UpdateAccount = ({ idUpdate, onClose, onRefetch, checkShowroom }) => {
             .finally(() => {
                 setUpdating(false);
             });
+    };
+    const handleChange = (value) => {
+        const name = roles.find((item) => item.id == value);
+        if (name.name == 'Quản Lý') {
+            setOpenSelect(true);
+        } else {
+            setOpenSelect(false);
+        }
     };
     return (
         <div>
@@ -136,12 +155,9 @@ const UpdateAccount = ({ idUpdate, onClose, onRefetch, checkShowroom }) => {
                             ]}
                         >
                             <Select
-                                defaultValue={{
-                                    value: 'Quản Lý',
-                                    label: 'Quản Lý',
-                                }}
                                 className="h-10 text-base border-[#02b875]"
                                 placeholder="Chọn cửa hàng"
+                                onChange={handleChange}
                             >
                                 {roles.map((role) => {
                                     return (
@@ -154,24 +170,28 @@ const UpdateAccount = ({ idUpdate, onClose, onRefetch, checkShowroom }) => {
                                 })}
                             </Select>
                         </Form.Item>
-                        <Form.Item
-                            label={<p className="text-base font-semibold">Cửa hàng</p>}
-                            name="showroomId"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Quý khách vui lòng không để trống trường thông tin này.',
-                                },
-                            ]}
-                        >
-                            <Select className="h-10 text-base border-[#02b875]" placeholder="Chọn cửa hàng">
-                                {checked.map((showroom) => (
-                                    <Option value={showroom._id} key={showroom._id}>
-                                        {showroom.name}
-                                    </Option>
-                                ))}
-                            </Select>
-                        </Form.Item>
+                        {!openSelect ? (
+                            ''
+                        ) : (
+                            <Form.Item
+                                label={<p className="text-base font-semibold">Cửa hàng</p>}
+                                name="showroomId"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Quý khách vui lòng không để trống trường thông tin này.',
+                                    },
+                                ]}
+                            >
+                                <Select className="h-10 text-base border-[#02b875]" placeholder="Chọn cửa hàng">
+                                    {checked.map((showroom) => (
+                                        <Option value={showroom._id} key={showroom._id}>
+                                            {showroom.name}
+                                        </Option>
+                                    ))}
+                                </Select>
+                            </Form.Item>
+                        )}
                         <div className="absolute bottom-0 flex align-center">
                             <Form.Item>
                                 <Button

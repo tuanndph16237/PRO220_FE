@@ -12,6 +12,7 @@ const CreateAccount = ({ open, onClose, onRefetch, checkShowroom }) => {
     const roles = useSelector((state) => state.role.valueRole);
     const [role,setRole] = useState([])
     const [loading, setLoading] = useState(false);
+    const [openSelect,setOpenSelect] = useState(false)
     useEffect(() => {
         if (roles.length == 0) {
             (() => {
@@ -44,6 +45,14 @@ const CreateAccount = ({ open, onClose, onRefetch, checkShowroom }) => {
                 setLoading(false);
             });
     };
+    const handleChange = (value) => {
+        const name = roles.find((item)=>item.id == value)
+        if (name.name == 'Quản Lý') {
+            setOpenSelect(true)
+        }else{
+            setOpenSelect(false)
+        }
+      };
     return (
         <>
             <Drawer title="Thêm thành viên" placement="right" width="40%" onClose={handleClose} open={open}>
@@ -112,7 +121,7 @@ const CreateAccount = ({ open, onClose, onRefetch, checkShowroom }) => {
                             },
                         ]}
                     >
-                        <Select className="h-10 text-base border-[#02b875]" placeholder="Chọn cửa hàng">
+                        <Select className="h-10 text-base border-[#02b875]" placeholder="Chọn cửa hàng" onChange={handleChange}>
                             {role.map((role) => {
                                 return (
                                     role.name !== 'Admin' && (
@@ -124,7 +133,7 @@ const CreateAccount = ({ open, onClose, onRefetch, checkShowroom }) => {
                             })}
                         </Select>
                     </Form.Item>
-                    {isEmpty(checkShowroom) ? (
+                    {isEmpty(checkShowroom) || !openSelect? (
                         ''
                     ) : (
                         <Form.Item

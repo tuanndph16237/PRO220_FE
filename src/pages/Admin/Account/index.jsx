@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { DeleteOutlined, EditOutlined, SyncOutlined } from '@ant-design/icons';
-import { Popconfirm, Table, Row, Space, Avatar, Button, Tooltip } from 'antd';
+import { Popconfirm, Table, Row, Space, Avatar, Button, Tooltip, Tag } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import useDocumentTitle from '../../../hooks/useDocumentTitle';
 import { getAccounts, removeAccount } from '../../../api/account';
@@ -54,11 +54,14 @@ const AccountManager = () => {
     const getAllAccount = (filter) => {
         getAccounts(filter)
             .then(({ data: res }) => {
-                const newData = res.map((item, index) => {
-                    return {
-                        key: item._id,
-                        ...item,
-                    };
+                console.log('res', res);
+                const newData = res.filter((item, index) => {
+                    if (item.roleId !== '640317c7f28e238735a29128') {
+                        return {
+                            key: item._id,
+                            ...item,
+                        };
+                    }
                 });
                 setData(newData);
             })
@@ -129,7 +132,12 @@ const AccountManager = () => {
             dataIndex: 'showroomId',
             render: (showroomId) => {
                 const showroom = showrooms.find((showroom) => showroom._id === showroomId);
-                if (!showroom) return '';
+                if (!showroom)
+                    return (
+                        <Tag color={'geekblue'} key={'ds'}>
+                            {'không có cửa hàng'.toUpperCase()}
+                        </Tag>
+                    );
                 return showroom.name;
             },
         },
