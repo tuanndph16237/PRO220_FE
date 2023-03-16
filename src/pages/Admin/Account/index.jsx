@@ -11,6 +11,7 @@ import { NOTIFICATION_TYPE } from '../../../constants/status';
 import { getAllRoleAsync } from '../../../slices/role';
 import UpdateAccount from './UpdateAccount';
 import Filter from '../../../components/Filter/Filter';
+import { isEmpty } from 'lodash';
 
 const AccountManager = () => {
     useDocumentTitle('Quản lý thành viên');
@@ -23,6 +24,7 @@ const AccountManager = () => {
     const [data, setData] = useState([]);
     const [roleFilter, setRoleFilter] = useState([]);
     const [showroomsFilter, setShowroomsFilter] = useState([]);
+    const [checkShowroom, setCheckShowroom] = useState([]);
 
     const handleRefetch = async () => {
         setOpen(false);
@@ -46,7 +48,6 @@ const AccountManager = () => {
             })
             .catch((err) => {
                 Notification(NOTIFICATION_TYPE.ERROR, err.message);
-                console.log('remove-account', err);
             });
     };
 
@@ -61,9 +62,7 @@ const AccountManager = () => {
                 });
                 setData(newData);
             })
-            .catch((err) => {
-                console.log('get acounts err', err);
-            });
+            .catch((err) => {});
     };
 
     useEffect(() => {
@@ -72,11 +71,18 @@ const AccountManager = () => {
 
     useEffect(() => {
         if (showrooms.length === 0) {
-            dispatch(getAllShowroomAsync());
+            dispatch(getAllShowroomAsync(data));
             return;
         }
         setShowroomsFilter(showrooms.map((showroom) => ({ label: showroom.name, value: showroom._id })));
     }, [showrooms]);
+    useEffect(() => {
+        if (!isEmpty(data) && !isEmpty(showrooms)) {
+            const a = data.map((item) => item.showroomId);
+            const checkShowroom = showrooms.filter((item) => !a.includes(item._id));
+            setCheckShowroom(checkShowroom);
+        }
+    }, [data, showrooms]);
     useEffect(() => {
         if (roles.length === 0) {
             dispatch(getAllRoleAsync());
@@ -204,9 +210,16 @@ const AccountManager = () => {
                 </Button>
             </div>
             <Table columns={columns} dataSource={data} />
-            {open && <CreateAccount open={open} onClose={setOpen} onRefetch={handleRefetch} />}
+            {open && (
+                <CreateAccount open={open} onClose={setOpen} onRefetch={handleRefetch} checkShowroom={checkShowroom} />
+            )}
             {idUpdate && (
-                <UpdateAccount idUpdate={idUpdate} onClose={setIdUpdate} onRefetch={handleRefetchUpdateAccount} />
+                <UpdateAccount
+                    idUpdate={idUpdate}
+                    onClose={setIdUpdate}
+                    onRefetch={handleRefetchUpdateAccount}
+                    checkShowroom={checkShowroom}
+                />
             )}
         </div>
     );

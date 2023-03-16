@@ -8,32 +8,45 @@ import { NOTIFICATION_TYPE } from '../../../constants/status';
 import { R_EMAIL, R_NUMBER_PHONE } from '../../../constants/regex';
 import useDocumentTitle from '../../../hooks/useDocumentTitle';
 import SpinCustomize from '../../../components/Customs/Spin';
+import { isEmpty } from 'lodash';
 
-const UpdateAccount = ({ idUpdate, onClose, onRefetch }) => {
+const UpdateAccount = ({ idUpdate, onClose, onRefetch, checkShowroom }) => {
     useDocumentTitle('Cập nhật thành viên');
     const dispatch = useDispatch();
     const showrooms = useSelector((state) => state.showroom.showrooms.values);
     const roles = useSelector((state) => state.role.valueRole);
     const [loading, setLoading] = useState(true);
     const [updating, setUpdating] = useState(false);
+    const [checked, setChecked] = useState([]);
 
     const [data, setData] = useState({});
 
     useEffect(() => {
         getUser(idUpdate)
             .then(({ data: res }) => {
-                setData(res);
+                setData({
+                    ...res,
+                    roleId: res.roleId._id,
+                });
             })
             .finally(() => {
                 setLoading(false);
             });
     }, [idUpdate]);
     useEffect(() => {
+        if (!isEmpty(data)) {
+            console.log('data', data);
+            let filter = showrooms.find((item) => item._id === data.showroomId);
+            setChecked([...checkShowroom, filter]);
+        }
+    }, [data]);
+    useEffect(() => {
         if (roles.length == 0) {
             (() => {
                 dispatch(getAllRoleAsync());
             })();
         }
+        console.log('roles', roles);
     }, [roles]);
     const handleClose = () => {
         onClose(false);
@@ -46,9 +59,7 @@ const UpdateAccount = ({ idUpdate, onClose, onRefetch }) => {
                 Notification(NOTIFICATION_TYPE.SUCCESS, 'Cập nhật thành công');
                 onRefetch(res);
             })
-            .catch((err) => {
-                console.log('create-acount', err);
-            })
+            .catch((err) => {})
             .finally(() => {
                 setUpdating(false);
             });
@@ -124,12 +135,23 @@ const UpdateAccount = ({ idUpdate, onClose, onRefetch }) => {
                                 },
                             ]}
                         >
-                            <Select className="h-10 text-base border-[#02b875]" placeholder="Chọn cửa hàng">
-                                {roles.map((role) => (
-                                    <Option value={role.id} key={role.id}>
-                                        {role.name}
-                                    </Option>
-                                ))}
+                            <Select
+                                defaultValue={{
+                                    value: 'Quản Lý',
+                                    label: 'Quản Lý',
+                                }}
+                                className="h-10 text-base border-[#02b875]"
+                                placeholder="Chọn cửa hàng"
+                            >
+                                {roles.map((role) => {
+                                    return (
+                                        role.name !== 'Admin' && (
+                                            <Option value={role.id} key={role.id}>
+                                                {role.name}
+                                            </Option>
+                                        )
+                                    );
+                                })}
                             </Select>
                         </Form.Item>
                         <Form.Item
@@ -143,7 +165,7 @@ const UpdateAccount = ({ idUpdate, onClose, onRefetch }) => {
                             ]}
                         >
                             <Select className="h-10 text-base border-[#02b875]" placeholder="Chọn cửa hàng">
-                                {showrooms.map((showroom) => (
+                                {checked.map((showroom) => (
                                     <Option value={showroom._id} key={showroom._id}>
                                         {showroom.name}
                                     </Option>

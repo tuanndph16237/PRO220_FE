@@ -6,10 +6,11 @@ import { createAccount } from '../../../api/account';
 import { Notification } from '../../../utils/notifications';
 import { NOTIFICATION_TYPE } from '../../../constants/status';
 import { R_EMAIL, R_NUMBER_PHONE } from '../../../constants/regex';
-const CreateAccount = ({ open, onClose, onRefetch }) => {
+import { isEmpty } from 'lodash';
+const CreateAccount = ({ open, onClose, onRefetch, checkShowroom }) => {
     const dispatch = useDispatch();
-    const showrooms = useSelector((state) => state.showroom.showrooms.values);
     const roles = useSelector((state) => state.role.valueRole);
+    const [role,setRole] = useState([])
     const [loading, setLoading] = useState(false);
     useEffect(() => {
         if (roles.length == 0) {
@@ -17,12 +18,17 @@ const CreateAccount = ({ open, onClose, onRefetch }) => {
                 dispatch(getAllRoleAsync());
             })();
         }
+        if (isEmpty(checkShowroom)) {
+            setRole(()=>roles.filter((item)=>item.name !== 'Quản Lý'))
+        }else{
+            setRole(roles)
+        }
     }, [roles]);
     const handleClose = () => {
         onClose(false);
     };
     const onFinish = (values) => {
-        const data = { ...values, password: '11111111' };
+        const data = { ...values, password: '12345678' };
         setLoading(true);
         createAccount(data)
             .then(({ data: res }) => {
@@ -107,31 +113,39 @@ const CreateAccount = ({ open, onClose, onRefetch }) => {
                         ]}
                     >
                         <Select className="h-10 text-base border-[#02b875]" placeholder="Chọn cửa hàng">
-                            {roles.map((role) => (
-                                <Option value={role.id} key={role.id}>
-                                    {role.name}
-                                </Option>
-                            ))}
+                            {role.map((role) => {
+                                return (
+                                    role.name !== 'Admin' && (
+                                        <Option value={role.id} key={role.id}>
+                                            {role.name}
+                                        </Option>
+                                    )
+                                );
+                            })}
                         </Select>
                     </Form.Item>
-                    <Form.Item
-                        label={<p className="text-base font-semibold">Cửa hàng</p>}
-                        name="showroomId"
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Quý khách vui lòng không để trống trường thông tin này.',
-                            },
-                        ]}
-                    >
-                        <Select className="h-10 text-base border-[#02b875]" placeholder="Chọn cửa hàng">
-                            {showrooms.map((showroom) => (
-                                <Option value={showroom._id} key={showroom._id}>
-                                    {showroom.name}
-                                </Option>
-                            ))}
-                        </Select>
-                    </Form.Item>
+                    {isEmpty(checkShowroom) ? (
+                        ''
+                    ) : (
+                        <Form.Item
+                            label={<p className="text-base font-semibold">Cửa hàng</p>}
+                            name="showroomId"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Quý khách vui lòng không để trống trường thông tin này.',
+                                },
+                            ]}
+                        >
+                            <Select className="h-10 text-base border-[#02b875]" placeholder="Chọn cửa hàng">
+                                {checkShowroom.map((showroom) => (
+                                    <Option value={showroom._id} key={showroom._id}>
+                                        {showroom.name}
+                                    </Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                    )}
                     <div className="absolute bottom-0 flex align-center">
                         <Form.Item>
                             <Button
