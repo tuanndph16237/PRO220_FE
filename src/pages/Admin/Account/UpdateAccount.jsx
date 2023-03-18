@@ -64,6 +64,7 @@ const UpdateAccount = ({ idUpdate, onClose, onRefetch, checkShowroom }) => {
         if (name.name !== 'Quản Lý') {
             update = _.omit({ ...data, ...values, showroomId: null });
         }
+        console.log('values',values)
         setUpdating(true);
         updateAccount(update)
             .then(({ data: res }) => {
@@ -162,9 +163,9 @@ const UpdateAccount = ({ idUpdate, onClose, onRefetch, checkShowroom }) => {
                                 {roles.map((role) => {
                                     return (
                                         role.name !== 'Admin' && (
-                                            <Option value={role.id} key={role.id}>
+                                            <Select.Option value={role.id} key={role.id}>
                                                 {role.name}
-                                            </Option>
+                                            </Select.Option>
                                         )
                                     );
                                 })}
@@ -185,9 +186,9 @@ const UpdateAccount = ({ idUpdate, onClose, onRefetch, checkShowroom }) => {
                             >
                                 <Select className="h-10 text-base border-[#02b875]" placeholder="Chọn cửa hàng">
                                     {checked.map((showroom) => (
-                                        <Option value={showroom._id} key={showroom._id}>
+                                        <Select.Option value={showroom._id} key={showroom._id}>
                                             {showroom.name}
-                                        </Option>
+                                        </Select.Option>
                                     ))}
                                 </Select>
                             </Form.Item>

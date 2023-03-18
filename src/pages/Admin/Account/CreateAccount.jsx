@@ -10,9 +10,9 @@ import { isEmpty } from 'lodash';
 const CreateAccount = ({ open, onClose, onRefetch, checkShowroom }) => {
     const dispatch = useDispatch();
     const roles = useSelector((state) => state.role.valueRole);
-    const [role,setRole] = useState([])
+    const [role, setRole] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [openSelect,setOpenSelect] = useState(false)
+    const [openSelect, setOpenSelect] = useState(false);
     useEffect(() => {
         if (roles.length == 0) {
             (() => {
@@ -20,9 +20,9 @@ const CreateAccount = ({ open, onClose, onRefetch, checkShowroom }) => {
             })();
         }
         if (isEmpty(checkShowroom)) {
-            setRole(()=>roles.filter((item)=>item.name !== 'Quản Lý'))
-        }else{
-            setRole(roles)
+            setRole(() => roles.filter((item) => item.name !== 'Quản Lý'));
+        } else {
+            setRole(roles);
         }
     }, [roles]);
     const handleClose = () => {
@@ -46,13 +46,13 @@ const CreateAccount = ({ open, onClose, onRefetch, checkShowroom }) => {
             });
     };
     const handleChange = (value) => {
-        const name = roles.find((item)=>item.id == value)
+        const name = roles.find((item) => item.id == value);
         if (name.name == 'Quản Lý') {
-            setOpenSelect(true)
-        }else{
-            setOpenSelect(false)
+            setOpenSelect(true);
+        } else {
+            setOpenSelect(false);
         }
-      };
+    };
     return (
         <>
             <Drawer title="Thêm thành viên" placement="right" width="40%" onClose={handleClose} open={open}>
@@ -121,19 +121,23 @@ const CreateAccount = ({ open, onClose, onRefetch, checkShowroom }) => {
                             },
                         ]}
                     >
-                        <Select className="h-10 text-base border-[#02b875]" placeholder="Chọn cửa hàng" onChange={handleChange}>
-                            {role.map((role) => {
+                        <Select
+                            className="h-10 text-base border-[#02b875]"
+                            placeholder="Chọn cửa hàng"
+                            onChange={handleChange}
+                        >
+                            {role.map((role, index) => {
                                 return (
                                     role.name !== 'Admin' && (
-                                        <Option value={role.id} key={role.id}>
+                                        <Select.Option key={role.id} value={role.id}>
                                             {role.name}
-                                        </Option>
+                                        </Select.Option>
                                     )
                                 );
                             })}
                         </Select>
                     </Form.Item>
-                    {isEmpty(checkShowroom) || !openSelect? (
+                    {isEmpty(checkShowroom) || !openSelect ? (
                         ''
                     ) : (
                         <Form.Item
@@ -148,9 +152,9 @@ const CreateAccount = ({ open, onClose, onRefetch, checkShowroom }) => {
                         >
                             <Select className="h-10 text-base border-[#02b875]" placeholder="Chọn cửa hàng">
                                 {checkShowroom.map((showroom) => (
-                                    <Option value={showroom._id} key={showroom._id}>
+                                    <Select.Option value={showroom._id} key={showroom._id}>
                                         {showroom.name}
-                                    </Option>
+                                    </Select.Option>
                                 ))}
                             </Select>
                         </Form.Item>

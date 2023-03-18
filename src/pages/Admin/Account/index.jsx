@@ -54,14 +54,11 @@ const AccountManager = () => {
     const getAllAccount = (filter) => {
         getAccounts(filter)
             .then(({ data: res }) => {
-                console.log('res', res);
-                const newData = res.filter((item, index) => {
-                    if (item.roleId !== '640317c7f28e238735a29128') {
-                        return {
-                            key: item._id,
-                            ...item,
-                        };
-                    }
+                const newData = res.map((item) => {
+                    return {
+                        key: item._id,
+                        ...item,
+                    };
                 });
                 setData(newData);
             })
@@ -99,6 +96,7 @@ const AccountManager = () => {
         {
             title: 'Tên',
             dataIndex: 'name',
+            key: 'name',
             render: (name, data) => {
                 return (
                     <Space>
@@ -113,14 +111,17 @@ const AccountManager = () => {
         {
             title: 'Số điện thoại',
             dataIndex: 'number_phone',
+            key: 'number_phone',
         },
         {
             title: 'Email',
             dataIndex: 'email',
+            key: 'email',
         },
         {
             title: 'Vai trò',
             dataIndex: 'roleId',
+            key: 'roleId',
             render: (roleId) => {
                 const role = roles.find((role) => role.id === roleId);
                 if (!role) return '';
@@ -130,6 +131,7 @@ const AccountManager = () => {
         {
             title: 'Cửa hàng',
             dataIndex: 'showroomId',
+            key: 'showroomId',
             render: (showroomId) => {
                 const showroom = showrooms.find((showroom) => showroom._id === showroomId);
                 if (!showroom)
@@ -143,7 +145,7 @@ const AccountManager = () => {
         },
         {
             title: '',
-            render: (data) => {
+            render: (data, index) => {
                 return (
                     <Row>
                         <EditOutlined className="text-xl pr-4" onClick={() => setIdUpdate(data._id)} />
@@ -217,7 +219,7 @@ const AccountManager = () => {
                     Thêm thành viên
                 </Button>
             </div>
-            <Table columns={columns} dataSource={data} />
+            <Table columns={columns} dataSource={data} rowKey="key" />
             {open && (
                 <CreateAccount open={open} onClose={setOpen} onRefetch={handleRefetch} checkShowroom={checkShowroom} />
             )}

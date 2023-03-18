@@ -7,7 +7,7 @@ export const getAccounts = async (filter) => {
     return instance.post(URL, filter);
 };
 export const createAccount = async (data) => {
-    return instance.post('account', data);
+    return instance.post('/account', data);
 };
 
 export const removeAccount = async (id) => {
@@ -15,7 +15,8 @@ export const removeAccount = async (id) => {
 };
 
 export const updateAccount = async (data) => {
-    return instance.put(`/accounts/${data._id}`, _.omit(data, ['_id']));
+    console.log('data',_.omit(data, ['_id','password','__v']));
+    return instance.put(`/accounts/${data._id}`, _.omit(data, ['_id','password','__v']));
 };
 
 export const getUser = async (id) => {
