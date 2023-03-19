@@ -117,6 +117,7 @@ const DrawerCreateShowroom = () => {
                 layout={'vertical'}
                 initialValues={{
                     remember: false,
+                    districtId:'----chọn địa điểm cửa hàng----'
                 }}
                 onFinish={onFinish}
                 autoComplete="off"
@@ -171,7 +172,6 @@ const DrawerCreateShowroom = () => {
                     <Select
                         size="large"
                         className="h-10 w-full text-base border-[#02b875]"
-                        defaultValue="----chọn địa điểm cửa hàng----"
                     >
                         {zone.map((item) => (
                             <Select.Option value={item._id} key={item._id} label={item.name}>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import _ from 'lodash';
+import _, { isEmpty } from 'lodash';
 import { EditOutlined, SearchOutlined } from '@ant-design/icons';
 import { Input, Space, Table, Button, Spin, Tooltip } from 'antd';
 import './showroom.css';
@@ -20,28 +20,23 @@ const ShowRoom = () => {
     const loadding = useSelector((state) => state.showroom.showrooms.loading);
     const account = useSelector((state) => state.user.currentUser.values);
     const roleAccount = account.role;
-    const data = showrooms.map((showroom) => ({ ...showroom, key: showroom._id }));
-    const [reload, setReload] = useState({
-        reload: false,
-    });
     const [searchText, setSearchText] = useState('');
     const [searchedColumn, setSearchedColumn] = useState('');
     const searchInput = useRef(null);
     const [zone, setZone] = useState([]);
-    const [showroomAccount, setShowroomAccount] = useState({});
+    const [showroomAccount, setShowroomAccount] = useState();
     const local = JwtDecode();
 
     const fetchApiShowroomAccount = async () => {
         try {
-            const dataShowroomAccount = await getShowroomById(local.showroomId);
-            setShowroomAccount(dataShowroomAccount.data);
-            console.log(dataShowroomAccount.data.name);
+            const { data } = await getShowroomById(local.showroomId);
+            const datas = {
+                ...data,
+                key: data._id,
+            };
+            setShowroomAccount([datas]);
         } catch (error) {}
     };
-
-    useEffect(() => {
-        fetchApiShowroomAccount();
-    }, []);
 
     const fetchApiDistrict = async () => {
         try {
@@ -53,10 +48,19 @@ const ShowRoom = () => {
     useEffect(() => {
         fetchApiDistrict();
     }, []);
-
     useEffect(() => {
-        dispatch(getAllShowroomAsync());
-    }, [reload]);
+        if (showrooms.length > 0) {
+            const data = showrooms.map((showroom) => ({ ...showroom, key: showroom._id }));
+            setShowroomAccount(data);
+        }
+    }, [showrooms]);
+    useEffect(() => {
+        if (local.role == 'Admin') {
+            dispatch(getAllShowroomAsync());
+        } else {
+            fetchApiShowroomAccount();
+        }
+    }, []);
 
     const handleSearch = (selectedKeys, confirm, dataIndex) => {
         confirm();
@@ -198,23 +202,7 @@ const ShowRoom = () => {
                 </div>
             ) : (
                 <>
-                    {roleAccount == ROLE.ADMIN ? (
-                        <Table columns={columns} dataSource={data} />
-                    ) : (
-                        <div>
-                            <h1 className="text-2xl">
-                                <b>Tên Showroom:</b> {showroomAccount.name}
-                            </h1>
-                            <br></br>
-                            <h1 className="text-2xl">
-                                <b>Số điện thoại:</b> {showroomAccount.phone}
-                            </h1>
-                            <br></br>
-                            <h1 className="text-2xl">
-                                <b>Địa chỉ:</b> {showroomAccount.address}
-                            </h1>
-                        </div>
-                    )}
+                    <Table columns={columns} dataSource={showroomAccount} rowKey="key" />
                 </>
             )}
         </div>
