@@ -7,6 +7,7 @@ import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from 'firebase/auth
 import { Notification } from '../../utils/notifications';
 import { NOTIFICATION_TYPE } from '../../constants/status';
 import { register } from '../../api/auth';
+import { R_NUMBER_PHONE } from '../../constants/regex';
 const auth = getAuth(app);
 const Register = () => {
     useDocumentTitle('Đăng ký tài khoản');
@@ -139,8 +140,10 @@ const Register = () => {
                         name="number_phone"
                         rules={[
                             { required: true, message: 'Vui lòng nhập Số điện thoại!' },
-                            { min: 10, message: 'Số điện thoại không đúng định dạng!' },
-                            { max: 11, message: 'Số điện thoại không đúng định dạng!' },
+                            {
+                                pattern: R_NUMBER_PHONE,
+                                message: 'Số điện thoại không đúng định dạng.',
+                            },
                         ]}
                     >
                         <Input className="py-2 text-base" placeholder="Số điện thoại" disabled={isVerify} />
@@ -184,7 +187,7 @@ const Register = () => {
                             name="password"
                             rules={[
                                 { required: true, message: 'Vui lòng nhập Mật khẩu!' },
-                                { min: 6, message: 'Mật khẩu phải đủ 8 ký tự!' },
+                                { min: 8, message: 'Mật khẩu phải đủ 8 ký tự!' },
                             ]}
                         >
                             <Input.Password className="py-2 text-base" type="password" placeholder="Mật khẩu" />

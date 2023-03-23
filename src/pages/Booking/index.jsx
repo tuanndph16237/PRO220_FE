@@ -2,8 +2,8 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import _ from 'lodash';
 import useDocumentTitle from '../../hooks/useDocumentTitle';
-import { Avatar, Button, Col, DatePicker, Form, Input, Row, Select } from 'antd';
-import { HOUR_DATE_TIME } from '../../constants/format';
+import { Avatar, Button, Col, DatePicker, Form, Input, Row, Select, TimePicker } from 'antd';
+import { HOUR_DATE_TIME, DATE_FORMAT } from '../../constants/format';
 import { compareUserShowroom, search } from '../../api/showroom';
 import './booking.css';
 import SpinCustomize from '../../components/Customs/Spin';
@@ -12,13 +12,17 @@ import { Notification } from '../../utils/notifications';
 import { NOTIFICATION_TYPE } from '../../constants/status';
 import { getAllShowroomAsync } from '../../slices/showroom';
 import { SEVICE_TYPE, VEHICLE_TYPE } from '../../constants/order';
-import { R_EMAIL, R_NUMBER, R_NUMBER_PHONE } from '../../constants/regex';
-import { disabledDate, disabledDateTime } from '../../utils/date';
+import { R_NUMBER, R_NUMBER_PHONE } from '../../constants/regex';
+import { disabledDate, disabledDateTime, setHourISODate } from '../../utils/date';
 import ModalCustomize from '../../components/Customs/ModalCustomize';
 import ShowroomModal from './showroomModal';
+import { useNavigate } from 'react-router-dom';
+import HourPicker from '../../components/HourPicker';
+import dayjs from 'dayjs';
 
 const BookingPage = () => {
     useDocumentTitle('Đặt lịch');
+    const navigate = useNavigate();
     const dispatch = useDispatch();
     const user = useSelector((state) => state.user.currentUser.values);
     const showrooms = useSelector((state) => state.showroom.showrooms.values);
@@ -27,6 +31,7 @@ const BookingPage = () => {
     const [creatingBooking, setCreatingBooking] = useState(false);
     const [isShowroom, setIsShowroom] = useState(true);
     const [date, setDate] = useState(new Date());
+    const [hour, setHour] = useState('8:00');
     const [showroomsFilter, setShowroomsFilter] = useState([]);
     const [filter, setFilter] = useState('');
     const [initialValues, setInitialValues] = useState({});
@@ -94,22 +99,26 @@ const BookingPage = () => {
     }, [showrooms]);
 
     const onFinish = (values) => {
+        const myDate = setHourISODate(date, hour);
         setCreatingBooking(true);
-        createBannerByCustomer({ ...values, address, accountId: user._id, showroomId: filter._id || null })
-            .then(({ data: { message } }) => {
-                if (message) {
-                    Notification(NOTIFICATION_TYPE.WARNING, message);
+        createBannerByCustomer({
+            ...values,
+            appointmentSchedule: myDate,
+            address,
+            accountId: user._id,
+            showroomId: filter._id || null,
+        })
+            .then(({ data }) => {
+                if (data.message) {
+                    Notification(NOTIFICATION_TYPE.WARNING, data.message);
                     return;
                 }
+                Notification(NOTIFICATION_TYPE.SUCCESS, 'Bạn đã đặt lịch thành công!');
                 if (isLogged) {
-                    Notification(
-                        NOTIFICATION_TYPE.SUCCESS,
-                        'Bạn đã đặt lịch thành công!',
-                        'Theo dõi lịch trong phần đơn hàng!',
-                    );
+                    navigate(`/cai-dat/quan-ly-don-hang/${data._id}`);
                     return null;
                 }
-                Notification(NOTIFICATION_TYPE.SUCCESS, 'Bạn đã đặt lịch thành công!');
+                navigate('/');
             })
             .catch((error) => {
                 Notification(NOTIFICATION_TYPE.ERROR, error.message);
@@ -154,7 +163,14 @@ const BookingPage = () => {
                     >
                         <h1 className="text-center text-xl font-semibold text-[#1f2125] pt-8 ">ĐẶT LỊCH DỊCH VỤ</h1>
                         <Row className="pt-8 font-mono" gutter={[8, 16]} wrap>
-                            <Col span={12}>
+                            <Col
+                                xs={{
+                                    span: 24,
+                                }}
+                                lg={{
+                                    span: 12,
+                                }}
+                            >
                                 <Col span={24}>
                                     <Col span={24} className="pb-6">
                                         <Avatar
@@ -196,7 +212,10 @@ const BookingPage = () => {
                                                 },
                                             ]}
                                         >
-                                            <Input className="h-10 text-base border-[#02b875]" />
+                                            <Input
+                                                className="h-10 text-base border-[#02b875]"
+                                                disabled={_.get(user, 'number_phone', false)}
+                                            />
                                         </Form.Item>
                                     </Col>
                                     <Col span={24}>
@@ -276,7 +295,14 @@ const BookingPage = () => {
                                     </Col>
                                 </Col>
                             </Col>
-                            <Col span={12}>
+                            <Col
+                                xs={{
+                                    span: 24,
+                                }}
+                                lg={{
+                                    span: 12,
+                                }}
+                            >
                                 <Col span={24}>
                                     <Col span={24} className="pb-6">
                                         <Avatar
@@ -348,41 +374,46 @@ const BookingPage = () => {
                                             label={<p className="text-base font-semibold">Cửa hàng</p>}
                                             rules={[
                                                 {
-                                                    required: true,
+                                                    required: filter == '' ? true : false,
                                                     message: 'Quý khách vui lòng không để trống trường thông tin này.',
                                                 },
                                             ]}
                                         >
-                                            <Select
-                                                size="large"
-                                                value={filter}
-                                                placeholder="Tìm kiếm cửa hàng theo tên, địa chỉ."
-                                                className="h-10 text-base border-[#02b875]"
-                                                optionLabelProp="label"
-                                                showSearch
-                                                onSearch={handleSearch}
-                                                onChange={handleChange}
-                                                filterOption={false}
-                                            >
-                                                {_.map(showroomsFilter, (showroom) => (
-                                                    <Select.Option
-                                                        value={showroom._id}
-                                                        key={showroom._id}
-                                                        label={showroom.name + ' - ' + showroom.address}
-                                                    >
-                                                        <div span={24}>
-                                                            <div span={24}>
-                                                                <span className="text-base font-medium text-[#02b875]">
-                                                                    {showroom.name}
-                                                                </span>
-                                                            </div>
-                                                            <div span={24}>
-                                                                <span className="font-medium">{showroom.address}</span>
-                                                            </div>
+                                            <>
+                                                <div
+                                                    className="!cursor-pointer flex items-center border rounded-md border-[#02b875]"
+                                                    onClick={() => setOpenModal(true)}
+                                                >
+                                                    <Input
+                                                        type="text"
+                                                        value={filter == '' ? '' : filter.name + ' - ' + filter.address}
+                                                        disabled={true}
+                                                        placeholder="Chọn cửa hàng sửa chữa"
+                                                        className="!cursor-pointer !bg-white py-2 relative !text-black text-base"
+                                                    />
+                                                    {filter == '' && (
+                                                        <div className="right-3 absolute">
+                                                            <svg
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                width="16"
+                                                                height="16"
+                                                                fill="currentColor"
+                                                                className="bi bi-caret-right-fill"
+                                                                viewBox="0 0 16 16"
+                                                            >
+                                                                <path d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z"></path>
+                                                            </svg>
                                                         </div>
-                                                    </Select.Option>
-                                                ))}
-                                            </Select>
+                                                    )}
+                                                </div>
+                                                <ModalCustomize
+                                                    showModal={open}
+                                                    footer={null}
+                                                    setShowModal={() => setOpenModal(false)}
+                                                >
+                                                    <ShowroomModal setSelectShowroom={handleChange} />
+                                                </ModalCustomize>
+                                            </>
                                         </Form.Item>
                                         {isShowroom ? null : (
                                             <Form.Item
@@ -390,52 +421,64 @@ const BookingPage = () => {
                                                 name="address"
                                                 rules={[
                                                     {
-                                                        required: true,
+                                                        required: address == '' ? true : false,
                                                         message:
                                                             'Quý khách vui lòng không để trống trường thông tin này.',
                                                     },
                                                 ]}
                                             >
-                                                <Input.TextArea
-                                                    className="text-base border-[#02b875]"
-                                                    rows={2}
-                                                    placeholder=""
-                                                />
+                                                <>
+                                                    <p className="text-black mx-2">
+                                                        Lưu ý: hỗ trợ trong bán kính 5km với cửa hàng bạn chọn!
+                                                    </p>
+                                                    <Input
+                                                        className="text-base border-[#02b875] w-full py-2"
+                                                        placeholder="Nhập địa chỉ"
+                                                        value={address}
+                                                        onChange={(e) => setAddress(e.target.value)}
+                                                        id="searchBooking"
+                                                    />
+                                                </>
                                             </Form.Item>
                                         )}
                                     </Col>
-                                    <Col span={24}>
-                                        <Form.Item
-                                            name="appointmentSchedule"
-                                            label={<p className="text-base font-semibold">Thời gian</p>}
-                                            rules={[
-                                                {
-                                                    required: true,
-                                                    message: 'Quý khách vui lòng không để trống trường thông tin này.',
-                                                },
-                                            ]}
-                                        >
-                                            <DatePicker
-                                                size="large"
-                                                className="w-full border-[#02b875]"
-                                                placeholder="Vui lòng chọn thời gian"
-                                                format={HOUR_DATE_TIME}
-                                                disabledDate={disabledDate}
-                                                disabledTime={disabledDateTime}
-                                                showToday
-                                                value={date}
-                                                onChange={(date, dateString) => {
-                                                    const dateStringConvert = new Date(dateString);
-                                                    setDate(dateStringConvert);
-                                                }}
-                                                showTime
-                                            />
-                                        </Form.Item>
-                                    </Col>
+                                    <Row gutter={16}>
+                                        <Col span={12}>
+                                            <Form.Item
+                                                label={
+                                                    <p className="text-base font-semibold">
+                                                        <span className="text-[#ff4d4f] text-base">* </span>Ngày
+                                                    </p>
+                                                }
+                                            >
+                                                <DatePicker
+                                                    size="large"
+                                                    defaultValue={dayjs()}
+                                                    format={DATE_FORMAT}
+                                                    mode="date"
+                                                    className="w-full border-[#02b875]"
+                                                    placeholder="Ngày"
+                                                    showToday
+                                                    onChange={(date, dateString) => setDate(dateString)}
+                                                />
+                                            </Form.Item>
+                                        </Col>
+                                        <Col span={12}>
+                                            <Form.Item
+                                                label={
+                                                    <p className="text-base font-semibold">
+                                                        <span className="text-[#ff4d4f] text-base">* </span>Giờ
+                                                    </p>
+                                                }
+                                            >
+                                                <HourPicker onChange={(value) => setHour(value)} format={'HH'} />
+                                            </Form.Item>
+                                        </Col>
+                                    </Row>
                                 </Col>
                             </Col>
                         </Row>
-                        <Form.Item wrapperCol={{ offset: 8, span: 8 }} name="#">
+                        <Form.Item wrapperCol={{ offset: 8, span: 8 }}>
                             <Button
                                 htmlType="submit"
                                 type="primary"
@@ -460,7 +503,14 @@ const BookingPage = () => {
                 >
                     <h1 className="text-center text-xl font-semibold text-[#1f2125] pt-8 ">ĐẶT LỊCH DỊCH VỤ</h1>
                     <Row className="pt-8 font-mono" gutter={[8, 16]} wrap>
-                        <Col span={12}>
+                        <Col
+                            xs={{
+                                span: 24,
+                            }}
+                            lg={{
+                                span: 12,
+                            }}
+                        >
                             <Col span={24}>
                                 <Col span={24} className="pb-6">
                                     <Avatar
@@ -499,7 +549,10 @@ const BookingPage = () => {
                                             },
                                         ]}
                                     >
-                                        <Input className="h-10 text-base border-[#02b875]" />
+                                        <Input
+                                            className="h-10 text-base border-[#02b875]"
+                                            disabled={_.get(user, 'number_phone', false)}
+                                        />
                                     </Form.Item>
                                 </Col>
                                 <Col span={24}>
@@ -579,7 +632,14 @@ const BookingPage = () => {
                                 </Col>
                             </Col>
                         </Col>
-                        <Col span={12}>
+                        <Col
+                            xs={{
+                                span: 24,
+                            }}
+                            lg={{
+                                span: 12,
+                            }}
+                        >
                             <Col span={24}>
                                 <Col span={24} className="pb-6">
                                     <Avatar
@@ -711,38 +771,43 @@ const BookingPage = () => {
                                         </Form.Item>
                                     )}
                                 </Col>
-                                <Col span={24}>
-                                    <Form.Item
-                                        name="appointmentSchedule"
-                                        label={<p className="text-base font-semibold">Thời gian</p>}
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: 'Quý khách vui lòng không để trống trường thông tin này.',
-                                            },
-                                        ]}
-                                    >
-                                        <DatePicker
-                                            size="large"
-                                            className="w-full border-[#02b875]"
-                                            placeholder="Vui lòng chọn thời gian"
-                                            format={HOUR_DATE_TIME}
-                                            disabledDate={disabledDate}
-                                            disabledTime={disabledDateTime}
-                                            showToday
-                                            value={date}
-                                            onChange={(date, dateString) => {
-                                                const dateStringConvert = new Date(dateString);
-                                                setDate(dateStringConvert);
-                                            }}
-                                            showTime
-                                        />
-                                    </Form.Item>
-                                </Col>
+                                <Row gutter={16}>
+                                    <Col span={12}>
+                                        <Form.Item
+                                            label={
+                                                <p className="text-base font-semibold">
+                                                    <span className="text-[#ff4d4f] text-base">* </span>Ngày
+                                                </p>
+                                            }
+                                        >
+                                            <DatePicker
+                                                size="large"
+                                                defaultValue={dayjs()}
+                                                format={DATE_FORMAT}
+                                                mode="date"
+                                                className="w-full border-[#02b875]"
+                                                placeholder="Ngày"
+                                                showToday
+                                                onChange={(date, dateString) => setDate(dateString)}
+                                            />
+                                        </Form.Item>
+                                    </Col>
+                                    <Col span={12}>
+                                        <Form.Item
+                                            label={
+                                                <p className="text-base font-semibold">
+                                                    <span className="text-[#ff4d4f] text-base">* </span>Giờ
+                                                </p>
+                                            }
+                                        >
+                                            <HourPicker onChange={(value) => setHour(value)} format={'HH'} />
+                                        </Form.Item>
+                                    </Col>
+                                </Row>
                             </Col>
                         </Col>
                     </Row>
-                    <Form.Item wrapperCol={{ offset: 8, span: 8 }} name="#">
+                    <Form.Item wrapperCol={{ offset: 8, span: 8 }}>
                         <Button
                             htmlType="submit"
                             type="primary"

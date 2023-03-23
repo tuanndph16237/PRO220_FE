@@ -17,3 +17,26 @@ export const disabledDateTime = () => ({
     disabledMinutes: () => range(0),
     disabledSeconds: () => range(0, 60),
 });
+
+export const setHourISODate = (date = dayjs(), hour = '8:00') => {
+    switch (hour) {
+        case '9:00':
+            return dayjs(date).set('hour', 9).set('minute', 0);
+        case '10:00':
+            return dayjs(date).set('hour', 10).set('minute', 0);
+        case '11:00':
+            return dayjs(date).set('hour', 11).set('minute', 0);
+        case '13:00':
+            return dayjs(date).set('hour', 13).set('minute', 0);
+        case '14:00':
+            return dayjs(date).set('hour', 14).set('minute', 0);
+        case '15:00':
+            return dayjs(date).set('hour', 15).set('minute', 0);
+        case '16:00':
+            return dayjs(date).set('hour', 16).set('minute', 0);
+        case '17:00':
+            return dayjs(date).set('hour', 17).set('minute', 0);
+        default:
+            return dayjs(date).set('hour', 8).set('minute', 0);
+    }
+};

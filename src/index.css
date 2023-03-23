@@ -102,3 +102,8 @@ h6 {
 .ant-slider-track {
     background-color: #02b875 !important;
 }
+
+/* css inputn */
+.ant-input:focus {
+    border-color: var(--primary-color) !important;
+}
