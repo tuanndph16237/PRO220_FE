@@ -36,7 +36,7 @@ const ShowroomModal = ({ setSelectShowroom }) => {
         navigator.geolocation.getCurrentPosition(async (position) => {
             let latitude = position.coords.latitude.toString();
             let longitude = position.coords.longitude.toString();
-            let dist = 2;
+            let dist = 2000;
             const dataUserNearBy = await findNearShowroom({ latitude, longitude, dist });
             if (_.isEmpty(dataUserNearBy.data)) {
                 setDataToPreview([]);

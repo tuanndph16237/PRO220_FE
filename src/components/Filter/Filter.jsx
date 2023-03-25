@@ -44,10 +44,11 @@ const Filter = ({ items, onFilter }) => {
             <Space size={[8, 16]} wrap>
                 {selectedKeys.map((key) => {
                     const values = items.find((item) => item.key === key);
+                    console.log(values);
                     switch (values.type) {
                         case 'select':
                             return (
-                                <Space>
+                                <Space key={key}>
                                     <SelectFilter
                                         placeholder={values.name}
                                         mode={values.mode}
@@ -61,7 +62,7 @@ const Filter = ({ items, onFilter }) => {
                             );
                         case 'date': {
                             return (
-                                <Space>
+                                <Space key={key}>
                                     <span>{values.name} :</span>
                                     <DatePickerByOptions
                                         getTypeWhenOnChangeTime={true}
@@ -75,7 +76,7 @@ const Filter = ({ items, onFilter }) => {
                         }
                         default:
                             return (
-                                <Space>
+                                <Space key={key}>
                                     <TextStringFilter
                                         placeholder={values.name}
                                         onChange={(text) => handleMergeValuesSearch(values.key, text)}

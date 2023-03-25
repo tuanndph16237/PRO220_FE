@@ -103,6 +103,10 @@ h6 {
     background-color: #02b875 !important;
 }
 
+.icon-admin{
+    display: flex;
+    align-items: center !important;
+}
 /* css inputn */
 .ant-input:focus {
     border-color: var(--primary-color) !important;

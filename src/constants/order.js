@@ -37,13 +37,14 @@ export const ORDER_STATUS = {
     5: 'Hoàn thành',
 };
 export const SEVICE_TYPE = {
-    HOUSE: 0,
+    RESCUE: 0,
     SHOWROOM: 1,
+    CONTACT_RESCUE: 2,
 };
 export const SEVICE_TYPE_ODERDETAIL = {
     0: 'Tại nhà',
-    1: 'Tại cửa hàng'
-}
+    1: 'Tại cửa hàng',
+};
 export const VEHICLE_TYPE = [
     { value: 1, label: 'Xe số' },
     { value: 2, label: 'Xe tay ga' },
@@ -59,4 +60,4 @@ export const ORDER_STATUS_TYPE = [
     { key: 5, label: 'Thanh toán', path: 'thanh-toan' },
     { key: 6, label: 'Hoàn thành', path: 'hoan-thanh' },
     { key: 7, label: 'Hủy', path: 'huy' },
-]
+];

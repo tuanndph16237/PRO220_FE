@@ -42,4 +42,5 @@ export const PERMISSION_LABLEL = {
     LOCATION_MANAGE: 'Quản Lý Địa Chỉ',
     ACCOUNT_MANAGE: 'Quản Lý Thành Viên',
     NEWS_MANAGE: 'Quản Lý Tin Tức',
+    SERVICE_MANAGE: 'Quản Lý Dịch Vụ',
 };

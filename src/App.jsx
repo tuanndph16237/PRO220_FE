@@ -45,8 +45,11 @@ import AccountManager from './pages/Admin/Account';
 import PostManager from './pages/Admin/Post';
 import Posts from './pages/Post';
 import Post from './pages/Post/Post';
+import ServiceManager from './pages/Admin/ServiceManage';
+import CreateService from './pages/Admin/ServiceManage/CreateService';
+import UpdateService from './pages/Admin/ServiceManage/UpdateService';
 
-function App() {
+function App () {
     return (
         <Routes>
             <Route path="/" element={<MainLayout />}>
@@ -123,6 +126,9 @@ function App() {
                 <Route path="quan-ly-quyen" element={<Permission />} />
                 <Route path="quan-ly-tai-khoan" element={<AccountManager />} />
                 <Route path="quan-ly-tin-tuc" element={<PostManager />} />
+                <Route path="quan-ly-dich-vu" element={<ServiceManager />} />
+                <Route path="them-dich-vu" element={<CreateService />} />
+                <Route path="sua-dich-vu/:id" element={<UpdateService />} />
             </Route>
             <Route path="*" element={<PageNotFound />} />
         </Routes>

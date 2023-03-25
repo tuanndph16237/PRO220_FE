@@ -8,7 +8,7 @@ import { getAllShowroomAsync } from '../../../slices/showroom';
 import { EditOutlined, SyncOutlined } from '@ant-design/icons';
 import { Button, Space, Table, Tooltip } from 'antd';
 import { HOUR_DATE_TIME } from '../../../constants/format';
-import { ORDER_STATUS, VEHICLE_TYPE } from '../../../constants/order';
+import { ORDER_STATUS, SEVICE_TYPE, VEHICLE_TYPE } from '../../../constants/order';
 import SpinCustomize from '../../../components/Customs/Spin';
 import Filter from '../../../components/Filter/Filter';
 
@@ -18,6 +18,10 @@ const OrderManage = () => {
     const showrooms = useSelector((state) => state.showroom.showrooms.values);
     const orders = useSelector((state) => state.order.orders.values);
     const loading = useSelector((state) => state.order.orders.loading);
+    const handleOrder = orders.map((order) => {
+        return { ...order, key: order._id };
+    });
+
     const columns = [
         {
             title: 'Mã đơn hàng',
@@ -38,35 +42,27 @@ const OrderManage = () => {
             dataIndex: 'name',
         },
         {
-            title: 'Địa chỉ sửa chữa',
-            dataIndex: 'address',
-        },
-        {
             title: 'Số điện thoại',
             dataIndex: 'number_phone',
         },
         {
-            title: 'Số km xe đã chạy',
-            dataIndex: 'km',
-        },
-        {
-            title: 'Loại xe',
-            dataIndex: 'vehicleType',
-            render: (value) => {
-                const vehicle = VEHICLE_TYPE.find((item) => item.value == value);
-                if (vehicle) {
-                    return vehicle.label;
-                }
-            },
-        },
-        {
-            title: 'Biển kiểm soát',
-            dataIndex: 'licensePlates',
-        },
-        {
             title: 'Loại hình dịch vụ',
             dataIndex: 'serviceType',
-            render: (servviceType) => (servviceType ? 'Tại cửa hàng' : 'Tại nhà'),
+            render: (servviceType) => {
+                switch (servviceType) {
+                    case SEVICE_TYPE.SHOWROOM:
+                        return 'Sửa chữa/ Bảo dưỡng tại cửa hàng.';
+
+                    case SEVICE_TYPE.RESCUE:
+                        return 'Cứu hộ 24/7';
+
+                    case SEVICE_TYPE.CONTACT_RESCUE:
+                        return 'Nhận về sửa chữa';
+
+                    default:
+                        return '';
+                }
+            },
         },
         {
             title: 'Thời gian sửa chữa',
@@ -79,19 +75,14 @@ const OrderManage = () => {
             dataIndex: 'description',
         },
         {
-            title: 'Giá',
-            dataIndex: 'price',
-            render: (value) => value && value.toLocaleString('en') + ' VNĐ',
-        },
-        {
-            title: 'Phụ giá',
+            title: 'Phụ phí',
             dataIndex: 'subPrice',
             render: (value) => value && value.toLocaleString('en') + ' VNĐ',
         },
-        // {
-        //     title: 'VAT',
-        //     render: () => '10%',
-        // },
+        {
+            title: 'giảm giá',
+            render: () => '10%',
+        },
         {
             title: 'Tổng tiền',
             dataIndex: 'total',
@@ -188,11 +179,6 @@ const OrderManage = () => {
                                         name: 'Số điện thoại',
                                     },
                                     {
-                                        label: <Space align="center">Biển kiểm soát</Space>,
-                                        key: 'licensePlates',
-                                        name: 'Biển kiểm soát',
-                                    },
-                                    {
                                         label: <Space align="center">Ngày tạo</Space>,
                                         key: 'createdAt',
                                         type: 'date',
@@ -229,7 +215,7 @@ const OrderManage = () => {
                                 x: 3000,
                             }}
                             columns={columns}
-                            dataSource={orders}
+                            dataSource={handleOrder}
                         />
                     )}
                 </div>

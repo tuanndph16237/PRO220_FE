@@ -70,6 +70,16 @@ const siderBarItems = [
         label: 'Quản Lý Thành Viên',
     },
     {
+        label: PERMISSION_LABLEL.SERVICE_MANAGE,
+        key: PERMISSION_LABLEL.SERVICE_MANAGE,
+        code: PERMISSION_TYPE.CONFIRM,
+        icon: <FileDoneOutlined />,
+        children: [
+            { key: 'danh sach dịch vụ', path: 'quan-ly-dich-vu', label: 'Danh sách dịch vụ' },
+            { key: 'Thêm dịch vụ', path: 'them-dich-vu', code: PERMISSION_TYPE.CREATE, label: 'Thêm dịch vụ' },
+        ],
+    },
+    {
         key: PERMISSION_LABLEL.SHOWROOM_MANAGE,
         label: 'Quản Lý Cửa Hàng',
         code: PERMISSION_TYPE.NULL,
@@ -171,7 +181,10 @@ const AdminLayout = () => {
                 }}
             >
                 <Link to={'/'}>
-                    <img src="/images/admin-logo.png" className="mx-auto my-4 sm:h-16" alt="Dodoris Logo" />
+                    <div className="flex items-center justify-center gap-4">
+                        <img src="/images/admin-logo.png" className="my-4 sm:h-16" alt="Dodoris Logo" />
+                        <p className="text-[#ffff] font-bold">Dodoris</p>
+                    </div>
                 </Link>
                 <Menu
                     style={{ backgroundColor: '#17274e' }}
@@ -191,7 +204,7 @@ const AdminLayout = () => {
                         borderBottom: '1px solid #ccc',
                     }}
                 >
-                    <div className="flex justify-between content-center px-8">
+                    <div className="flex justify-between items-center px-10">
                         <div>
                             {collapsed ? (
                                 <span onClick={() => setCollapsed(!collapsed)} className="trigger">
@@ -203,9 +216,7 @@ const AdminLayout = () => {
                                 </span>
                             )}
                         </div>
-                        <div className="pt-2">
-                            <User layoutAdmin={true} />
-                        </div>
+                        <User layoutAdmin={true} />
                     </div>
                 </Header>
                 <Content className="bg-white p-6">

@@ -62,6 +62,7 @@ const UpdateOrder = (props) => {
             setOpenModal(true);
         }
     };
+
     const handleOk = async () => {
         setLoading(true);
         const data = await updateStatusOrder();
@@ -251,7 +252,7 @@ const UpdateOrder = (props) => {
                                         },
                                     ]}
                                 >
-                                    <Input className="h-10 text-base border-[#02b875]" placeholder="Nguyen Van A" />
+                                    <Input className="h-10 text-base border-[#02b875]" disabled />
                                 </Form.Item>
                             </Col>
                             <Col span={24}>
@@ -269,7 +270,7 @@ const UpdateOrder = (props) => {
                                         },
                                     ]}
                                 >
-                                    <Input className="h-10 text-base border-[#02b875]" />
+                                    <Input className="h-10 text-base border-[#02b875]" disabled />
                                 </Form.Item>
                             </Col>
                             <Col span={24}>
@@ -291,6 +292,7 @@ const UpdateOrder = (props) => {
                                         type="email"
                                         className="h-10 text-base border-[#02b875]"
                                         placeholder="vidu@gmail.com"
+                                        disabled
                                     />
                                 </Form.Item>
                             </Col>
@@ -302,44 +304,108 @@ const UpdateOrder = (props) => {
                                     icon={<p className="text-base font-semibold leading-8">2</p>}
                                     style={{ backgroundColor: '#02b875' }}
                                 />
-                                <span className="text-base pl-4 font-medium">Thông tin xe</span>
+                                <span className="text-base pl-4 font-medium">Địa điểm và Thời gian</span>
                             </Col>
                             <Col span={24}>
                                 <Form.Item
-                                    label={<p className="text-base font-semibold">Số km xe đã chạy</p>}
-                                    name="km"
+                                    name="serviceType"
+                                    label={<p className="text-base font-semibold">Nơi sửa chữa</p>}
                                     rules={[
                                         {
-                                            pattern: R_NUMBER,
-                                            message: 'Số km không đúng định dạng.',
+                                            required: true,
+                                            message: 'Quý khách vui lòng không để trống trường thông tin này.',
                                         },
                                     ]}
                                 >
-                                    <Input className="h-10 text-base border-[#02b875]" placeholder="" />
-                                </Form.Item>
-                                <Form.Item
-                                    name="vehicleType"
-                                    label={<p className="text-base font-semibold">Loại xe</p>}
-                                >
-                                    <Select size="large" className="h-10 text-base border-[#02b875]">
-                                        {VEHICLE_TYPE.map((item) => (
-                                            <Select.Option key={item.value} value={item.value} label={item.label}>
-                                                {item.label}
-                                            </Select.Option>
-                                        ))}
+                                    <Select disabled size="large" className="h-10 text-base ">
+                                        <Select.Option value={SEVICE_TYPE.SHOWROOM}>
+                                            Sửa chữa/ Bảo dưỡng tại cửa hàng.
+                                        </Select.Option>
+                                        <Select.Option value={SEVICE_TYPE.RESCUE}>Cứu hộ 24/7</Select.Option>
+                                        <Select.Option value={SEVICE_TYPE.CONTACT_RESCUE}>
+                                            Nhận về sửa chữa
+                                        </Select.Option>
                                     </Select>
                                 </Form.Item>
+                                {isShowroom ? null : (
+                                    <>
+                                        <Form.Item
+                                            label={<p className="text-base font-semibold">Địa chỉ cụ thể</p>}
+                                            name="address"
+                                            // rules={[
+                                            //     {
+                                            //         required: true,
+                                            //         message: 'Quý khách vui lòng không để trống trường thông tin này.',
+                                            //     },
+                                            // ]}
+                                        >
+                                            <Input.TextArea
+                                                disabled
+                                                className="text-base border-[#02b875]"
+                                                rows={1}
+                                                placeholder={'ưeqesfstsdtgweg'}
+                                            />
+                                        </Form.Item>
+                                        <p className="text-base font-semibold my-2">Vấn đề cụ thể</p>
+                                        <Select
+                                            disabled
+                                            mode="multiple"
+                                            className="mb-3"
+                                            defaultValue={['thay_xam']}
+                                            size="large"
+                                            style={{ width: '100%' }}
+                                            placeholder="chọn vấn đề bạn gặp phải"
+                                            options={[
+                                                { value: 'thay_xam', label: 'Thay xăm' },
+                                                { value: 'thay_binh', label: 'Thay bình điện' },
+                                                { value: 'thay_lốp', label: 'Thay lốp' },
+                                            ]}
+                                            optionLabelProp="label"
+                                        />
+                                    </>
+                                )}
+                                {!isShowroom ? null : (
+                                    <Form.Item
+                                        name="appointmentSchedule"
+                                        label={<p className="text-base font-semibold">Thời gian</p>}
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Quý khách vui lòng không để trống trường thông tin này.',
+                                            },
+                                        ]}
+                                    >
+                                        <DatePicker
+                                            disabled
+                                            size="large"
+                                            className="w-full border-[#02b875]"
+                                            placeholder="Vui lòng chọn thời gian"
+                                            format={HOUR_DATE_TIME}
+                                            disabledDate={disabledDate}
+                                            disabledTime={disabledDateTime}
+                                            value={date}
+                                            showNow={false}
+                                            onChange={(date, dateString) => {
+                                                const dateStringConvert = new Date(dateString);
+                                                setDate(dateStringConvert);
+                                            }}
+                                            showTime
+                                        />
+                                    </Form.Item>
+                                )}
+                            </Col>
+
+                            <Col span={24}>
                                 <Form.Item
-                                    label={<p className="text-base font-semibold">Biển số xe</p>}
-                                    name="licensePlates"
-                                    // rules={[
-                                    //     {
-                                    //         required: true,
-                                    //         message: 'Quý khách vui lòng không để trống trường thông tin này.',
-                                    //     },
-                                    // ]}
+                                    name="description"
+                                    label={<p className="text-base font-semibold">Ghi chú</p>}
                                 >
-                                    <Input className="h-10 text-base border-[#02b875]" placeholder="XX-XX/12345" />
+                                    <Input.TextArea
+                                        disabled
+                                        className="text-base border-[#02b875]"
+                                        rows={2}
+                                        placeholder="Cụ thể yêu cầu với Dodoris"
+                                    />
                                 </Form.Item>
                             </Col>
                         </Col>
@@ -368,101 +434,6 @@ const UpdateOrder = (props) => {
                                 <Avatar
                                     size={34}
                                     icon={<p className="text-base font-semibold leading-8">3</p>}
-                                    style={{ backgroundColor: '#02b875' }}
-                                />
-                                <span className="text-base pl-4 font-medium">Địa điểm và Thời gian</span>
-                            </Col>
-                            <Col span={24}>
-                                <Form.Item
-                                    name="serviceType"
-                                    label={<p className="text-base font-semibold">Nơi sửa chữa</p>}
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: 'Quý khách vui lòng không để trống trường thông tin này.',
-                                        },
-                                    ]}
-                                >
-                                    <Select
-                                        size="large"
-                                        placeholder="Sửa chữa tại..."
-                                        className="h-10 text-base border-[#02b875]"
-                                        onSelect={(value) => {
-                                            setIsShowroom(!!value);
-                                        }}
-                                    >
-                                        <Select.Option value={SEVICE_TYPE.SHOWROOM}>
-                                            Sửa chữa/ Bảo dưỡng tại cửa hàng.
-                                        </Select.Option>
-                                        <Select.Option value={SEVICE_TYPE.HOUSE}>
-                                            Sửa chữa/ Bảo dưỡng tại nhà.
-                                        </Select.Option>
-                                    </Select>
-                                </Form.Item>
-                                {isShowroom ? null : (
-                                    <Form.Item
-                                        label={<p className="text-base font-semibold">Địa chỉ cụ thể</p>}
-                                        name="address"
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: 'Quý khách vui lòng không để trống trường thông tin này.',
-                                            },
-                                        ]}
-                                    >
-                                        <Input.TextArea
-                                            className="text-base border-[#02b875]"
-                                            rows={2}
-                                            placeholder=""
-                                        />
-                                    </Form.Item>
-                                )}
-                            </Col>
-                            <Col span={24}>
-                                <Form.Item
-                                    name="appointmentSchedule"
-                                    label={<p className="text-base font-semibold">Thời gian</p>}
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: 'Quý khách vui lòng không để trống trường thông tin này.',
-                                        },
-                                    ]}
-                                >
-                                    <DatePicker
-                                        size="large"
-                                        className="w-full border-[#02b875]"
-                                        placeholder="Vui lòng chọn thời gian"
-                                        format={HOUR_DATE_TIME}
-                                        disabledDate={disabledDate}
-                                        disabledTime={disabledDateTime}
-                                        value={date}
-                                        showNow={false}
-                                        onChange={(date, dateString) => {
-                                            const dateStringConvert = new Date(dateString);
-                                            setDate(dateStringConvert);
-                                        }}
-                                        showTime
-                                    />
-                                </Form.Item>
-                                <Form.Item
-                                    name="description"
-                                    label={<p className="text-base font-semibold">Ghi chú</p>}
-                                >
-                                    <Input.TextArea
-                                        className="text-base border-[#02b875]"
-                                        rows={4}
-                                        placeholder="Cụ thể yêu cầu với Dodoris"
-                                    />
-                                </Form.Item>
-                            </Col>
-                        </Col>
-
-                        <Col span={12}>
-                            <Col span={24} className="pb-6">
-                                <Avatar
-                                    size={34}
-                                    icon={<p className="text-base font-semibold leading-8">4</p>}
                                     style={{ backgroundColor: '#02b875' }}
                                 />
                                 <span className="text-base pl-4 font-medium">Dịch vụ</span>
@@ -518,16 +489,19 @@ const UpdateOrder = (props) => {
                                     disabled
                                 />
                             </Form.Item>
-                            <Form.Item label={<p className="text-base font-semibold">Phụ phí</p>} name="subPrice">
-                                <InputNumber
-                                    className="h-10 w-full text-base border-[#02b875]"
-                                    formatter={(value) => `VNĐ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                                    parser={(value) => {
-                                        return value.replace(/\VNĐ\s?|(,*)/g, '');
-                                    }}
-                                    onChange={handleChangeSubPrice}
-                                />
-                            </Form.Item>
+                            {isShowroom ? null : (
+                                <Form.Item label={<p className="text-base font-semibold">Phụ phí</p>} name="subPrice">
+                                    <InputNumber
+                                        className="h-10 w-full text-base border-[#02b875]"
+                                        formatter={(value) => `VNĐ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                        parser={(value) => {
+                                            return value.replace(/\VNĐ\s?|(,*)/g, '');
+                                        }}
+                                        onChange={handleChangeSubPrice}
+                                    />
+                                </Form.Item>
+                            )}
+
                             <Form.Item label={<p className="text-base font-semibold">Tổng đơn hàng</p>} name="total">
                                 <InputNumber
                                     className="h-10 w-full text-base border-[#02b875]"

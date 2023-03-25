@@ -22,7 +22,6 @@ const StatusOrder = (props) => {
         {
             title: 'Chờ xác nhận',
             status: 'process',
-            description: 'Check lại thông tin đơn hàng.',
         },
         {
             title: 'Đã tiếp nhận lịch',
@@ -73,13 +72,13 @@ const StatusOrder = (props) => {
     }, [props.status]);
 
     const handleChangeStep = () => {
-        props.status > 2 ? setStepValue(1) : setStepValue(0);
+        props.status > 1 ? setStepValue(1) : setStepValue(0);
         const statusConvert = status.filter((items, idx) => {
             //hidden cancel
-            if (props.status > 2 && items.title !== 'Hủy') {
+            if (props.status > 1 && items.title !== 'Hủy') {
                 return true;
             }
-            if (props.status <= 2) {
+            if (props.status <= 1) {
                 return true;
             }
         });
@@ -107,7 +106,7 @@ const StatusOrder = (props) => {
 
     const checkDisableChangeStatus = (current) => {
         //disabeld cancel
-        if (!current && props.status > 2) {
+        if (!current && props.status > 1) {
             msgCancel();
             setDisabled(true);
             return;
