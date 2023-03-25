@@ -55,6 +55,7 @@ function App() {
                 <Route path="dat-lich" element={<BookingPage />} />
                 <Route path="tin-tuc" element={<Posts />} />
                 <Route path="tin-tuc/*" element={<Post />} />
+                <Route path="gioi-thieu" element={<AboutPage/>}/>
                 <Route
                     path="dang-nhap"
                     element={
