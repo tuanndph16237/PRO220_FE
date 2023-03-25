@@ -9,11 +9,17 @@
     -webkit-transition: width 0.2s;
     box-shadow: 0 1px 0 0 rgb(139 141 157 / 5%), 0 0 1px 0 rgb(65 71 108 / 15%);
 }
+
 .content-main {
     padding-top: 86px;
 }
+
 .footer-main {
     transition: width 0.2s;
     -webkit-transition: width 0.2s;
     box-shadow: 0 1px 3px 5px rgb(139 141 157 / 5%), 0 0 1px 0 rgb(65 71 108 / 15%);
+}
+
+.active {
+    color: #02b875;
 }

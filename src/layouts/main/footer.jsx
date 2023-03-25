@@ -6,10 +6,7 @@ const Footer = () => {
         <footer className="footer-main bg-white border-gray-200 px-2 sm:px-4 pb-2.5">
             <div className="container mx-auto pt-12">
                 <div className="flex justify-between items-center border-b py-6">
-                    <Link to="/" className="flex items-center">
-                        <img src="/images/myLogo.png" className="mr-3 sm:h-10" alt="Dodoris Logo" />
-                        <span className="self-center text-xl text-[#02b875] font-bold whitespace-nowrap">DODORIS</span>
-                    </Link>
+                    <div></div>
                     <ul className="flex space-x-6 justify-center">
                         <li className="text-base rounded md:bg-transparent md:p-0 hover:text-[#02b875]">
                             <Link to="#" className="text-gray-500 hover:text-gray-900 dark:hover:text-white">
