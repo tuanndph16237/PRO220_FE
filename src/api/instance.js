@@ -1,10 +1,12 @@
 import axios from 'axios';
 import { ROLE } from '../constants/auth';
+import { NOTIFICATION_TYPE } from '../constants/status';
 import { JwtDecode } from '../utils/auth';
+import { Notification } from '../utils/notifications';
 
 const instance = axios.create({
     baseURL: import.meta.env.VITE_BASE_URL,
-    timeout: 5000,
+    timeout: 10000,
 });
 
 instance.interceptors.request.use(
@@ -24,6 +26,8 @@ instance.interceptors.response.use(
         return response;
     },
     function (error) {
+        const {response} = error
+        Notification(NOTIFICATION_TYPE.ERROR,'Try cập không hợp lệ',response.data.message)
         return Promise.reject(error);
     },
 );

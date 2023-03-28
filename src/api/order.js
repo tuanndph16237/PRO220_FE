@@ -10,6 +10,10 @@ export const getOrders = (filter) => {
     });
 };
 
+export const getOrdersFilter = (filter) => {
+    return instance.post('/orders-filter', filter);
+};
+
 export const getOrderById = (id) => {
     return instance.get(`${URL}/${id}`);
 };
@@ -34,6 +38,26 @@ export const updateOrder = (id, data) => {
     return instance.patch(`${URL}/${id}`, data);
 };
 
+export const updateOrderStatus = (id, data) => {
+    return instance.patch(`order-status/${id}`, data);
+};
+
 export const createBannerByCustomer = (data) => {
     return instance.post('/order-by-customer', data);
+};
+
+export const getUserOrder = (accountId) => {
+    return instance.get(`/orders-customer/${accountId}`);
+};
+
+export const updateOrderUser = (data) => {
+    return instance.patch(`orders-customer/${data.idOrder}`, { status: 0 });
+};
+
+export const getTotalOrderByOptions = (data) => {
+    return instance.post('/order/statistical-total', data);
+};
+
+export const getOrderRevenue = (data) => {
+    return instance.post('/order/statistical-revenue', data);
 };

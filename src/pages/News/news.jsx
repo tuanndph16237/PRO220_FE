@@ -148,7 +148,7 @@ const News = () => {
 	</div>
 	<div className="card-columns listrecent">
 
-	
+
 		<div className="card">
 			<a href="#">
 				<img className="img-fluid" src="../../../public/images/Cac-tieu-chuan-ve-nhot-xe-tay-ga.jpg.webp" alt=""/>

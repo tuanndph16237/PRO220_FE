@@ -1,8 +1,8 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { createMaterial, getMaterials, removeMaterialById, removeMaterialByIds, updateMaterial } from '../api/material';
+import { createMaterial, getMaterials, updateMaterial } from '../api/material';
 import { NOTIFICATION_TYPE } from '../constants/status';
 
-export const getAllMaterialAsync = createAsyncThunk('getAllMaterialAsync', async (filter, { rejectWithValue }) => {
+export const getAllMaterialAsync = createAsyncThunk('getAllMaterialAsync', async(filter, { rejectWithValue }) => {
     try {
         const materials = await getMaterials(filter);
         return materials;
@@ -13,7 +13,7 @@ export const getAllMaterialAsync = createAsyncThunk('getAllMaterialAsync', async
 
 export const updateMaterialAsync = createAsyncThunk(
     'updateMaterialAsync',
-    async ({ _id, data }, { rejectWithValue }) => {
+    async({ _id, data }, { rejectWithValue }) => {
         try {
             const material = await updateMaterial(_id, data);
             return material;
@@ -22,7 +22,7 @@ export const updateMaterialAsync = createAsyncThunk(
         }
     },
 );
-export const createMaterialAsync = createAsyncThunk('createMaterialAsync', async (data, { rejectWithValue }) => {
+export const createMaterialAsync = createAsyncThunk('createMaterialAsync', async(data, { rejectWithValue }) => {
     try {
         const material = await createMaterial(data);
         return material;
@@ -30,17 +30,6 @@ export const createMaterialAsync = createAsyncThunk('createMaterialAsync', async
         return rejectWithValue(error);
     }
 });
-export const removeMaterialByIdsAsync = createAsyncThunk(
-    'removeMaterialByIdsAsync',
-    async (ids, { rejectWithValue }) => {
-        try {
-            const materials = await removeMaterialByIds(ids);
-            return materials;
-        } catch (error) {
-            return rejectWithValue(error);
-        }
-    },
-);
 
 export const MaterialSlice = createSlice({
     name: 'material',
@@ -49,11 +38,6 @@ export const MaterialSlice = createSlice({
             values: [],
             errors: null,
             loading: false,
-        },
-        materialsRemove: {
-            errors: null,
-            message: null,
-            dataDeleted: null,
         },
         update: {
             errors: null,
@@ -70,17 +54,6 @@ export const MaterialSlice = createSlice({
     },
     reducers: {},
     extraReducers: {
-        [getAllMaterialAsync.rejected.type]: (state, action) => {
-            state.materials.loading = false;
-        },
-        [getAllMaterialAsync.pending.type]: (state, action) => {
-            state.materials.loading = true;
-        },
-        [getAllMaterialAsync.fulfilled.type]: (state, action) => {
-            state.materials.loading = false;
-            state.materials.values = action.payload.data;
-        },
-
         [updateMaterialAsync.rejected.type]: (state, action) => {
             state.update.loading = false;
         },
@@ -95,14 +68,6 @@ export const MaterialSlice = createSlice({
             });
         },
 
-        [removeMaterialByIdsAsync.fulfilled.type]: (state, action) => {
-            if (action.payload.data.dataDeleted) {
-                state.materialsRemove.dataDeleted = action.payload.data.dataDeleted;
-            }
-            state.materials.values = state.materials.values.filter((material) => {
-                return !action.payload.data.ids.includes(material._id);
-            });
-        },
         [createMaterialAsync.rejected.type]: (state, action) => {
             state.create.message = 'Thêm thất bại';
             state.create.status = NOTIFICATION_TYPE.ERROR;

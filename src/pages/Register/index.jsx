@@ -7,6 +7,7 @@ import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from 'firebase/auth
 import { Notification } from '../../utils/notifications';
 import { NOTIFICATION_TYPE } from '../../constants/status';
 import { register } from '../../api/auth';
+import { R_NUMBER_PHONE } from '../../constants/regex';
 const auth = getAuth(app);
 const Register = () => {
     useDocumentTitle('Đăng ký tài khoản');
@@ -14,6 +15,8 @@ const Register = () => {
     const [isVerify, setIsVerify] = useState(false);
     const [sendOTP, setSendOTP] = useState(false);
     const [loadingSendOTP, setLoadingSendOTP] = useState(false);
+    const [loadingVerify, setLoadingVerify] = useState(false);
+    const [loadingCreatingAccount, setLoadingCreatingAccount] = useState(false);
     const navigate = useNavigate();
 
     const formatErrorMessageSendOTP = (message) => {
@@ -69,6 +72,7 @@ const Register = () => {
     };
 
     const verifyCode = () => {
+        setLoadingVerify(true);
         window.confirmationResult
             .confirm(otp)
             .then((result) => {
@@ -85,6 +89,9 @@ const Register = () => {
                     setSendOTP(false);
                     setLoadingSendOTP(false);
                 }
+            })
+            .finally(() => {
+                setLoadingVerify(false);
             });
     };
 
@@ -93,6 +100,7 @@ const Register = () => {
             setLoadingSendOTP(true);
             return onSignInSubmit(values.number_phone);
         }
+        setLoadingCreatingAccount(true);
         register(values)
             .then(({ data }) => {
                 Notification(NOTIFICATION_TYPE.WARNING, data.message);
@@ -106,20 +114,18 @@ const Register = () => {
                 setIsVerify(false);
                 setSendOTP(false);
                 setLoadingSendOTP(false);
+            })
+            .finally(() => {
+                setLoadingCreatingAccount(false);
             });
     };
 
     return (
-        <div>
-            <div className="flex h-full my-10 items-center font-sans font-semibold text-2xl">
+        <div className="login-page">
+            <div className="register-content items-center font-sans font-semibold text-2xl">
                 <div id="sign-in-button"></div>
-                <Form
-                    name="normal_login"
-                    className="login-form w-[400px] m-auto"
-                    initialValues={{ remember: true }}
-                    onFinish={onFinish}
-                >
-                    <h1 className="text-[28px] mb-6">Đăng ký tài khoản</h1>
+                <Form name="normal_login" className="login-form w-[380px] m-auto" onFinish={onFinish}>
+                    <h1 className="title-login">Đăng ký tài khoản</h1>
                     {isVerify ? (
                         <Form.Item name="name" rules={[{ required: true, message: 'Vui lòng nhập Họ và tên!' }]}>
                             <Input className="py-2 text-base" placeholder="Họ và tên" />
@@ -134,8 +140,10 @@ const Register = () => {
                         name="number_phone"
                         rules={[
                             { required: true, message: 'Vui lòng nhập Số điện thoại!' },
-                            { min: 10, message: 'Số điện thoại không đúng định dạng!' },
-                            { max: 11, message: 'Số điện thoại không đúng định dạng!' },
+                            {
+                                pattern: R_NUMBER_PHONE,
+                                message: 'Số điện thoại không đúng định dạng.',
+                            },
                         ]}
                     >
                         <Input className="py-2 text-base" placeholder="Số điện thoại" disabled={isVerify} />
@@ -147,7 +155,7 @@ const Register = () => {
                                 htmlType="submit"
                                 disabled={sendOTP}
                                 loading={loadingSendOTP}
-                                className="login-form-button mt-2 bg-[#02b875] w-full h-10 text-base font-medium"
+                                className="login-form-button btn-primary w-full h-10 font-medium mt-2"
                             >
                                 Nhận mã OTP xác thực
                             </Button>
@@ -167,7 +175,8 @@ const Register = () => {
                                 onClick={verifyCode}
                                 type="primary"
                                 disabled={!sendOTP}
-                                className="login-form-button my-4 bg-[#02b875] w-full h-10 text-base font-medium"
+                                loading={loadingVerify}
+                                className="login-form-button btn-primary w-full h-10 font-medium my-4 text-base"
                             >
                                 Xác thực
                             </Button>
@@ -178,7 +187,7 @@ const Register = () => {
                             name="password"
                             rules={[
                                 { required: true, message: 'Vui lòng nhập Mật khẩu!' },
-                                { min: 6, message: 'Mật khẩu phải đủ 8 ký tự!' },
+                                { min: 8, message: 'Mật khẩu phải đủ 8 ký tự!' },
                             ]}
                         >
                             <Input.Password className="py-2 text-base" type="password" placeholder="Mật khẩu" />
@@ -195,19 +204,20 @@ const Register = () => {
                                 type="primary"
                                 htmlType="submit"
                                 // disabled={!isVerify}
-                                className="login-form-button mt-4 bg-[#02b875] w-full h-10 text-base font-medium"
+                                loading={loadingCreatingAccount}
+                                className="login-form-button btn-primary w-full h-10 font-medium mt-4 text-base"
                             >
                                 Đăng ký
                             </Button>
                         </Form.Item>
                     ) : null}
-                    <p className="my-5 text-center">Đã có tài khoản?</p>
-                    <Link
-                        to="/dang-nhap"
-                        className="inline-block leading-10 text-base h-10 w-full rounded text-[#1464f4] text-center border border-[#1464f4] hover:text-[#fff] hover:bg-[#02b875] hover:border-none"
-                    >
-                        Đăng nhập
-                    </Link>
+                    <p className="my-5 pb-14 text-center">
+                        Đã có tài khoản?
+                        <Link to="/dang-nhap" className="text-base rounded text-[#02b875] text-underline">
+                            {' '}
+                            Đăng nhập
+                        </Link>
+                    </p>
                 </Form>
             </div>
         </div>

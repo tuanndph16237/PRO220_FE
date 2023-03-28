@@ -13,3 +13,8 @@ export const checkAuth = () => {
     if (!role) return false;
     return true;
 };
+
+export const isTokenExpired = (token) => {
+    const now = Math.floor(Date.now() / 1000);
+    return token.exp < now;
+};

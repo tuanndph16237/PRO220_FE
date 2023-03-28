@@ -1,0 +1,21 @@
+.login-page {
+    background: url('https://res.cloudinary.com/vannam042/image/upload/v1678423292/web_app/product-list__bg.jpg_yxk8tz.webp')
+        no-repeat top left/100% #dfdfdf;
+    padding: 64px 0;
+}
+.login-content,
+.register-content {
+    background-color: #fff;
+    width: 500px;
+    margin: 0 auto;
+    z-index: 2;
+    box-shadow: 0 1.5rem 3rem rgb(0 0 0 / 40%);
+    border-radius: 6px;
+}
+.title-login {
+    font-size: 32px;
+    display: block;
+    text-align: center;
+    padding-top: 48px;
+    padding-bottom: 40px;
+}

@@ -1,14 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import User from '../User';
 
 const Header = () => {
+    const [activeMenu, setActiveMenu] = useState('home');
+
+    const handleClick = (menu) => {
+        setActiveMenu(menu);
+    };
     return (
-        <header>
+        <header className="header-main">
             <nav className="bg-white border-gray-200 px-2 sm:px-4 py-2.5">
                 <div className="container flex flex-wrap items-center justify-between mx-auto">
                     <Link to="/" className="flex items-center">
-                        <img src="/images/myLogo.png" className="mr-3 sm:h-16" alt="Dodoris Logo" />
+                        <img src="/images/myLogo.png" className="mr-3 sm:h-10" alt="Dodoris Logo" />
                         <span className="self-center text-xl text-[#02b875] font-bold whitespace-nowrap">DODORIS</span>
                     </Link>
                     <div className="flex items-center md:order-2">
@@ -22,46 +27,61 @@ const Header = () => {
                             <li>
                                 <Link
                                     to="/"
-                                    className="block py-2 pl-3 pr-4 text-base text-[#3c3c3c] rounded md:bg-transparent md:p-0 hover:text-[#02b875]"
+                                    className={`block py-2 pl-3 pr-4 text-base text-[#3c3c3c] rounded md:bg-transparent md:p-0 hover:text-[#02b875] ${
+                                        activeMenu === 'home' ? 'active' : ''
+                                    }`}
+                                    onClick={() => handleClick('home')}
                                     aria-current="page"
                                 >
-                                    Trang chủ
+                                    Trang chủ
                                 </Link>
                             </li>
                             <li>
                                 <Link
                                     to="dat-lich"
-                                    className="block py-2 pl-3 pr-4 text-base text-[#3c3c3c] rounded md:bg-transparent md:p-0 hover:text-[#02b875]"
+                                    className={`block py-2 pl-3 pr-4 text-base text-[#3c3c3c] rounded md:bg-transparent md:p-0 hover:text-[#02b875] ${
+                                        activeMenu === 'booking' ? 'active' : ''
+                                    }`}
+                                    onClick={() => handleClick('booking')}
                                     aria-current="page"
                                 >
-                                    Đặt lịch
+                                    Đặt lịch
                                 </Link>
                             </li>
                             <li>
                                 <Link
                                     to="#"
-                                    className="block py-2 pl-3 pr-4 text-base text-[#3c3c3c] rounded md:bg-transparent md:p-0 hover:text-[#02b875]"
+                                    className={`block py-2 pl-3 pr-4 text-base text-[#3c3c3c] rounded md:bg-transparent md:p-0 hover:text-[#02b875] ${
+                                        activeMenu === 'services' ? 'active' : ''
+                                    }`}
+                                    onClick={() => handleClick('services')}
                                     aria-current="page"
                                 >
-                                    Dịch vụ của chúng tôi
+                                    Dịch vụ của chúng tôi
                                 </Link>
                             </li>
                             <li>
                                 <Link
-                                    to="about"
-                                    className="block py-2 pl-3 pr-4 text-base text-[#3c3c3c] rounded md:bg-transparent md:p-0 hover:text-[#02b875]"
+                                    to="gioi-thieu"
+                                    className={`block py-2 pl-3 pr-4 text-base text-[#3c3c3c] rounded md:bg-transparent md:p-0 hover:text-[#02b875] ${
+                                        activeMenu === 'about' ? 'active' : ''
+                                    }`}
+                                    onClick={() => handleClick('about')}
                                     aria-current="page"
                                 >
-                                    Giới thiệu
+                                    Giới thiệu
                                 </Link>
                             </li>
                             <li>
                                 <Link
-                                    to="news"
-                                    className="block py-2 pl-3 pr-4 text-base text-[#3c3c3c] rounded md:bg-transparent md:p-0 hover:text-[#02b875]"
+                                    to="tin-tuc"
+                                    className={`block py-2 pl-3 pr-4 text-base text-[#3c3c3c] rounded md:bg-transparent md:p-0 hover:text-[#02b875] ${
+                                        activeMenu === 'news' ? 'active' : ''
+                                    }`}
+                                    onClick={() => handleClick('news')}
                                     aria-current="page"
                                 >
-                                    Tin tức
+                                    Tin tức
                                 </Link>
                             </li>
                         </ul>

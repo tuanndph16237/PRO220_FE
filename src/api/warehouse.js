@@ -6,5 +6,25 @@ export const getWarehouseByShowroomId = (idShowroom) => {
 };
 
 export const updateQuantityOnePart = (dataUpdate) => {
-    return instance.patch(`${URL}/update-one`,dataUpdate);
+    return instance.patch(`${URL}/update-one`, dataUpdate);
+};
+
+export const warehouseSearch = (name) => {
+    return instance.post(`/warehouse/search?`, { name });
+};
+
+export const updateWarehouseByMaterials = (data) => {
+    return instance.patch('/warehouses', data);
+};
+
+export const giveBackMaterial = (data) => {
+    return instance.patch('/warehouses/take-part-out', data);
+};
+
+export const getExchangePart = (value) => {
+    return instance.get(`/warehouse-exchange`, { params: value });
+};
+
+export const exchangePart = (value) => {
+    return instance.patch(`/warehouse-exchange`, value);
 };

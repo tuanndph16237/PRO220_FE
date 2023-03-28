@@ -18,3 +18,15 @@
 .status-content .ant-steps-item-description:hover {
     color: var(--primary-color) !important;
 }
+
+.input-string-filter .ant-btn-primary {
+    background-color: var(--primary-color) !important;
+}
+.input-string-filter .ant-btn-primary:hover {
+    background-color: var(--primary-color-hover) !important;
+}
+.input-string-filter .ant-input-affix-wrapper:hover,
+.input-string-filter .ant-input-affix-wrapper:focus,
+.input-string-filter .ant-input-search .ant-input:focus {
+    border-color: var(--primary-color) !important;
+}

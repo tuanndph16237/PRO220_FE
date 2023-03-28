@@ -14,14 +14,12 @@ export const getMaterialById = (id) => {
     return instance.get(`${URL}/${id}`);
 };
 
-export const removeMaterialById = (id) => {
-    return instance.delete(`${URL}/${id}`);
-};
-
-export const removeMaterialByIds = (ids = []) => {
-    return instance.delete(URL, { data: { ids } });
-};
-
 export const updateMaterial = (id, data) => {
     return instance.patch(`${URL}/${id}`, data);
+};
+
+export const searchMaterial = (value) => {
+    return instance.get(`/materials/search`, {
+        params: value,
+    });
 };

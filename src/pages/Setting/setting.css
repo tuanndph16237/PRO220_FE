@@ -2,3 +2,6 @@
     background-color: var(--primary-color) !important;
     color: var(--white-color) !important;
 }
+.updateProfile>.ant-row {
+    display: inline;
+}

@@ -1,9 +1,9 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { getOrders, getOrderById, createOrder, updateOrder } from '../api/order';
+import { getOrderById, createOrder, updateOrder, getOrdersFilter } from '../api/order';
 
 export const getOrdersAsync = createAsyncThunk('getOrdersAsync', async (filter, { rejectWithValue }) => {
     try {
-        const order = await getOrders(filter);
+        const order = await getOrdersFilter(filter);
         return order;
     } catch (error) {
         return rejectWithValue(error);
@@ -45,23 +45,40 @@ export const OrderSlice = createSlice({
             errors: null,
             loading: false,
         },
+        updateOrder: {
+            loading: false,
+            errors: null,
+        },
     },
     reducers: {},
     extraReducers: {
         [getOrdersAsync.rejected.type]: (state, action) => {
             state.orders.loading = false;
+            state.orders.errors = true;
         },
         [getOrdersAsync.pending.type]: (state, action) => {
             state.orders.loading = true;
+            state.orders.errors = false;
         },
         [getOrdersAsync.fulfilled.type]: (state, action) => {
             state.orders.loading = false;
+            state.orders.errors = false;
             state.orders.values = action.payload.data;
         },
         [createOrderAsync.fulfilled.type]: (state, action) => {
             state.orders.values.push(action.payload.data);
         },
+        [updateOrderAsync.pending.type]: (state, action) => {
+            state.updateOrder.loading = true;
+        },
+        [updateOrderAsync.rejected.type]: (state, action) => {
+            console.log('update-async-error', action);
+            state.updateOrder.loading = false;
+            state.updateOrder.errors = action.payload;
+        },
         [updateOrderAsync.fulfilled.type]: (state, action) => {
+            state.updateOrder.loading = false;
+            state.updateOrder.errors = false;
             state.orders.values = state.orders.values.map((order) => {
                 if (order._id !== action.payload.data._id) return order;
                 return action.payload.data;
