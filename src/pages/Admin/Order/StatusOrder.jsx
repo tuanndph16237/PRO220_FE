@@ -161,7 +161,7 @@ const StatusOrder = (props) => {
                 </div>
             ) : null}
             <div className="pt-4 flex justify-end">
-                {/* {props.status === 3 && (
+                {props.status === 3 && (
                     <Button
                         onClick={() => {
                             setIsChangeMaterials(true);
@@ -174,7 +174,7 @@ const StatusOrder = (props) => {
                     >
                         Chỉnh sửa vật tư
                     </Button>
-                )} */}
+                )}
                 <Button
                     onClick={handleChangeStatus}
                     disabled={disabled}

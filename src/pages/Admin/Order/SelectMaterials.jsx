@@ -2,9 +2,11 @@ import React, { useState, useEffect, Fragment, useRef } from 'react';
 import _ from 'lodash';
 import { useDispatch, useSelector } from 'react-redux';
 import { giveBackMaterial, warehouseSearch } from '../../../api/warehouse';
-import { InputNumber, Select, Tooltip } from 'antd';
+import { Dropdown, Input, InputNumber, List, Tooltip } from 'antd';
 import ModalCustomize from '../../../components/Customs/ModalCustomize';
-import { updateWarehouseByMaterialsAsync } from '../../../slices/warehouse';
+import { giveBackMaterialAsync, updateWarehouseByMaterialsAsync } from '../../../slices/warehouse';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import { CloseCircleOutlined } from '@ant-design/icons';
 
 const SelectMaterials = (props) => {
     const materialsDefault = useSelector((state) => state.warehouse.materials.value);
@@ -12,6 +14,7 @@ const SelectMaterials = (props) => {
     const [materials, setMaterials] = useState([]);
     const [materialIds, setMaterialIds] = useState([]);
     const [selectedMaterials, setSelectedMaterials] = useState([]);
+    const [loading, setLoading] = useState(false);
     const searchTemp = useRef(null);
 
     useEffect(() => {
@@ -19,11 +22,11 @@ const SelectMaterials = (props) => {
     }, [materialsDefault]);
 
     useEffect(() => {
-        setMaterialIds(props.order.materialIds);
+        setMaterialIds(props.order.materialIds || []);
     }, [props.order.materialIds]);
 
     useEffect(() => {
-        setSelectedMaterials(props.order.materials);
+        setSelectedMaterials(props.order.materials || []);
     }, [props.order.materials]);
 
     const handleSearch = (value) => {
@@ -53,13 +56,8 @@ const SelectMaterials = (props) => {
     };
 
     const handleRemoveMaterial = (id) => {
-        //handle setMaterial
-        if (props.isChangeMaterials) {
-            handleGiveBackMaterial(id);
-        }
         const otherMaterialIds = materialIds.filter((materialId) => materialId !== id);
         handleOnChangeMaterial(otherMaterialIds);
-        //check is change material
     };
     const handleGiveBackMaterial = (id) => {
         const data = order.materials.find((value) => value.materialId === id);
@@ -75,9 +73,9 @@ const SelectMaterials = (props) => {
         //luu lai order
     };
 
-    const handleOnChangeMaterial = (marterials) => {
-        setMaterialIds(marterials);
-        const materialsWithQuantity = _.map(marterials, (marterial) => {
+    const handleOnChangeMaterial = (newMarterials) => {
+        setMaterialIds(newMarterials);
+        const materialsWithQuantity = _.map(newMarterials, (marterial) => {
             const price = _.get(
                 _.find(materialsDefault, (value) => value.materialId._id === marterial),
                 'materialId.price',
@@ -105,23 +103,60 @@ const SelectMaterials = (props) => {
             value={materialIds}
             footer={true}
             onSubmit={() => {
-                // neu khp chinh sua vat tu thi call api tru cac vat tu da chon
-                // if (!props.isChangeMaterials) {
-                dispatch(
-                    updateWarehouseByMaterialsAsync({
-                        showroomId: props.order.showroomId,
-                        materials: selectedMaterials,
-                    }),
-                );
-                // }
-                // const isNotChangeMaterial = checkMaterial(selectedMaterials);
-                // if (!isNotChangeMaterial) {
+                //handle change materials
+                if (props.isChangeMaterials) {
+                    const materialsNew = [];
+                    _.forEach(selectedMaterials, (item) => {
+                        const existMaterial = _.find(
+                            props.order.materials,
+                            (material) => material.materialId === item.materialId,
+                        );
+                        //case 1: them vat tu moi
+                        if (!existMaterial) {
+                            materialsNew.push(_.omit(item, ['price']));
+                            return;
+                        }
+                        //case 2: tra vat tu
+                        if (item.qty < existMaterial.qty) {
+                            const materialId = item.materialId;
+                            const data = {
+                                showroomId: props.order.showroomId,
+                                material: {
+                                    materialId,
+                                    qty: existMaterial.qty - item.qty,
+                                },
+                            };
+                            //tra lai vat tu
+                            dispatch(giveBackMaterialAsync(data));
+                        }
+                        //case 3: lay them vat tu
+                        if (item.qty > existMaterial.qty) {
+                            const data = {
+                                materialId: item.materialId,
+                                qty: item.qty - existMaterial.qty,
+                            };
+                            materialsNew.push(data);
+                        }
+                    });
+                    dispatch(
+                        updateWarehouseByMaterialsAsync({
+                            showroomId: props.order.showroomId,
+                            materials: materialsNew,
+                        }),
+                    );
+                } else {
+                    dispatch(
+                        updateWarehouseByMaterialsAsync({
+                            showroomId: props.order.showroomId,
+                            materials: selectedMaterials,
+                        }),
+                    );
+                }
                 props.handleOkCancel({
                     materials: selectedMaterials,
                     materialIds,
                     reasons: [],
                 });
-                // }
                 props.setShowModal();
             }}
             disabled={true}
@@ -133,35 +168,73 @@ const SelectMaterials = (props) => {
                     Chọn vật tư
                     <span className="text-[#ff4d4f]"> *</span>
                 </p>
-                <Select
-                    disabled={false}
-                    size="large"
-                    placeholder="Chọn vật tư sử dụng..."
-                    className="w-full text-base border-[#02b875]"
-                    mode="multiple"
-                    value={materialIds}
-                    onChange={handleOnChangeMaterial}
-                    optionLabelProp="label"
-                    showSearch
-                    // removeIcon={null}
-                    onSearch={handleSearch}
-                    filterOption={false}
-                >
-                    {_.map(materials, (item) => {
-                        const { quantity, materialId: material } = item;
+                <Dropdown
+                    menu={{
+                        items: [],
+                        selectable: true,
+                        defaultSelectedKeys: [],
+                    }}
+                    dropdownRender={(menu) => {
                         return (
-                            <Select.Option
-                                disabled={!quantity}
-                                key={material._id}
-                                value={material._id}
-                                label={
-                                    <div>
-                                        <Tooltip title={material.name}>
-                                            {material.name.length > 40
-                                                ? material.name.slice(0, 40) + '...'
-                                                : material.name}
-                                        </Tooltip>
+                            <div
+                                id="scrollableDiv"
+                                style={{
+                                    height: 400,
+                                    overflow: 'auto',
+                                    padding: '0 16px',
+                                    border: '1px solid rgba(140, 140, 140, 0.35)',
+                                    backgroundColor: '#fff',
+                                }}
+                            >
+                                <Input
+                                    size="middle"
+                                    className="my-2 text-base border-[#02b875] w-full py-2"
+                                    placeholder="Tìm kiếm tên vật tư"
+                                    onChange={(e) => handleSearch(e.target.value)}
+                                />
+                                <InfiniteScroll dataLength={materials.length} scrollableTarget="scrollableDiv">
+                                    <List
+                                        dataSource={materials}
+                                        renderItem={({ materialId: { _id, name, price }, quantity }) => {
+                                            return (
+                                                <List.Item key={_id}>
+                                                    <button
+                                                        className="w-full text-left"
+                                                        disabled={
+                                                            !quantity || !!_.find(materialIds, (id) => id === _id)
+                                                        }
+                                                        onClick={() => handleOnChangeMaterial([...materialIds, _id])}
+                                                    >
+                                                        <Tooltip title={name}>{name}</Tooltip>
+                                                        <p>Số lượng: {quantity}</p>
+                                                        <p>Giá tiền: {price.toLocaleString('en') + ' VNĐ'}</p>
+                                                    </button>
+                                                </List.Item>
+                                            );
+                                        }}
+                                    />
+                                </InfiniteScroll>
+                            </div>
+                        );
+                    }}
+                >
+                    {_.get(selectedMaterials, 'length', 0) > 0 ? (
+                        <div className="flex flex-wrap bg-[#fff] border border-[#02b875] rounded">
+                            {_.map(selectedMaterials, (selectedMaterial) => {
+                                const { materialId: material, quantity } = _.find(
+                                    materialsDefault,
+                                    (item) => item.materialId._id === selectedMaterial.materialId,
+                                );
+                                return (
+                                    <span
+                                        className="inline-block h-10 rounded border border-[#02b875] px-2 m-2 leading-10"
+                                        key={selectedMaterial.materialId}
+                                    >
+                                        <Tooltip title={material.name}>{material.name}</Tooltip>
+                                        <span> - </span>
+                                        <label htmlFor={selectedMaterial.materialId}>SL:</label>
                                         <InputNumber
+                                            id={selectedMaterial.materialId}
                                             className="mx-2"
                                             size="small"
                                             value={_.get(
@@ -170,6 +243,7 @@ const SelectMaterials = (props) => {
                                                 1,
                                             )}
                                             min={1}
+                                            max={quantity}
                                             disabled={false}
                                             defaultValue={1}
                                             onChange={(value) => {
@@ -189,19 +263,21 @@ const SelectMaterials = (props) => {
                                                 setSelectedMaterials(materialsWithQuantity);
                                             }}
                                         />
-                                        {/* <button onClick={() => handleRemoveMaterial(material._id)}>
+                                        <button onClick={() => handleRemoveMaterial(selectedMaterial.materialId)}>
                                             <CloseCircleOutlined />
-                                        </button> */}
-                                    </div>
-                                }
-                            >
-                                <Tooltip title={`${material.name} - ${material.price} - Số lượng: ${quantity}`}>
-                                    {material.name} - {material.price} - SL: {quantity}
-                                </Tooltip>
-                            </Select.Option>
-                        );
-                    })}
-                </Select>
+                                        </button>
+                                    </span>
+                                );
+                            })}
+                        </div>
+                    ) : (
+                        <Input
+                            size="larger"
+                            className="relative text-base border-[#02b875] w-full py-2"
+                            placeholder="Chọn vật tư sử dụng..."
+                        />
+                    )}
+                </Dropdown>
                 {_.isEmpty(selectedMaterials) && (
                     <span className="text-[#ff4d4f]">Vui lòng nhập chọn vật tư sử dụng</span>
                 )}

@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { getWarehouseByShowroomId, updateWarehouseByMaterials } from '../api/warehouse';
+import { getWarehouseByShowroomId, giveBackMaterial, updateWarehouseByMaterials } from '../api/warehouse';
 
 export const getMaterialsWarehouseAsync = createAsyncThunk(
     'getMaterialsWarehouseAsync',
@@ -16,6 +16,15 @@ export const getMaterialsWarehouseAsync = createAsyncThunk(
 export const updateWarehouseByMaterialsAsync = createAsyncThunk('updateWarehouseByMaterialsAsync', async (data) => {
     try {
         const res = await updateWarehouseByMaterials(data);
+        return data;
+    } catch (error) {
+        return rejectWithValue(error);
+    }
+});
+
+export const giveBackMaterialAsync = createAsyncThunk('giveBackMaterialAsync', async (data) => {
+    try {
+        const res = await giveBackMaterial(data);
         return data;
     } catch (error) {
         return rejectWithValue(error);
@@ -53,6 +62,25 @@ export const WarehouseSlice = createSlice({
                     ...material,
                     quantity: materialUpdate ? material.quantity - materialUpdate.qty : material.quantity,
                 };
+            });
+            state.materials.value = newMaterials;
+        },
+        [updateWarehouseByMaterialsAsync.rejected]: (state, action) => {
+            console.log('updateWarehouseByMaterialsAsync-errors,', action);
+        },
+        [giveBackMaterialAsync.rejected]: (state, action) => {
+            console.log('giveBackMaterialAsync-errors,', action);
+        },
+        [giveBackMaterialAsync.fulfilled]: (state, action) => {
+            const newMaterials = state.materials.value.map((material) => {
+                const id = material.materialId._id;
+                if (id === action.payload.material.materialId) {
+                    return {
+                        ...material,
+                        quantity: material.quantity + action.payload.material.qty,
+                    };
+                }
+                return material;
             });
             state.materials.value = newMaterials;
         },

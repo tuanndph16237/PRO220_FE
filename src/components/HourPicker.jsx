@@ -1,9 +1,20 @@
 import React, { useState } from 'react';
 import { Col, Input, Row } from 'antd';
+import dayjs from 'dayjs';
+import { DATE_FORMAT } from '../constants/format';
 const HourPicker = (props) => {
     const [toggle, setToggle] = useState(false);
     const [tab, setTab] = useState(1);
     const [hour, setHour] = useState('8:00');
+
+    const checkDisabledHourByDatePicker = (h) => {
+        const datePresent = dayjs().format(DATE_FORMAT);
+        const datePicker = dayjs(props.datePicker).format(DATE_FORMAT);
+        if (datePresent !== datePicker) return false;
+        const hourPresent = dayjs().format('HH');
+        if (h <= hourPresent) return true;
+        return false;
+    };
 
     const handleSetHour = (value) => {
         setHour(value);
@@ -48,6 +59,7 @@ const HourPicker = (props) => {
                             <Row gutter={8} wrap>
                                 <Col span={6}>
                                     <button
+                                        disabled={checkDisabledHourByDatePicker(8)}
                                         type="button"
                                         className={`${hour === '8:00' ? 'btn-primary' : 'bg-slate-50'} w-full h-10
                                 font-medium rounded-lg text-sm text-center`}
@@ -58,6 +70,7 @@ const HourPicker = (props) => {
                                 </Col>
                                 <Col span={6}>
                                     <button
+                                        disabled={checkDisabledHourByDatePicker(9)}
                                         type="button"
                                         className={`${hour === '9:00' ? 'btn-primary' : 'bg-slate-50'} w-full h-10
                                 font-medium rounded-lg text-sm text-center`}
@@ -68,6 +81,7 @@ const HourPicker = (props) => {
                                 </Col>
                                 <Col span={6}>
                                     <button
+                                        disabled={checkDisabledHourByDatePicker(10)}
                                         type="button"
                                         className={`${hour === '10:00' ? 'btn-primary' : 'bg-slate-50'} w-full h-10
                                 font-medium rounded-lg text-sm text-center`}
@@ -78,6 +92,7 @@ const HourPicker = (props) => {
                                 </Col>
                                 <Col span={6}>
                                     <button
+                                        disabled={checkDisabledHourByDatePicker(11)}
                                         type="button"
                                         className={`${hour === '11:00' ? 'btn-primary' : 'bg-slate-50'} w-full h-10
                                 font-medium rounded-lg text-sm text-center`}
@@ -94,6 +109,7 @@ const HourPicker = (props) => {
                             <Row gutter={8} wrap>
                                 <Col span={6}>
                                     <button
+                                        disabled={checkDisabledHourByDatePicker(13)}
                                         type="button"
                                         className={`${hour === '13:00' ? 'btn-primary' : 'bg-slate-50'} w-full h-10
                                 font-medium rounded-lg text-sm text-center`}
@@ -104,6 +120,7 @@ const HourPicker = (props) => {
                                 </Col>
                                 <Col span={6}>
                                     <button
+                                        disabled={checkDisabledHourByDatePicker(14)}
                                         type="button"
                                         className={`${hour === '14:00' ? 'btn-primary' : 'bg-slate-50'} w-full h-10
                                 font-medium rounded-lg text-sm text-center`}
@@ -114,6 +131,7 @@ const HourPicker = (props) => {
                                 </Col>
                                 <Col span={6}>
                                     <button
+                                        disabled={checkDisabledHourByDatePicker(15)}
                                         type="button"
                                         className={`${hour === '15:00' ? 'btn-primary' : 'bg-slate-50'} w-full h-10
                                 font-medium rounded-lg text-sm text-center`}
@@ -124,6 +142,7 @@ const HourPicker = (props) => {
                                 </Col>
                                 <Col span={6}>
                                     <button
+                                        disabled={checkDisabledHourByDatePicker(16)}
                                         type="button"
                                         className={`${hour === '16:00' ? 'btn-primary' : 'bg-slate-50'} w-full h-10
                                 font-medium rounded-lg text-sm text-center`}
@@ -134,6 +153,7 @@ const HourPicker = (props) => {
                                 </Col>
                                 <Col span={6}>
                                     <button
+                                        disabled={checkDisabledHourByDatePicker(17)}
                                         type="button"
                                         className={`${hour === '17:00' ? 'btn-primary' : 'bg-slate-50'} w-full h-10
                                 font-medium rounded-lg text-sm text-center`}
