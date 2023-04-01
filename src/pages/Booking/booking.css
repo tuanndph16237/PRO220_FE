@@ -6,6 +6,10 @@
 }
 
 .content-booking {
+    height: 100vh;
     background-image: url(https://res.cloudinary.com/vannam042/image/upload/v1672115969/web_app/bg-booking_yuwzzf.png) !important;
 }
 
+.content-booking-form{
+    background-image: url(https://res.cloudinary.com/vannam042/image/upload/v1672115969/web_app/bg-booking_yuwzzf.png) !important;
+}
