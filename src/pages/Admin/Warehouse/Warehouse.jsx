@@ -12,6 +12,7 @@ import PermissionCheck from '../../../components/permission/PermissionCheck';
 import { PERMISSION_LABLEL, PERMISSION_TYPE } from '../../../constants/permission';
 import Exchange from './Exchange';
 import ModalCustomize from '../../../components/Customs/ModalCustomize';
+import Filter from '../../../components/Filter/Filter';
 
 const noti = (type, message, description) => {
     notification[type]({
@@ -372,10 +373,79 @@ const Warehouse = () => {
         }
     }, [state.idCurrentShowroom]);
 
+    const handleFilter = (values = {}) => {
+        console.log('fillter');
+    };
+
     return (
         <>
-            <div className="my-3 grid grid-cols-2">
+            <div className="my-3 flex gap-5">
                 <div>{!showroomId ? <ListShowroom options={listShowroom} selectShowroom={dispatch} /> : ''}</div>
+                <Filter
+                    items={[
+                        {
+                            label: <Space align="center">Mã đơn hàng</Space>,
+                            key: '_id',
+                            name: 'Mã đơn hàng',
+                        },
+                        {
+                            label: <Space align="center">Trạng thái</Space>,
+                            key: 'status',
+                            type: 'select',
+                            mode: 'multiple',
+                            values: [
+                                {
+                                    label: 'Hủy',
+                                    value: 0,
+                                },
+                                {
+                                    label: 'Chờ xác nhận',
+                                    value: 1,
+                                },
+                                {
+                                    label: 'Đã xác nhận',
+                                    value: 2,
+                                },
+                                {
+                                    label: 'Đang xử lý',
+                                    value: 3,
+                                },
+                                {
+                                    label: 'Thanh toán',
+                                    value: 4,
+                                },
+                                {
+                                    label: 'Hoàn thành',
+                                    value: 5,
+                                },
+                            ],
+                            name: 'Trạng thái',
+                        },
+                        {
+                            label: <Space align="center">Tên khách hàng</Space>,
+                            key: 'name',
+                            type: 'string',
+                        },
+                        {
+                            label: <Space align="center">Số điện thoại</Space>,
+                            key: 'number_phone',
+                            name: 'Số điện thoại',
+                        },
+                        {
+                            label: <Space align="center">Ngày tạo</Space>,
+                            key: 'createdAt',
+                            type: 'date',
+                            name: 'Ngày tạo',
+                        },
+                        {
+                            label: <Space align="center">Thời gian sửa chữa</Space>,
+                            key: 'appointmentSchedule',
+                            type: 'date',
+                            name: 'Thời gian sửa chữa',
+                        },
+                    ]}
+                    onFilter={handleFilter}
+                />
                 <div className="flex justify-end pr-4">
                     <p className="text-[18px]">
                         Số lượng: <span className="font-bold">{totals}</span>

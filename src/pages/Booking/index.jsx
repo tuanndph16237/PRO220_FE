@@ -2,17 +2,15 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import _ from 'lodash';
 import useDocumentTitle from '../../hooks/useDocumentTitle';
-import { Avatar, Button, Col, DatePicker, Form, Input, Row, Select, TimePicker } from 'antd';
-import { HOUR_DATE_TIME, DATE_FORMAT } from '../../constants/format';
-import { compareUserShowroom, search } from '../../api/showroom';
+import { Avatar, Button, Col, DatePicker, Form, Input, Row } from 'antd';
+import { DATE_FORMAT } from '../../constants/format';
+import { search } from '../../api/showroom';
 import './booking.css';
-import SpinCustomize from '../../components/Customs/Spin';
 import { checkPhoneinSystem, createBannerByCustomer } from '../../api/order';
 import { Notification } from '../../utils/notifications';
 import { NOTIFICATION_TYPE } from '../../constants/status';
 import { getAllShowroomAsync } from '../../slices/showroom';
-import { SEVICE_TYPE, VEHICLE_TYPE } from '../../constants/order';
-import { R_NUMBER, R_NUMBER_PHONE } from '../../constants/regex';
+import { R_NUMBER_PHONE } from '../../constants/regex';
 import { disabledDate, disabledDateTime, setHourISODate } from '../../utils/date';
 import ModalCustomize from '../../components/Customs/ModalCustomize';
 import ShowformModal from './showformModal';
@@ -24,7 +22,7 @@ import app from '../Register/fisebase_config';
 import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from 'firebase/auth';
 import { ModalOtp } from '../Booking/modalOTP';
 import { JwtDecode } from '../../utils/auth';
-import axios from 'axios';
+import ServiceType from './serviceType';
 
 const auth = getAuth(app);
 
@@ -75,7 +73,7 @@ const BookingPage = () => {
     const searchTemp = useRef(null);
     const [open, setOpenModal] = useState(false);
     const [address, setAddress] = useState('');
-    const [service_type, setService_type] = useState([]);
+    const [serviceType, setServiceType] = useState([]);
     const [otp, setOtp] = useState('');
     const [loadingVerify, setLoadingVerify] = useState(false);
     const [openOpt, setOpenOtp] = useState(false);
@@ -84,11 +82,7 @@ const BookingPage = () => {
     const [openMoadl, setOpentModal] = useState(false);
     const [numberPhone, setNumberPhone] = useState(0);
     const [openText, setOpenText] = useState(false);
-
-    const coordinate = useRef({
-        latitude: '',
-        longitude: '',
-    });
+    const [isServiceEmpty, setIsServiceEmpty] = useState(true);
 
     const verifyCode = () => {
         setLoadingVerify(true);
@@ -126,39 +120,6 @@ const BookingPage = () => {
                 );
             });
     };
-    useEffect(() => {
-        var geocoder = new maptiler.Geocoder({
-            input: 'searchBooking',
-            key: 'CKlzQ1LLayVnG9v67Xs3',
-        });
-        geocoder.on('select', async (item) => {
-            if (_.isEmpty(filter)) {
-                Notification(NOTIFICATION_TYPE.ERROR, 'Bạn chưa chọn showroom!', 'Hãy chọn showroom gần bạn nhất!');
-            } else {
-                let coordinates = item.center;
-                coordinate.current.latitude = coordinates[1];
-                coordinate.current.longitude = coordinates[0];
-                if (_.has(item, 'place_name_vi')) {
-                    setAddress(item.place_name_vi);
-                } else {
-                    setAddress(item.place_name_en);
-                }
-                const checkUserDistance = await compareUserShowroom({
-                    showroomId: filter._id,
-                    latitude: coordinates[1],
-                    longitude: coordinates[0],
-                });
-                if (!checkUserDistance.data) {
-                    setAddress('');
-                    Notification(
-                        NOTIFICATION_TYPE.ERROR,
-                        'Địa chỉ không nằm trong phạm vi hỗ trợ!',
-                        'Hãy chọn showroom gần bạn nhất!',
-                    );
-                }
-            }
-        });
-    }, [isShowroom == false]);
 
     useEffect(() => {
         //call api get showroom
@@ -172,20 +133,17 @@ const BookingPage = () => {
 
     const onFinish = (values) => {
         setCreatingBooking(true);
+        if (_.isEmpty(serviceType)) setIsServiceEmpty(true);
         const myDate = setHourISODate(date, hour);
         createBannerByCustomer({
             ...values,
             appointmentSchedule: myDate,
             address,
+            serviceType: serviceType?.serviceName,
             accountId: user._id ? user._id : initialValues.accountId,
             showroomId: filter._id || null,
         })
             .then(({ data }) => {
-                if (data.message) {
-                    onSignInSubmit(data.number_phone);
-                    setDataForm(data);
-                    return;
-                }
                 Notification(NOTIFICATION_TYPE.SUCCESS, 'Bạn đã đặt lịch thành công!');
                 if (isLogged) {
                     navigate(`/cai-dat/quan-ly-don-hang/${data._id}`);
@@ -221,16 +179,12 @@ const BookingPage = () => {
         setOpenModal(false);
     };
 
-    const handleChangeSelect = (value) => {
-        setService_type(value);
-    };
-
     const handlCheckedtext = () => {
         setOpenText(false);
     };
 
     const handlChecked = async () => {
-        const { data } = await checkPhoneinSystem({ number_phone: numberPhone })
+        const { data } = await checkPhoneinSystem({ number_phone: numberPhone });
         if (!data.isPhoneInSystem) {
             setOpentModal(false);
             onSignInSubmit(numberPhone);
@@ -260,17 +214,18 @@ const BookingPage = () => {
             if (!jwt) {
                 setLoadingInital(true);
                 setOpentModal(true);
-                window.scrollTo(0, 0)
+                window.scrollTo(0, 0);
             } else {
                 setInitialValues(jwt);
                 setIsOpenForm(true);
             }
         })();
     }, []);
+
     return (
         <div className="">
             {isOpenForm ? (
-                <div className='w-full content-booking-form py-16'>
+                <div className="w-full content-booking-form py-16">
                     <Form
                         className="bg-white px-6 max-w-screen-lg mx-auto rounded py-5"
                         name="booking-form"
@@ -360,42 +315,19 @@ const BookingPage = () => {
                                     </Col>
                                     <Col span={24}>
                                         <Form.Item
-                                            name="serviceType"
-                                            label={<p className="text-base font-semibold">Dịch vụ sửa chữa</p>}
+                                            name="serviceSelect"
                                             rules={[
                                                 {
-                                                    required: true,
+                                                    required: isServiceEmpty,
                                                     message: 'Quý khách vui lòng không để trống trường thông tin này.',
                                                 },
                                             ]}
-                                            initialValue={SEVICE_TYPE.SHOWROOM}
                                         >
-                                            <Select
-                                                size="large"
-                                                placeholder="Sửa chữa tại..."
-                                                className="h-10 text-base border-[#02b875]"
-                                                onSelect={(value) => {
-                                                    if (
-                                                        value === SEVICE_TYPE.SHOWROOM ||
-                                                        value === SEVICE_TYPE.CONTACT_RESCUE
-                                                    ) {
-                                                        setIsShowroom(true);
-                                                        setService_type([]);
-                                                        setAddress('');
-                                                        setFilter('');
-                                                        return;
-                                                    }
-                                                    setIsShowroom(false);
-                                                }}
-                                            >
-                                                <Select.Option value={SEVICE_TYPE.SHOWROOM}>
-                                                    Sửa chữa/ Bảo dưỡng tại cửa hàng.
-                                                </Select.Option>
-                                                <Select.Option value={SEVICE_TYPE.RESCUE}>Cứu hộ 24/7</Select.Option>
-                                                <Select.Option value={SEVICE_TYPE.CONTACT_RESCUE}>
-                                                    Nhận về sửa chữa
-                                                </Select.Option>
-                                            </Select>
+                                            <ServiceType
+                                                serviceSelect={serviceType}
+                                                getService={setServiceType}
+                                                handleEmpty={setIsServiceEmpty}
+                                            />
                                         </Form.Item>
                                         <Form.Item
                                             name="description"
@@ -474,61 +406,6 @@ const BookingPage = () => {
                                                 </ModalCustomize>
                                             </>
                                         </Form.Item>
-                                        {isShowroom ? null : (
-                                            <>
-                                                <Form.Item
-                                                    label={<p className="text-base font-semibold">Địa chỉ cụ thể</p>}
-                                                    name="address"
-                                                    rules={[
-                                                        {
-                                                            required: address == '' ? true : false,
-                                                            message:
-                                                                'Quý khách vui lòng không để trống trường thông tin này.',
-                                                        },
-                                                    ]}
-                                                >
-                                                    <>
-                                                        <p className="text-black mx-2">
-                                                            Lưu ý: hỗ trợ trong bán kính 5km với cửa hàng bạn chọn!
-                                                        </p>
-                                                        <Input
-                                                            className="text-base border-[#02b875] w-full py-2"
-                                                            placeholder="Nhập địa chỉ"
-                                                            value={address}
-                                                            onChange={(e) => setAddress(e.target.value)}
-                                                            id="searchBooking"
-                                                        />
-                                                    </>
-                                                </Form.Item>
-
-                                                <Form.Item
-                                                    label={<p className="text-base font-semibold">Vấn đề cụ thể</p>}
-                                                    name="service_type"
-                                                    rules={[
-                                                        {
-                                                            required: service_type.length == 0 ? true : false,
-                                                            message:
-                                                                'Quý khách vui lòng không để trống trường thông tin này.',
-                                                        },
-                                                    ]}
-                                                >
-                                                    <Select
-                                                        mode="multiple"
-                                                        defaultValue={['thay_xam']}
-                                                        size="large"
-                                                        style={{ width: '100%' }}
-                                                        placeholder="chọn vấn đề bạn gặp phải"
-                                                        onChange={handleChangeSelect}
-                                                        options={[
-                                                            { value: 'thay_xam', label: 'Thay xăm' },
-                                                            { value: 'thay_binh', label: 'Thay bình điện' },
-                                                            { value: 'thay_lốp', label: 'Thay lốp' },
-                                                        ]}
-                                                        optionLabelProp="label"
-                                                    />
-                                                </Form.Item>
-                                            </>
-                                        )}
                                     </Col>
                                     {!isShowroom ? null : (
                                         <Row gutter={16}>
@@ -601,7 +478,10 @@ const BookingPage = () => {
                                     <ModalCustomize
                                         showModal={openMoadl}
                                         footer={true}
-                                        setShowModal={() => setOpentModal(false)}
+                                        setShowModal={() => {
+                                            setOpentModal(false);
+                                            navigate('/');
+                                        }}
                                         onSubmit={handlChecked}
                                     >
                                         <ShowformModal onValue={(item) => handlOk(item)} title={'Nhập số điện thoại'} />
