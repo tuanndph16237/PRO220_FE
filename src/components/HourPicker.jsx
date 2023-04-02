@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Col, Input, Row } from 'antd';
 import dayjs from 'dayjs';
 import { DATE_FORMAT } from '../constants/format';
@@ -6,6 +6,26 @@ const HourPicker = (props) => {
     const [toggle, setToggle] = useState(false);
     const [tab, setTab] = useState(1);
     const [hour, setHour] = useState('8:00');
+
+    useEffect(() => {
+        const datePresent = dayjs().format(DATE_FORMAT);
+        const datePicker = dayjs(props.datePicker).format(DATE_FORMAT);
+        if (datePresent === datePicker) {
+            const hourPickerChoose = [8, 9, 10, 11, 13, 14, 15, 16, 17];
+            const hourPresent = dayjs().format('HH');
+            const hourNext = +hourPresent + 1;
+            if (hourPickerChoose.includes(hourNext)) {
+                handleSetHour(`${hourNext.toString()}:00`);
+                return;
+            }
+            hourPickerChoose.some((h) => {
+                if (hourNext < h) {
+                    handleSetHour(`${h.toString()}:00`);
+                    return true;
+                }
+            });
+        }
+    }, [props.datePicker]);
 
     const checkDisabledHourByDatePicker = (h) => {
         const datePresent = dayjs().format(DATE_FORMAT);
