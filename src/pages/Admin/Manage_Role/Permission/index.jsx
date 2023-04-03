@@ -79,7 +79,7 @@ const index = () => {
                 <div className="flex justify-between">
                     <div>
                         <Button onClick={() => OpenShowDrawer()} className="btn-primary text-white mr-5" type="primary">
-                            Thêm đơn hàng
+                            Thêm quyền
                         </Button>
                         <button className="pr-6" onClick={() => handleFilters()}>
                             <Tooltip title="Làm mới đơn hàng">

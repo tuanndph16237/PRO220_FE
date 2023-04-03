@@ -54,7 +54,8 @@ const index = () => {
                     tags: ['cool', 'teacher'],
                 };
             });
-            setData(showdata);
+            const newData = showdata.filter((item)=>item.name !== 'Admin')
+            setData(newData);
         })();
     }, [Role]);
     return (
