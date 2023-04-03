@@ -54,11 +54,9 @@ const AccountManager = () => {
     const getAllAccount = (filter) => {
         getAccounts(filter)
             .then(({ data: res }) => {
-                const newData = res.map((item) => {
-                    return {
-                        key: item._id,
-                        ...item,
-                    };
+                const Data = res.filter((item) => item.roleId !== '640317c7f28e238735a29128');
+                const newData =  Data.map((item) => {
+                    return { key: item._id, ...item };
                 });
                 setData(newData);
             })
@@ -125,7 +123,7 @@ const AccountManager = () => {
             render: (roleId) => {
                 const role = roles.find((role) => role.id === roleId);
                 if (!role) return '';
-                return role.name;
+                return role.name !== 'Admin' && role.name;
             },
         },
         {
