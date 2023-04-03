@@ -80,7 +80,7 @@ const EditPermission = ({ id, onClose }) => {
         return object;
     };
     const onChage = (event) => {
-        const resual = hanldInput(event);
+        const resual = hanldInput(event.target.value);
         form.setFieldsValue({
             namePermission: resual,
         });

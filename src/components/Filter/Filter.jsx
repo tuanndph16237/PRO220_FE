@@ -44,7 +44,6 @@ const Filter = ({ items, onFilter }) => {
             <Space size={[8, 16]} wrap>
                 {selectedKeys.map((key) => {
                     const values = items.find((item) => item.key === key);
-                    console.log(values);
                     switch (values.type) {
                         case 'select':
                             return (

@@ -100,7 +100,7 @@ const CreateRole = ({ onClose }) => {
         return box;
     };
     const onChage = (event) => {
-        const resual = hanldInput(event);
+        const resual = hanldInput(event.target.value);
         form.setFieldsValue({
             name: resual,
         });

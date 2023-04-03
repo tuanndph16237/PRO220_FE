@@ -1,7 +1,7 @@
 export const hanldInput = (e) => {
     let text = '';
-    if (e.target.value) {
-        text = e.target.value.split(' ').map((element) => capitalizeFirstLetter(element)).join(' ');
+    if (e) {
+        text = e.split(' ').map((element) => capitalizeFirstLetter(element)).join(' ');
         return text
     }
 };

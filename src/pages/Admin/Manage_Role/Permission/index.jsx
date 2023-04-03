@@ -1,11 +1,14 @@
 import React, { useEffect } from 'react';
 import ShowDrawer from './ShowDrawer';
 import { useState } from 'react';
-import { Space, Spin, Table, Tag } from 'antd';
-import { EditOutlined, PlusOutlined } from '@ant-design/icons';
+import { Button, Space, Spin, Table, Tooltip } from 'antd';
+import { EditOutlined, SyncOutlined } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { getPermissions } from '../../../../slices/role';
 import { isEmpty } from 'lodash';
+import Filter from '../../../../components/Filter/Filter';
+import { hanldInput } from '../../../../utils/capotaliieFirstLetter';
+import { useRef } from 'react';
 const index = () => {
     const [open, setOpen] = useState(false);
     const [action, setAction] = useState('');
@@ -14,6 +17,8 @@ const index = () => {
     const dispatch = useDispatch();
     const Loading = useSelector((state) => state.role.loading);
     const [id, setId] = useState('');
+    const data = useRef([]);
+    const [showroomsFilter, setShowroomsFilter] = useState([]);
     const columns = [
         {
             title: 'Name',
@@ -55,22 +60,53 @@ const index = () => {
             };
         });
         setDataTree(value);
+        data.current = value;
+        setShowroomsFilter(value.map((item) => ({ label: item.name, value: item.key })));
     }, [listPermission]);
+    const handleFilter = (values) => {
+        if (values.nameId.length == 0) {
+            setDataTree(data.current);
+        } else {
+            setDataTree(data.current.filter((item) => values.nameId.includes(item.key)));
+        }
+    };
+    const handleFilters = () => {
+        setDataTree(data.current);
+    };
     return (
         <div>
-            {' '}
             <div>
-                <button
-                    type="button"
-                    onClick={() => OpenShowDrawer()}
-                    className="focus:outline-none h-10 text-white bg-[#02b875] hover:bg-[#09915f] focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-base px-5 py-2.5 my-5"
-                >
-                    <PlusOutlined className="pr-2 text-white " />
-                    Thêm
-                </button>
+                <div className="flex justify-between">
+                    <div>
+                        <Button onClick={() => OpenShowDrawer()} className="btn-primary text-white mr-5" type="primary">
+                            Thêm đơn hàng
+                        </Button>
+                        <button className="pr-6" onClick={() => handleFilters()}>
+                            <Tooltip title="Làm mới đơn hàng">
+                                <SyncOutlined style={{ fontSize: '18px', color: '#000' }} />
+                            </Tooltip>
+                        </button>
+                        <Filter
+                            items={[
+                                {
+                                    label: <Space align="center">Tên Quyền</Space>,
+                                    key: 'nameId',
+                                    type: 'select',
+                                    mode: 'multiple',
+                                    values:showroomsFilter,
+                                    name: 'Tên Quyền....',
+                                },
+                            ]}
+                            onFilter={handleFilter}
+                        />
+                    </div>
+                    <p className="p-5">
+                        Số lượng: <span className="font-bold">{dataTree?.length}</span>
+                    </p>
+                </div>
                 <>
                     <Spin spinning={Loading}>
-                        <Table columns={columns} dataSource={dataTree} />;
+                        <Table columns={columns} dataSource={dataTree} />
                         <ShowDrawer
                             open={open}
                             onClose={(data) => {
