@@ -123,6 +123,15 @@ const OrderManage = () => {
                 <div>
                     <div className="flex justify-between align-center pb-4">
                         <div>
+                            <Button
+                                onClick={() => {
+                                    navigate('/admin/them-don-hang');
+                                }}
+                                className="btn-primary text-white mr-5"
+                                type="primary"
+                            >
+                                Thêm đơn hàng
+                            </Button>
                             <button className="pr-6" onClick={() => handleFilter()}>
                                 <Tooltip title="Làm mới đơn hàng">
                                     <SyncOutlined style={{ fontSize: '18px', color: '#000' }} />
@@ -194,15 +203,9 @@ const OrderManage = () => {
                                 onFilter={handleFilter}
                             />
                         </div>
-                        <Button
-                            onClick={() => {
-                                navigate('/admin/them-don-hang');
-                            }}
-                            className="btn-primary text-white"
-                            type="primary"
-                        >
-                            Thêm đơn hàng
-                        </Button>
+                        <p className="p-5">
+                            Số lượng: <span className="font-bold">{handleOrder?.length}</span>
+                        </p>
                     </div>
 
                     {loading ? (

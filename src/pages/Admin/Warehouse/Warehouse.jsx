@@ -1,4 +1,16 @@
-import { Form, Input, InputNumber, Popconfirm, Table, Typography, Space, Button, Tooltip, notification } from 'antd';
+import {
+    Form,
+    Input,
+    InputNumber,
+    Popconfirm,
+    Table,
+    Typography,
+    Space,
+    Button,
+    Tooltip,
+    notification,
+    Select,
+} from 'antd';
 import { JwtDecode } from '../../../utils/auth';
 import { SearchOutlined } from '@ant-design/icons';
 import React, { useEffect, useRef, useState, useMemo, useReducer } from 'react';
@@ -137,7 +149,6 @@ const Warehouse = () => {
             noti(NOTIFICATION_TYPE.ERROR, `${res.response.data.error}`);
         }
     };
-
     const handleSearch = (selectedKeys, confirm, dataIndex) => {
         confirm();
         setSearchText(selectedKeys[0]);
@@ -373,84 +384,52 @@ const Warehouse = () => {
         }
     }, [state.idCurrentShowroom]);
 
-    const handleFilter = (values = {}) => {
-        console.log('fillter');
+    const handleChange = (value) => {
+        if (value == 'sort') {
+            for (let i = 0; i < data.length; i++) {
+                for (let j = i + 1; j < data.length; j++) {
+                    if (data[i].quantity > data[j].quantity) {
+                        const temp = data[i];
+                        data[i] = data[j];
+                        data[j] = temp;
+                    }
+                }
+            }
+            setData(data);
+        } else {
+            const a = data.filter((item) => item.quantity === 0);
+            setData(a);
+        }
     };
-
     return (
         <>
             <div className="my-3 flex gap-5">
                 <div>{!showroomId ? <ListShowroom options={listShowroom} selectShowroom={dispatch} /> : ''}</div>
-                <Filter
-                    items={[
-                        {
-                            label: <Space align="center">Mã đơn hàng</Space>,
-                            key: '_id',
-                            name: 'Mã đơn hàng',
-                        },
-                        {
-                            label: <Space align="center">Trạng thái</Space>,
-                            key: 'status',
-                            type: 'select',
-                            mode: 'multiple',
-                            values: [
+                {data.length > 0 && (
+                    <>
+                        <Button onClick={() => OpenShowDrawer()} className="btn-primary text-white" type="primary">
+                            Bộ Lọc
+                        </Button>
+                        <Select
+                            style={{
+                                width: 120,
+                            }}
+                            onChange={handleChange}
+                            options={[
                                 {
-                                    label: 'Hủy',
-                                    value: 0,
+                                    value: 'soluong',
+                                    label: 'sản phẩm đã hết',
                                 },
-                                {
-                                    label: 'Chờ xác nhận',
-                                    value: 1,
-                                },
-                                {
-                                    label: 'Đã xác nhận',
-                                    value: 2,
-                                },
-                                {
-                                    label: 'Đang xử lý',
-                                    value: 3,
-                                },
-                                {
-                                    label: 'Thanh toán',
-                                    value: 4,
-                                },
-                                {
-                                    label: 'Hoàn thành',
-                                    value: 5,
-                                },
-                            ],
-                            name: 'Trạng thái',
-                        },
-                        {
-                            label: <Space align="center">Tên khách hàng</Space>,
-                            key: 'name',
-                            type: 'string',
-                        },
-                        {
-                            label: <Space align="center">Số điện thoại</Space>,
-                            key: 'number_phone',
-                            name: 'Số điện thoại',
-                        },
-                        {
-                            label: <Space align="center">Ngày tạo</Space>,
-                            key: 'createdAt',
-                            type: 'date',
-                            name: 'Ngày tạo',
-                        },
-                        {
-                            label: <Space align="center">Thời gian sửa chữa</Space>,
-                            key: 'appointmentSchedule',
-                            type: 'date',
-                            name: 'Thời gian sửa chữa',
-                        },
-                    ]}
-                    onFilter={handleFilter}
-                />
-                <div className="flex justify-end pr-4">
-                    <p className="text-[18px]">
-                        Số lượng: <span className="font-bold">{totals}</span>
-                    </p>
-                </div>
+                            ]}
+                            placeholder="Lựa chọn"
+                        />
+                        <div className="flex justify-end pr-4">
+                            <p className="text-[18px]">
+                                Số lượng: <span className="font-bold">{data?.length}</span>
+                            </p>
+                        </div>
+                    </>
+                )}
             </div>
 
             <Form form={form} component={false}>

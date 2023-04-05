@@ -2,16 +2,17 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import _, { isEmpty } from 'lodash';
-import { EditOutlined, SearchOutlined } from '@ant-design/icons';
+import { EditOutlined, SearchOutlined, SyncOutlined } from '@ant-design/icons';
 import { Input, Space, Table, Button, Spin, Tooltip } from 'antd';
 import './showroom.css';
 import { getAllShowroomAsync } from '../../../slices/showroom';
 import Highlighter from 'react-highlight-words';
 import useDocumentTitle from '../../../hooks/useDocumentTitle';
 import { getDistrict } from '../../../api/district';
-import { ROLE } from '../../../constants/auth';
+// import Filter from '../../../../components/Filter/Filter';
 import { getShowroomById } from '../../../api/showroom';
 import { JwtDecode } from '../../../utils/auth';
+import Filter from '../../../components/Filter/Filter';
 
 const ShowRoom = () => {
     useDocumentTitle('Quản lý cửa hàng');
@@ -25,6 +26,7 @@ const ShowRoom = () => {
     const searchInput = useRef(null);
     const [zone, setZone] = useState([]);
     const [showroomAccount, setShowroomAccount] = useState();
+    const [showroomsFilter, setShowroomsFilter] = useState([]);
     const local = JwtDecode();
 
     const fetchApiShowroomAccount = async () => {
@@ -52,6 +54,7 @@ const ShowRoom = () => {
         if (showrooms.length > 0) {
             const data = showrooms.map((showroom) => ({ ...showroom, key: showroom._id }));
             setShowroomAccount(data);
+            setShowroomsFilter(data.map((item) => ({ label: item.name, value: item.key })));
         }
     }, [showrooms]);
     useEffect(() => {
@@ -191,7 +194,25 @@ const ShowRoom = () => {
             },
         },
     ];
-
+    const handleFilter = (values) => {
+        if (values.nameId.length == 0) {
+            setShowroomAccount(showrooms);
+        } else {
+            const arrFilter = [];
+            showrooms.forEach((item) => {
+                if (values.nameId.includes(item._id)) {
+                    arrFilter.push({
+                        key: item._id,
+                        ...item,
+                    });
+                }
+            });
+            setShowroomAccount(arrFilter);
+        }
+    };
+    const handleFilters = () => {
+        setShowroomAccount(showrooms);
+    };
     return (
         <div className="banner-content">
             {loadding ? (
@@ -202,6 +223,31 @@ const ShowRoom = () => {
                 </div>
             ) : (
                 <>
+                    <div className="flex justify-between">
+                        <div>
+                            <button className="pr-6" onClick={() => handleFilters()}>
+                                <Tooltip title="Làm mới cửa hàng">
+                                    <SyncOutlined style={{ fontSize: '18px', color: '#000' }} />
+                                </Tooltip>
+                            </button>
+                            <Filter
+                                items={[
+                                    {
+                                        label: <Space align="center">Tên Cửa Hàng</Space>,
+                                        key: 'nameId',
+                                        type: 'select',
+                                        mode: 'multiple',
+                                        values: showroomsFilter,
+                                        name: 'Tên Cửa Hàng....',
+                                    },
+                                ]}
+                                onFilter={handleFilter}
+                            />
+                        </div>
+                        <p className="p-5">
+                            Số lượng: <span className="font-bold">{showroomAccount?.length}</span>
+                        </p>
+                    </div>
                     <Table columns={columns} dataSource={showroomAccount} rowKey="key" />
                 </>
             )}

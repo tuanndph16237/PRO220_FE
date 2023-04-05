@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import User from '../User';
+import { JwtDecode } from '../../utils/auth';
+import { useSelector } from 'react-redux';
 
 const Header = () => {
     const [activeMenu, setActiveMenu] = useState('home');
-
+    const a = useSelector((state) => state.user.currentUser.values);
     const handleClick = (menu) => {
         setActiveMenu(menu);
     };
@@ -36,18 +38,22 @@ const Header = () => {
                                     Trang chủ
                                 </Link>
                             </li>
-                            <li>
-                                <Link
-                                    to="dat-lich"
-                                    className={`block py-2 pl-3 pr-4 text-base text-[#3c3c3c] rounded md:bg-transparent md:p-0 hover:text-[#02b875] ${
-                                        activeMenu === 'booking' ? 'active' : ''
-                                    }`}
-                                    onClick={() => handleClick('booking')}
-                                    aria-current="page"
-                                >
-                                    Đặt lịch
-                                </Link>
-                            </li>
+                            {a.role == 'Quản Lý' || a.role == 'Admin' ? (
+                                <></>
+                            ) : (
+                                <li>
+                                    <Link
+                                        to="dat-lich"
+                                        className={`block py-2 pl-3 pr-4 text-base text-[#3c3c3c] rounded md:bg-transparent md:p-0 hover:text-[#02b875] ${
+                                            activeMenu === 'booking' ? 'active' : ''
+                                        }`}
+                                        onClick={() => handleClick('booking')}
+                                        aria-current="page"
+                                    >
+                                        Đặt lịch
+                                    </Link>
+                                </li>
+                            )}
                             <li>
                                 <Link
                                     to="#"

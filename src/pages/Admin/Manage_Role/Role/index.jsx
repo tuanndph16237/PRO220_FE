@@ -76,6 +76,9 @@ const index = () => {
     return (
         <div>
             <div className="flex justify-between">
+                <Button onClick={() => OpenShowDrawer()} className="btn-primary text-white mr-5" type="primary">
+                    Thêm quyền
+                </Button>
                 <div>
                     <Button onClick={() => OpenShowDrawer()} className="btn-primary text-white mr-5" type="primary">
                         Thêm vai trò
@@ -105,7 +108,7 @@ const index = () => {
             </div>
             <>
                 <Spin spinning={Loading}>
-                    <Table columns={columns} dataSource={data} />;
+                    <Table columns={columns} dataSource={data} />
                     <DrawerCreateRole
                         open={open}
                         onClose={(data) => {
