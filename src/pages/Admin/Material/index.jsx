@@ -158,6 +158,13 @@ const MaterialManage = () => {
             ),
         },
         {
+            title: 'Giá nhập',
+            dataIndex: 'priceInitial',
+            render: (value) => {
+                return value.toLocaleString('en') + ' VNĐ';
+            },
+        },
+        {
             title: 'Giá thành',
             dataIndex: 'price',
             render: (value) => {
