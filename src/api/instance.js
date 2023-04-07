@@ -6,7 +6,11 @@ import { Notification } from '../utils/notifications';
 
 const instance = axios.create({
     baseURL: import.meta.env.VITE_BASE_URL,
+
     timeout: 10000,
+
+    timeout: 5000,
+
 });
 
 instance.interceptors.request.use(
