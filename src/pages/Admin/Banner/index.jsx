@@ -140,21 +140,16 @@ const BannerManage = () => {
                 <>
                     <div className="flex justify-between align-center pb-4">
                         <Button
-                            size="large"
+                            type="primary"
                             onClick={() => handleRemoveBannerByIds(selectedRowKeys)}
-                            className="focus:outline-none text-base text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2"
+                            className="btn-primary text-white"
                             disabled={_.isEmpty(selectedRowKeys) ? true : false}
                         >
                             Xóa {_.isEmpty(selectedRowKeys) ? '' : _.get(selectedRowKeys, 'length', '') + ' banner'}
                         </Button>
-                        <button
-                            type="button"
-                            onClick={() => setOpen(true)}
-                            className="focus:outline-none h-10 text-white bg-[#02b875] hover:bg-[#09915f] focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-base px-5 py-2.5"
-                        >
-                            <PlusOutlined className="pr-2 text-white " />
-                            Thêm
-                        </button>
+                        <Button type="primary" onClick={() => setOpen(true)} className="btn-primary text-white">
+                            Thêm banner
+                        </Button>
                     </div>
                     <Table rowSelection={rowSelection} columns={columns} dataSource={data} />
                 </>

@@ -1,16 +1,17 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import _ from 'lodash';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import _ from 'lodash';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { getOrdersAsync } from '../../../slices/order';
 import { getAllShowroomAsync } from '../../../slices/showroom';
 import { EditOutlined, SyncOutlined } from '@ant-design/icons';
 import { Button, Space, Table, Tooltip } from 'antd';
 import { HOUR_DATE_TIME } from '../../../constants/format';
-import { ORDER_STATUS, SEVICE_TYPE, VEHICLE_TYPE } from '../../../constants/order';
+import { ORDER_STATUS, SEVICE_TYPE } from '../../../constants/order';
 import SpinCustomize from '../../../components/Customs/Spin';
 import Filter from '../../../components/Filter/Filter';
+import { CSVLink } from 'react-csv';
 
 const OrderManage = () => {
     const dispatch = useDispatch();
@@ -21,6 +22,7 @@ const OrderManage = () => {
     const handleOrder = orders.map((order) => {
         return { ...order, key: order._id };
     });
+    const [csvData, setCsvData] = useState([]);
 
     const columns = [
         {
@@ -67,7 +69,7 @@ const OrderManage = () => {
         {
             title: 'Thời gian sửa chữa',
             dataIndex: 'appointmentSchedule',
-            render: (date) => moment(date).format(HOUR_DATE_TIME),
+            render: (date) => dayjs(date).format(HOUR_DATE_TIME),
         },
 
         {
@@ -109,6 +111,22 @@ const OrderManage = () => {
     }, []);
 
     useEffect(() => {
+        const newCsvData = orders.map((order) => {
+            const status = ORDER_STATUS[order.status];
+            return {
+                name: order.name,
+                number_phone: order.number_phone,
+                email: order.email,
+                status,
+                appointmentSchedule: dayjs(order.appointmentSchedule).format(HOUR_DATE_TIME),
+                showroomId: _.get(_.find(showrooms, ['_id', order.showroomId]), 'name', ''),
+                total: (order.total && order.total.toLocaleString('en') + ' VNĐ') || '',
+            };
+        });
+        setCsvData(newCsvData);
+    }, [orders]);
+
+    useEffect(() => {
         if (_.isEmpty(showrooms)) {
             dispatch(getAllShowroomAsync());
         }
@@ -123,15 +141,6 @@ const OrderManage = () => {
                 <div>
                     <div className="flex justify-between align-center pb-4">
                         <div>
-                            <Button
-                                onClick={() => {
-                                    navigate('/admin/them-don-hang');
-                                }}
-                                className="btn-primary text-white mr-5"
-                                type="primary"
-                            >
-                                Thêm đơn hàng
-                            </Button>
                             <button className="pr-6" onClick={() => handleFilter()}>
                                 <Tooltip title="Làm mới đơn hàng">
                                     <SyncOutlined style={{ fontSize: '18px', color: '#000' }} />
@@ -139,11 +148,11 @@ const OrderManage = () => {
                             </button>
                             <Filter
                                 items={[
-                                    {
-                                        label: <Space align="center">Mã đơn hàng</Space>,
-                                        key: '_id',
-                                        name: 'Mã đơn hàng',
-                                    },
+                                    // {
+                                    //     label: <Space align="center">Mã đơn hàng</Space>,
+                                    //     key: '_id',
+                                    //     name: 'Mã đơn hàng',
+                                    // },
                                     {
                                         label: <Space align="center">Trạng thái</Space>,
                                         key: 'status',
@@ -203,10 +212,39 @@ const OrderManage = () => {
                                 onFilter={handleFilter}
                             />
                         </div>
-                        <p className="p-5">
-                            Số lượng: <span className="font-bold">{handleOrder?.length}</span>
-                        </p>
+                        <div>
+                            <Button className="btn-primary text-white mr-5" type="primary">
+                                <CSVLink
+                                    data={csvData}
+                                    headers={[
+                                        { label: 'Tên khách hàng', key: 'name' },
+                                        { label: 'Số điện thoại', key: 'number_phone' },
+                                        { label: 'Email', key: 'email' },
+                                        { label: 'Trạng thái', key: 'status' },
+                                        { label: 'Thời gian sữa chữa', key: 'appointmentSchedule' },
+                                        { label: 'Cửa hàng', key: 'showroomId' },
+                                        { label: 'Tổng tiền đơn hàng', key: 'total' },
+                                    ]}
+                                    separator={';'}
+                                    filename={'Đơn hàng.csv'}
+                                >
+                                    Xuất excel
+                                </CSVLink>
+                            </Button>
+                            <Button
+                                onClick={() => {
+                                    navigate('/admin/them-don-hang');
+                                }}
+                                className="btn-primary text-white mr-5"
+                                type="primary"
+                            >
+                                Thêm đơn hàng
+                            </Button>
+                        </div>
                     </div>
+                    <p className="py-5 pt-2">
+                        Số lượng đơn hàng: <span className="font-bold">{handleOrder?.length}</span>
+                    </p>
 
                     {loading ? (
                         <div className="absolute top-1/2 left-1/2">
