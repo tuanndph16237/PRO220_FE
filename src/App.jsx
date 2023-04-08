@@ -10,6 +10,7 @@ import BookingPage from './pages/Booking';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import BannerManage from './pages/Admin/Banner';
+
 import ShowRoom from './pages/Admin/showRoom';
 import PrivateLayout from './components/Private/PrivateLayout';
 import PageNotFound from './pages/PageNotFound';
@@ -50,12 +51,18 @@ import CreateService from './pages/Admin/ServiceManage/CreateService';
 import UpdateService from './pages/Admin/ServiceManage/UpdateService';
 
 function App () {
+
+import PageNotFound from './pages/PageNotFound';
+import UpdateBanner from './pages/Admin/Banner/UpdateBanner';
+function App() {
+
     return (
         <Routes>
             <Route path="/" element={<MainLayout />}>
                 <Route index element={<HomePage />} />
                 <Route path="about" element={<AboutPage />} />
                 <Route path="dat-lich" element={<BookingPage />} />
+
                 <Route path="tin-tuc" element={<Posts />} />
                 <Route path="tin-tuc/*" element={<Post />} />
                 <Route path="gioi-thieu" element={<AboutPage/>}/>
@@ -129,6 +136,14 @@ function App () {
                 <Route path="quan-ly-dich-vu" element={<ServiceManager />} />
                 <Route path="them-dich-vu" element={<CreateService />} />
                 <Route path="sua-dich-vu/:id" element={<UpdateService />} />
+
+                <Route path="dang-nhap" element={<Login />} />
+                <Route path="dang-ky" element={<Register />} />
+            </Route>
+            <Route path="/admin" element={<AdminLayout />}>
+                <Route path="quan-ly-banner" element={<BannerManage />} />
+                <Route path="quan-ly-banner/:id" element={<UpdateBanner />} />
+
             </Route>
             <Route path="*" element={<PageNotFound />} />
         </Routes>

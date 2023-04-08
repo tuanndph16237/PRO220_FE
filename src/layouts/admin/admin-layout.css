@@ -11,7 +11,10 @@
 .ant-menu-dark:not(.ant-menu-horizontal) .ant-menu-item-selected {
     background: var(--primary-color) !important;
 }
+
 .ant-menu-item,
 .ant-menu-submenu-title {
     padding-left: 10px !important;
 }
+
+
