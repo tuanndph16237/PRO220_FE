@@ -1,6 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
 import BannerReducer from '../slices/banner';
-
 import ShowroomReduce from '../slices/showroom';
 import UserReducer from '../slices/user';
 import MaterialReducer from '../slices/material';
@@ -16,11 +15,6 @@ const store = configureStore({
         order: OrderSlice,
         warehouse: WarehouseReducer,
         role: role,
-
-const store = configureStore({
-    reducer: {
-        banner: BannerReducer,
-
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({
