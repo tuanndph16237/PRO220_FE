@@ -15,8 +15,8 @@ export const removeAccount = async (id) => {
 };
 
 export const updateAccount = async (data) => {
-    console.log('data',_.omit(data, ['_id','password','__v']));
-    return instance.put(`/accounts/${data._id}`, _.omit(data, ['_id','password','__v']));
+    console.log('data', _.omit(data, ['_id', 'password', '__v']));
+    return instance.put(`/accounts/${data._id}`, _.omit(data, ['_id', 'password', '__v']));
 };
 
 export const getUser = async (id) => {
@@ -25,4 +25,8 @@ export const getUser = async (id) => {
 
 export const Password = async (data) => {
     return instance.post(`/chagePassword/${data._id}`, data);
+};
+
+export const getAllUser = async () => {
+    return instance.get('getUsers');
 };

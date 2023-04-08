@@ -43,4 +43,5 @@ export const PERMISSION_LABLEL = {
     ACCOUNT_MANAGE: 'Quản Lý Thành Viên',
     NEWS_MANAGE: 'Quản Lý Tin Tức',
     SERVICE_MANAGE: 'Quản Lý Dịch Vụ',
+    USER_MANAGER :'Quản Lý Người Dùng'
 };

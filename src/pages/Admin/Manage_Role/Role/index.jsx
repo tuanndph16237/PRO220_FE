@@ -76,9 +76,6 @@ const index = () => {
     return (
         <div>
             <div className="flex justify-between">
-                <Button onClick={() => OpenShowDrawer()} className="btn-primary text-white mr-5" type="primary">
-                    Thêm quyền
-                </Button>
                 <div>
                     <Button onClick={() => OpenShowDrawer()} className="btn-primary text-white mr-5" type="primary">
                         Thêm vai trò
@@ -95,7 +92,7 @@ const index = () => {
                                 key: 'nameId',
                                 type: 'select',
                                 mode: 'multiple',
-                                values:showroomsFilter,
+                                values: showroomsFilter,
                                 name: 'Tên Quyền....',
                             },
                         ]}

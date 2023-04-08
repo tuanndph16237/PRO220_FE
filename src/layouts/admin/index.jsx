@@ -110,6 +110,13 @@ const siderBarItems = [
         icon: <FileDoneOutlined />,
         label: PERMISSION_LABLEL.NEWS_MANAGE,
     },
+    {
+        key: 'Quản người dùng',
+        path: 'quan-ly-nguoi-dung',
+        code: PERMISSION_TYPE.CONFIRM,
+        icon: <FileDoneOutlined />,
+        label: PERMISSION_LABLEL.USER_MANAGER,
+    },
 ];
 
 const AdminLayout = () => {
