@@ -172,6 +172,13 @@ const MaterialManage = () => {
             },
         },
         {
+            title: 'Đơn vị',
+            dataIndex: 'unit',
+            render: (value) => {
+                return value;
+            },
+        },
+        {
             title: 'Ảnh',
             dataIndex: 'image',
             render: (url) => (

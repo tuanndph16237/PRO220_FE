@@ -140,6 +140,18 @@ const UpdateMaterial = () => {
                             className="h-10 text-base border-[#02b875] w-full"
                         />
                     </Form.Item>
+                    <Form.Item
+                    label={<p className="text-base font-semibold">Đơn vị</p>}
+                    name="unit"
+                    rules={[
+                        {
+                            required: true,
+                            message: 'Quý khách vui lòng không để trống trường thông tin này.',
+                        },
+                    ]}
+                    >
+                        <Input className="h-10 text-base border-[#02b875]" placeholder="Đơn vị vật tư" />
+                    </Form.Item>
                     <p className="text-base font-semibold">
                         <span className="text-[#ff4d4f]">*</span> Ảnh
                     </p>
