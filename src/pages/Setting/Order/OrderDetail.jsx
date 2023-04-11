@@ -56,7 +56,7 @@ const OrderDetail = () => {
         number_phone: '',
         serviceType: '',
         description: '',
-        totals: 0,
+        total: 0,
     });
     const currentOrder = useRef();
     const [opentpayment, setOpentpayment] = useState(false);
@@ -190,7 +190,7 @@ const OrderDetail = () => {
                     </div>
                     {opentpayment == false && (
                         <div className="font-bold mt-2 text-red-600	text-[14px] ml-[10px]">
-                            Tổng tiền: {dataOrderDetail.totals.toLocaleString('en') + ' VNĐ'}{' '}
+                            Tổng tiền: {dataOrderDetail?.total.toLocaleString('en') + ' VNĐ'}{' '}
                         </div>
                     )}
                 </div>
@@ -203,7 +203,7 @@ const OrderDetail = () => {
                             <div>
                                 <div className="my-px text-lg 	ml-[0px]">
                                     <div className="font-bold mt-2 text-red-600	text-[14px] ml-[10px]">
-                                        Tổng tiền: {dataOrderDetail.totals.toLocaleString('en') + ' VNĐ'}{' '}
+                                        Tổng tiền: {dataOrderDetail?.total.toLocaleString('en') + ' VNĐ'}{' '}
                                     </div>
                                     <Button type="primary" className="btn-primary m-[10px]" onClick={() => Payment()}>
                                         Thanh Toán

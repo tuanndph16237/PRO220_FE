@@ -45,7 +45,7 @@ const Home = () => {
                         </p>
                         <a href="#" className="text-[16px] font-bold">
                             <span>
-                                MUA NGAY <i class="fa-solid fa-arrow-right"></i>
+                                MUA NGAY <i className="fa-solid fa-arrow-right"></i>
                             </span>
                         </a>
                     </div>
@@ -76,7 +76,7 @@ const Home = () => {
                         </p>
                         <a href="#" className="text-[16px] font-bold">
                             <span>
-                                XEM THÔNG TIN SỰ KIỆN <i class="fa-solid fa-arrow-right"></i>
+                                XEM THÔNG TIN SỰ KIỆN <i className="fa-solid fa-arrow-right"></i>
                             </span>
                         </a>
                     </div>
@@ -106,15 +106,15 @@ const Home = () => {
                                 alt=""
                             />
                         </div>
-                        <div className="mt-[16px] text-center text-center">
+                        <div className="mt-[16px]  text-center">
                             <h3 className="text-[17px]">NIGHTSTER™ 2023</h3>
-                            <p className="text-[14px] py-2 py-2">
+                            <p className="text-[14px] py-2">
                                 Được thiết kế để truyền cảm hứng cho cả những tay đua mới và lão làng nhờ khả năng xử lý
                                 nhanh nhẹn và kiểu dáng cổ điển.
                             </p>
                             <a href="#" className="text-[16px] font-bold">
                                 <span>
-                                    XEM TIẾP <i class="fa-solid fa-arrow-right"></i>
+                                    XEM TIẾP <i className="fa-solid fa-arrow-right"></i>
                                 </span>
                             </a>
                         </div>
@@ -135,7 +135,7 @@ const Home = () => {
                             </p>
                             <a href="#" className="text-[16px] font-bold">
                                 <span>
-                                    XEM TIẾP <i class="fa-solid fa-arrow-right"></i>
+                                    XEM TIẾP <i className="fa-solid fa-arrow-right"></i>
                                 </span>
                             </a>
                         </div>
@@ -156,7 +156,7 @@ const Home = () => {
                             </p>
                             <a href="#" className="text-[16px] font-bold">
                                 <span>
-                                    XEM TIẾP <i class="fa-solid fa-arrow-right"></i>
+                                    XEM TIẾP <i className="fa-solid fa-arrow-right"></i>
                                 </span>
                             </a>
                         </div>
@@ -177,7 +177,7 @@ const Home = () => {
                             </p>
                             <a href="#" className="text-[16px] font-bold">
                                 <span>
-                                    XEM TIẾP <i class="fa-solid fa-arrow-right"></i>
+                                    XEM TIẾP <i className="fa-solid fa-arrow-right"></i>
                                 </span>
                             </a>
                         </div>
@@ -199,7 +199,7 @@ const Home = () => {
                             </p>
                             <a href="#" className="text-[16px] font-bold">
                                 <span>
-                                    XEM TIẾP <i class="fa-solid fa-arrow-right"></i>
+                                    XEM TIẾP <i className="fa-solid fa-arrow-right"></i>
                                 </span>
                             </a>
                         </div>
@@ -220,7 +220,7 @@ const Home = () => {
                                 alt=""
                             />
                             <a href="#" className="inline-block font-bold text-[16px] pt-[22px]">
-                                MUA ĐỒ NAM <i class="fa-solid fa-arrow-right"></i>
+                                MUA ĐỒ NAM <i className="fa-solid fa-arrow-right"></i>
                             </a>
                         </div>
                         <div>
@@ -230,7 +230,7 @@ const Home = () => {
                                 alt=""
                             />
                             <a href="#" className="inline-block font-bold text-[16px] pt-[22px]">
-                                MUA ĐỒ NỮ <i class="fa-solid fa-arrow-right"></i>
+                                MUA ĐỒ NỮ <i className="fa-solid fa-arrow-right"></i>
                             </a>
                         </div>
                     </div>
@@ -254,7 +254,7 @@ const Home = () => {
                             </p>
                             <a href="#" className="text-[16px] font-bold">
                                 <span>
-                                    MUA ĐỒ NAM <i class="fa-solid fa-arrow-right"></i>
+                                    MUA ĐỒ NAM <i className="fa-solid fa-arrow-right"></i>
                                 </span>
                             </a>
                         </div>
@@ -271,7 +271,7 @@ const Home = () => {
                             </p>
                             <a href="#" className="text-[16px] font-bold">
                                 <span>
-                                    SHOP PARTS <i class="fa-solid fa-arrow-right"></i>
+                                    SHOP PARTS <i className="fa-solid fa-arrow-right"></i>
                                 </span>
                             </a>
                         </div>
@@ -288,7 +288,7 @@ const Home = () => {
                             </p>
                             <a href="#" className="text-[16px] font-bold">
                                 <span>
-                                    MUA ĐỒ NỮ <i class="fa-solid fa-arrow-right"></i>
+                                    MUA ĐỒ NỮ <i className="fa-solid fa-arrow-right"></i>
                                 </span>
                             </a>
                         </div>

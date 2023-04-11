@@ -31,7 +31,7 @@
 export const ORDER_STATUS = {
     0: 'Hủy',
     1: 'Chờ xác nhận',
-    2: 'Đã tiếp nhận lịch',
+    2: 'Đã xác nhận lịch',
     3: 'Đang xử lý',
     4: 'Thanh toán',
     5: 'Hoàn thành',

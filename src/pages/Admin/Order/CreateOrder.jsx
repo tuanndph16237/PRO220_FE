@@ -120,7 +120,7 @@ const CreateOrder = () => {
                             <Col span={24}>
                                 <Form.Item
                                     name="serviceType"
-                                    label={<p className="text-base font-semibold">Nơi sửa chữa</p>}
+                                    label={<p className="text-base font-semibold">dịch vụ sửa chữa</p>}
                                     rules={[
                                         {
                                             required: true,
@@ -134,15 +134,7 @@ const CreateOrder = () => {
                                         placeholder="Sửa chữa tại..."
                                         className="h-10 text-base border-[#02b875]"
                                         onSelect={(value) => {
-                                            if (
-                                                value === SEVICE_TYPE.SHOWROOM ||
-                                                value === SEVICE_TYPE.CONTACT_RESCUE
-                                            ) {
-                                                setIsShowroom(true);
-                                                setService_type([]);
-                                                return;
-                                            }
-                                            setIsShowroom(false);
+                                            console.log(value);
                                         }}
                                     >
                                         <Select.Option value={SEVICE_TYPE.SHOWROOM}>

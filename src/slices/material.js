@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { createMaterial, getMaterials, updateMaterial } from '../api/material';
 import { NOTIFICATION_TYPE } from '../constants/status';
 
-export const getAllMaterialAsync = createAsyncThunk('getAllMaterialAsync', async(filter, { rejectWithValue }) => {
+export const getAllMaterialAsync = createAsyncThunk('getAllMaterialAsync', async (filter, { rejectWithValue }) => {
     try {
         const materials = await getMaterials(filter);
         return materials;
@@ -13,7 +13,7 @@ export const getAllMaterialAsync = createAsyncThunk('getAllMaterialAsync', async
 
 export const updateMaterialAsync = createAsyncThunk(
     'updateMaterialAsync',
-    async({ _id, data }, { rejectWithValue }) => {
+    async ({ _id, data }, { rejectWithValue }) => {
         try {
             const material = await updateMaterial(_id, data);
             return material;
@@ -22,7 +22,7 @@ export const updateMaterialAsync = createAsyncThunk(
         }
     },
 );
-export const createMaterialAsync = createAsyncThunk('createMaterialAsync', async(data, { rejectWithValue }) => {
+export const createMaterialAsync = createAsyncThunk('createMaterialAsync', async (data, { rejectWithValue }) => {
     try {
         const material = await createMaterial(data);
         return material;

@@ -56,40 +56,64 @@ const SelectMaterials = (props) => {
     };
 
     const handleRemoveMaterial = (id) => {
+        handleGiveBackMaterial(id);
         const otherMaterialIds = materialIds.filter((materialId) => materialId !== id);
         handleOnChangeMaterial(otherMaterialIds);
     };
+
     const handleGiveBackMaterial = (id) => {
-        const data = order.materials.find((value) => value.materialId === id);
+        const data = props.order.materials.find((value) => value.materialId === id);
         const dataPost = {
-            idShowroom: props.order.showroomId,
+            showroomId: props.order.showroomId,
             material: {
                 materialId: id,
-                quantity: data.qty,
+                qty: data.qty,
             },
         };
         //tra laij vat tu
         giveBackMaterial(dataPost);
-        //luu lai order
+        // luu lai order
     };
 
     const handleOnChangeMaterial = (newMarterials) => {
         setMaterialIds(newMarterials);
         const materialsWithQuantity = _.map(newMarterials, (marterial) => {
             const price = _.get(
-                _.find(materialsDefault, (value) => value.materialId._id === marterial),
+                _.find(materialsDefault, (value) => value.materialId._id == marterial),
                 'materialId.price',
                 0,
             );
+            const name = _.get(
+                _.find(materialsDefault, (value) => value.materialId._id == marterial),
+                'materialId.name',
+            );
             const qty = _.get(
-                _.find(selectedMaterials, (item) => item.materialId === marterial, {}),
+                _.find(selectedMaterials, (item) => item.materialId == marterial, {}),
                 'qty',
                 1,
             );
+            const priceInitial = _.get(
+                _.find(materialsDefault, (value) => value.materialId._id == marterial),
+                'materialId.priceInitial',
+            );
+
+            const unit = _.get(
+                _.find(materialsDefault, (value) => value.materialId._id == marterial),
+                'materialId.unit',
+            );
+
+            // console.log(name);
+            // console.log(priceInitial);
+            // console.log(unit);
+            // console.log(marterial);
+
             return {
                 materialId: marterial,
                 qty,
                 price,
+                name,
+                priceInitial,
+                unit,
             };
         });
         setSelectedMaterials(materialsWithQuantity);
@@ -97,13 +121,12 @@ const SelectMaterials = (props) => {
 
     return (
         <ModalCustomize
-            title={!props.isChangeMaterials ? 'Chuyển trạng thái: Đang xử lý' : 'Chỉnh sửa vật tư'}
             showModal={props.showModal}
             setShowModal={props.setShowModal}
             value={materialIds}
             footer={true}
             onSubmit={() => {
-                //handle change materials
+                // handle change materials
                 if (props.isChangeMaterials) {
                     const materialsNew = [];
                     _.forEach(selectedMaterials, (item) => {
@@ -113,7 +136,7 @@ const SelectMaterials = (props) => {
                         );
                         //case 1: them vat tu moi
                         if (!existMaterial) {
-                            materialsNew.push(_.omit(item, ['price']));
+                            materialsNew.push(_.omit(item, ['price', 'unit', 'priceInitial']));
                             return;
                         }
                         //case 2: tra vat tu
@@ -157,7 +180,7 @@ const SelectMaterials = (props) => {
                     materialIds,
                     reasons: [],
                 });
-                props.setShowModal();
+                props.setShowModal(false);
             }}
             disabled={true}
             width={'60%'}
@@ -195,7 +218,10 @@ const SelectMaterials = (props) => {
                                 <InfiniteScroll dataLength={materials.length} scrollableTarget="scrollableDiv">
                                     <List
                                         dataSource={materials}
-                                        renderItem={({ materialId: { _id, name, price }, quantity }) => {
+                                        renderItem={({
+                                            materialId: { _id, name, price, unit, priceInitial },
+                                            quantity,
+                                        }) => {
                                             return (
                                                 <List.Item key={_id}>
                                                     <button
@@ -255,6 +281,9 @@ const SelectMaterials = (props) => {
                                                                 materialId: materialSeleted.materialId,
                                                                 qty: value,
                                                                 price: materialSeleted.price,
+                                                                // name: materialSeleted.name,
+                                                                // unit: materialSeleted.unit,
+                                                                // priceInitial: materialSeleted.priceInitial,
                                                             };
                                                         }
                                                         return materialSeleted;
@@ -263,7 +292,11 @@ const SelectMaterials = (props) => {
                                                 setSelectedMaterials(materialsWithQuantity);
                                             }}
                                         />
-                                        <button onClick={() => handleRemoveMaterial(selectedMaterial.materialId)}>
+                                        <button
+                                            onClick={() => {
+                                                handleRemoveMaterial(selectedMaterial.materialId);
+                                            }}
+                                        >
                                             <CloseCircleOutlined />
                                         </button>
                                     </span>
