@@ -3,10 +3,12 @@ import { useState } from 'react';
 import { DATE_FORMAT } from '../../constants/format';
 import 'dayjs/locale/vi';
 import locale from 'antd/es/date-picker/locale/vi_VN';
+import dayjs from 'dayjs';
 const { RangePicker } = DatePicker;
 const { Option } = Select;
 const PickerWithType = ({ type, onChange }) => {
-    if (type === 'date') return <DatePicker locale={locale} onChange={onChange} format={DATE_FORMAT} />;
+    if (type === 'date')
+        return <DatePicker defaultValue={dayjs()} locale={locale} onChange={onChange} format={DATE_FORMAT} />;
     if (type === 'options') return <RangePicker locale={locale} onChange={onChange} format={DATE_FORMAT} />;
     return <DatePicker locale={locale} picker={type} onChange={onChange} />;
 };

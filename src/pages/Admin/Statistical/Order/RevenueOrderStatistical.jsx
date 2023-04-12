@@ -13,19 +13,36 @@ import { setCategoriesByType } from '../../../../utils/statistical';
 
 const defaultSeries = [
     {
-        name: 'Chưa thanh toán',
+        type: 'column',
+        name: 'Chi phí',
         data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     },
     {
-        name: 'Đã thanh toán',
+        type: 'column',
+        name: 'Doanh thu',
         data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    },
+    {
+        type: 'column',
+        name: 'Lợi nhuận',
+        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    },
+    {
+        type: 'spline',
+        name: 'Line doanh thu',
+        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        marker: {
+            lineWidth: 2,
+            lineColor: Highcharts.getOptions().colors[3],
+            fillColor: 'white',
+        },
     },
 ];
 const RevenueOrderStatistical = () => {
     useDocumentTitle('Thống kê doanh thu');
     const dispatch = useDispatch();
     const showrooms = useSelector((state) => state.showroom.showrooms.values);
-    const [time, setTime] = useState();
+    const [time, setTime] = useState(dayjs());
     const [type, setType] = useState('date');
     const [categories, setCategories] = useState([]);
     const [series, setSeries] = useState(defaultSeries);
@@ -60,97 +77,206 @@ const RevenueOrderStatistical = () => {
     const handleChange = (value) => {
         setShowroomIdSeleted(value);
     };
+
+    const priceMaterials = (materials) => {
+        return _.reduce(
+            materials,
+            (total, material) => {
+                const totalMaterial = material.qty * material.price;
+                return total + totalMaterial;
+            },
+            0,
+        );
+    };
     const handleSetSeries = () => {
         switch (type) {
             case 'date':
-                const defaultSeriesClone = _.cloneDeep(defaultSeries);
-                _.forEach(data.paymented, (item) => {
+                const defaultSeriesClone = [
+                    {
+                        type: 'column',
+                        name: 'Chi phí',
+                        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    },
+                    {
+                        type: 'column',
+                        name: 'Doanh thu',
+                        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    },
+                    {
+                        type: 'column',
+                        name: 'Lợi nhuận',
+                        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    },
+                    {
+                        type: 'spline',
+                        name: 'Line doanh thu',
+                        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        marker: {
+                            lineWidth: 2,
+                            lineColor: Highcharts.getOptions().colors[3],
+                            fillColor: 'white',
+                        },
+                    },
+                ];
+                _.forEach(data, (item) => {
                     const hour = dayjs(item.createdAt).hour();
-                    const idx = `[1].data[${hour}]`;
-                    const valuePrev = _.get(defaultSeriesClone, idx, 0);
-                    _.set(defaultSeriesClone, idx, valuePrev + _.get(item, 'total', 0));
-                });
-                _.forEach(data.not_payment, (item) => {
-                    const hour = dayjs(item.createdAt).hour();
-                    const idx = `[0].data[${hour}]`;
-                    const valuePrev = _.get(defaultSeriesClone, idx, 0);
-                    _.set(defaultSeriesClone, idx, valuePrev + _.get(item, 'total', 0));
+                    //tinh chi phi
+                    const expense = priceMaterials(item.materials);
+                    const total = _.get(item, 'total', 0);
+                    const idxExpense = `[0].data[${hour}]`;
+                    const expensePrev = _.get(defaultSeriesClone, idxExpense, 0);
+                    _.set(defaultSeriesClone, idxExpense, expensePrev + expense);
+                    //tinh loi nhuan
+                    const profit = total - expense;
+                    const idxProfit = `[2].data[${hour}]`;
+                    const profitPrev = _.get(defaultSeriesClone, idxProfit, 0);
+                    _.set(defaultSeriesClone, idxProfit, profitPrev + profit);
+                    //tinh doanh thu
+
+                    const idxTotalColumn = `[1].data[${hour}]`;
+                    const idxTotalLine = `[3].data[${hour}]`;
+                    const totalPrev = _.get(defaultSeriesClone, idxTotalColumn, 0);
+                    _.set(defaultSeriesClone, idxTotalColumn, totalPrev + total);
+                    _.set(defaultSeriesClone, idxTotalLine, totalPrev + total);
                 });
                 setSeries(defaultSeriesClone);
                 break;
             case 'week':
                 const defaultSeriesWeek = [
                     {
-                        name: 'Chưa thanh toán',
+                        type: 'column',
+                        name: 'Chi phí',
                         data: [0, 0, 0, 0, 0, 0, 0],
                     },
                     {
-                        name: 'Đã thanh toán',
+                        type: 'column',
+                        name: 'Doanh thu',
                         data: [0, 0, 0, 0, 0, 0, 0],
                     },
+                    {
+                        type: 'column',
+                        name: 'Lợi nhuận',
+                        data: [0, 0, 0, 0, 0, 0, 0],
+                    },
+                    {
+                        type: 'spline',
+                        name: 'Line doanh thu',
+                        data: [0, 0, 0, 0, 0, 0, 0],
+                        marker: {
+                            lineWidth: 2,
+                            lineColor: Highcharts.getOptions().colors[3],
+                            fillColor: 'white',
+                        },
+                    },
                 ];
-                _.forEach(data.paymented, (item) => {
+                _.forEach(data, (item) => {
                     const dayOfWeek = dayjs(item.createdAt).day();
                     const formatDayOfWeek = dayOfWeek ? dayOfWeek - 1 : 6;
-                    const idx = `[1].data[${formatDayOfWeek}]`;
-                    const valuePrev = _.get(defaultSeriesWeek, idx, 0);
-                    _.set(defaultSeriesWeek, idx, valuePrev + _.get(item, 'total', 0));
-                });
-                _.forEach(data.not_payment, (item) => {
-                    const dayOfWeek = dayjs(item.createdAt).day();
-                    const formatDayOfWeek = dayOfWeek ? dayOfWeek - 1 : 6;
-                    const idx = `[0].data[${formatDayOfWeek}]`;
-                    const valuePrev = _.get(defaultSeriesWeek, idx, 0);
-                    _.set(defaultSeriesWeek, idx, valuePrev + _.get(item, 'total', 0));
+                    //tinh chi phi
+                    const expense = priceMaterials(item.materials);
+                    const total = _.get(item, 'total', 0);
+                    const idxExpense = `[0].data[${formatDayOfWeek}]`;
+                    const expensePrev = _.get(defaultSeriesWeek, idxExpense, 0);
+                    _.set(defaultSeriesWeek, idxExpense, expensePrev + expense);
+                    //tinh loi nhuan
+                    const profit = total - expense;
+                    const idxProfit = `[2].data[${formatDayOfWeek}]`;
+                    const profitPrev = _.get(defaultSeriesWeek, idxProfit, 0);
+                    _.set(defaultSeriesWeek, idxProfit, profitPrev + profit);
+                    //tinh doanh thu
+
+                    const idxTotalColumn = `[1].data[${formatDayOfWeek}]`;
+                    const idxTotalLine = `[3].data[${formatDayOfWeek}]`;
+                    const totalPrev = _.get(defaultSeriesWeek, idxTotalColumn, 0);
+                    _.set(defaultSeriesWeek, idxTotalColumn, totalPrev + total);
+                    _.set(defaultSeriesWeek, idxTotalLine, totalPrev + total);
                 });
                 setSeries(defaultSeriesWeek);
                 break;
             case 'month':
                 const dayInMonth = dayjs(time).daysInMonth();
                 const weekOfMonth = Math.ceil(dayInMonth / 7);
+
                 const defaultSeriesMonths = [
                     {
-                        name: 'Chưa thanh toán',
+                        type: 'column',
+                        name: 'Chi phí',
                         data: weekOfMonth === 4 ? [0, 0, 0, 0] : [0, 0, 0, 0, 0],
                     },
                     {
-                        name: 'Đã thanh toán',
+                        type: 'column',
+                        name: 'Doanh thu',
                         data: weekOfMonth === 4 ? [0, 0, 0, 0] : [0, 0, 0, 0, 0],
                     },
+                    {
+                        type: 'column',
+                        name: 'Lợi nhuận',
+                        data: weekOfMonth === 4 ? [0, 0, 0, 0] : [0, 0, 0, 0, 0],
+                    },
+                    {
+                        type: 'spline',
+                        name: 'Line doanh thu',
+                        data: weekOfMonth === 4 ? [0, 0, 0, 0] : [0, 0, 0, 0, 0],
+                        marker: {
+                            lineWidth: 2,
+                            lineColor: Highcharts.getOptions().colors[3],
+                            fillColor: 'white',
+                        },
+                    },
                 ];
-                _.forEach(data.paymented, (item) => {
-                    const createdAtNumber = +dayjs(item.createdAt).format('DD');
-                    let dayofmonth = 0;
-                    if (createdAtNumber > 7 && createdAtNumber <= 14) dayofmonth = 1;
-                    if (createdAtNumber > 14 && createdAtNumber <= 21) dayofmonth = 2;
-                    if (createdAtNumber > 21 && createdAtNumber <= 28) dayofmonth = 3;
-                    if (createdAtNumber > 28) dayofmonth = 4;
-                    const idx = `[1].data[${dayofmonth}]`;
-                    const valuePrev = _.get(defaultSeriesMonths, idx, 0);
-                    _.set(defaultSeriesMonths, idx, valuePrev + _.get(item, 'total', 0));
-                });
-                _.forEach(data.not_payment, (item) => {
-                    const createdAtNumber = +dayjs(item.createdAt).format('DD');
-                    let dayofmonth = 0;
-                    if (createdAtNumber > 7 && createdAtNumber <= 14) dayofmonth = 1;
-                    if (createdAtNumber > 14 && createdAtNumber <= 21) dayofmonth = 2;
-                    if (createdAtNumber > 21 && createdAtNumber <= 28) dayofmonth = 3;
-                    if (createdAtNumber > 28) dayofmonth = 4;
-                    const idx = `[0].data[${dayofmonth}]`;
-                    const valuePrev = _.get(defaultSeriesMonths, idx, 0);
-                    _.set(defaultSeriesMonths, idx, valuePrev + _.get(item, 'total', 0));
+                _.forEach(data, (item) => {
+                    const dayOfMonth = +dayjs(item.createdAt).format('DD');
+                    let weekOfMonth = 0;
+                    if (dayOfMonth > 7 && dayOfMonth <= 14) weekOfMonth = 1;
+                    if (dayOfMonth > 14 && dayOfMonth <= 21) weekOfMonth = 2;
+                    if (dayOfMonth > 21 && dayOfMonth <= 28) weekOfMonth = 3;
+                    if (dayOfMonth > 28) weekOfMonth = 4;
+                    //tinh chi phi
+                    const expense = priceMaterials(item.materials);
+                    const total = _.get(item, 'total', 0);
+                    const idxExpense = `[0].data[${weekOfMonth}]`;
+                    const expensePrev = _.get(defaultSeriesMonths, idxExpense, 0);
+                    _.set(defaultSeriesMonths, idxExpense, expensePrev + expense);
+                    //tinh loi nhuan
+                    const profit = total - expense;
+                    const idxProfit = `[2].data[${weekOfMonth}]`;
+                    const profitPrev = _.get(defaultSeriesMonths, idxProfit, 0);
+                    _.set(defaultSeriesMonths, idxProfit, profitPrev + profit);
+                    //tinh doanh thu
+                    const idxTotalColumn = `[1].data[${weekOfMonth}]`;
+                    const idxTotalLine = `[3].data[${weekOfMonth}]`;
+                    const totalPrev = _.get(defaultSeriesMonths, idxTotalColumn, 0);
+                    _.set(defaultSeriesMonths, idxTotalColumn, totalPrev + total);
+                    _.set(defaultSeriesMonths, idxTotalLine, totalPrev + total);
                 });
                 setSeries(defaultSeriesMonths);
                 break;
             case 'year':
                 const defaultSeriesYear = [
                     {
-                        name: 'Chưa thanh toán',
+                        type: 'column',
+                        name: 'Chi phí',
                         data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                     },
                     {
-                        name: 'Đã thanh toán',
+                        type: 'column',
+                        name: 'Doanh thu',
                         data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    },
+                    {
+                        type: 'column',
+                        name: 'Lợi nhuận',
+                        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    },
+                    {
+                        type: 'spline',
+                        name: 'Line doanh thu',
+                        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        marker: {
+                            lineWidth: 2,
+                            lineColor: Highcharts.getOptions().colors[3],
+                            fillColor: 'white',
+                        },
                     },
                 ];
                 _.forEach(data.paymented, (item) => {
@@ -159,34 +285,74 @@ const RevenueOrderStatistical = () => {
                     const valuePrev = _.get(defaultSeriesYear, idx, 0);
                     _.set(defaultSeriesYear, idx, valuePrev + _.get(item, 'total', 0));
                 });
-                _.forEach(data.not_payment, (item) => {
-                    const createdAtFormat = dayjs(item.createdAt).format('MM') - 1;
-                    const idx = `[0].data[${createdAtFormat}]`;
-                    const valuePrev = _.get(defaultSeriesYear, idx, 0);
-                    _.set(defaultSeriesYear, idx, valuePrev + _.get(item, 'total', 0));
+                _.forEach(data, (item) => {
+                    const months = dayjs(item.createdAt).format('MM') - 1;
+                    //tinh chi phi
+                    const expense = priceMaterials(item.materials);
+                    const total = _.get(item, 'total', 0);
+                    const idxExpense = `[0].data[${months}]`;
+                    const expensePrev = _.get(defaultSeriesYear, idxExpense, 0);
+                    _.set(defaultSeriesYear, idxExpense, expensePrev + expense);
+                    //tinh loi nhuan
+                    const profit = total - expense;
+                    const idxProfit = `[2].data[${months}]`;
+                    const profitPrev = _.get(defaultSeriesYear, idxProfit, 0);
+                    _.set(defaultSeriesYear, idxProfit, profitPrev + profit);
+                    //tinh doanh thu
+                    const idxTotalColumn = `[1].data[${months}]`;
+                    const idxTotalLine = `[3].data[${months}]`;
+                    const totalPrev = _.get(defaultSeriesYear, idxTotalColumn, 0);
+                    _.set(defaultSeriesYear, idxTotalColumn, totalPrev + total);
+                    _.set(defaultSeriesYear, idxTotalLine, totalPrev + total);
                 });
                 setSeries(defaultSeriesYear);
                 break;
             default:
                 const defaultSeriesOptions = [
                     {
-                        name: 'Chưa thanh toán',
+                        type: 'column',
+                        name: 'Chi phí',
                         data: [0],
                     },
                     {
-                        name: 'Đã thanh toán',
+                        type: 'column',
+                        name: 'Doanh thu',
                         data: [0],
                     },
+                    {
+                        type: 'column',
+                        name: 'Lợi nhuận',
+                        data: [0],
+                    },
+                    {
+                        type: 'spline',
+                        name: 'Line doanh thu',
+                        data: [0],
+                        marker: {
+                            lineWidth: 2,
+                            lineColor: Highcharts.getOptions().colors[3],
+                            fillColor: 'white',
+                        },
+                    },
                 ];
-                _.forEach(data.paymented, (item) => {
-                    const idx = '[1].data[0]';
-                    const valuePrev = _.get(defaultSeriesOptions, idx, 0);
-                    _.set(defaultSeriesOptions, idx, valuePrev + _.get(item, 'total', 0));
-                });
-                _.forEach(data.not_payment, (item) => {
-                    const idx = '[0].data[0]';
-                    const valuePrev = _.get(defaultSeriesOptions, idx, 0);
-                    _.set(defaultSeriesOptions, idx, valuePrev + _.get(item, 'total', 0));
+                _.forEach(data, (item) => {
+                    //tinh chi phi
+                    const expense = priceMaterials(item.materials);
+                    const total = _.get(item, 'total', 0);
+                    const idxExpense = `[0].data[0]`;
+                    const expensePrev = _.get(defaultSeriesOptions, idxExpense, 0);
+                    _.set(defaultSeriesOptions, idxExpense, expensePrev + expense);
+                    //tinh loi nhuan
+                    const profit = total - expense;
+                    const idxProfit = `[2].data[0]`;
+                    const profitPrev = _.get(defaultSeriesOptions, idxProfit, 0);
+                    _.set(defaultSeriesOptions, idxProfit, profitPrev + profit);
+                    //tinh doanh thu
+                    const idxTotalColumn = `[1].data[0]`;
+                    const idxTotalLine = `[3].data[0]`;
+                    const totalPrev = _.get(defaultSeriesOptions, idxTotalColumn, 0);
+                    _.set(defaultSeriesOptions, idxTotalColumn, totalPrev + total);
+                    _.set(defaultSeriesOptions, idxTotalLine, totalPrev + total);
                 });
                 setSeries(defaultSeriesOptions);
         }
@@ -215,9 +381,6 @@ const RevenueOrderStatistical = () => {
                     <HighchartsReact
                         highcharts={Highcharts}
                         options={{
-                            chart: {
-                                type: 'line',
-                            },
                             title: {
                                 text: null,
                             },
@@ -237,19 +400,8 @@ const RevenueOrderStatistical = () => {
                                     },
                                 },
                             },
-                            plotOptions: {
-                                line: {
-                                    dataLabels: {
-                                        enabled: true,
-                                        formatter: function () {
-                                            const value = this.y;
-                                            if (!value) return '';
-                                            const valueFormat = value.toLocaleString('en') + ' VNĐ';
-                                            return valueFormat;
-                                        },
-                                    },
-                                    enableMouseTracking: false,
-                                },
+                            tooltip: {
+                                valueSuffix: ' VNĐ',
                             },
                             series,
                         }}

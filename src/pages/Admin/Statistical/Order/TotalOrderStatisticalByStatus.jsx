@@ -11,11 +11,37 @@ import ShowroomPicker from '../../../../components/ShowroomPicker';
 
 const defaultSeries = [
     {
-        name: 'Đơn hàng',
+        name: 'Hủy đơn hàng',
         data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        status: 0,
+    },
+    {
+        name: 'Chờ xác nhận',
+        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        status: 1,
+    },
+    {
+        name: 'Đã xác nhận',
+        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        status: 2,
+    },
+    {
+        name: 'Đang xử lý',
+        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        status: 3,
+    },
+    {
+        name: 'Thanh toán',
+        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        status: 4,
+    },
+    {
+        name: 'Hoàn thành',
+        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        status: 5,
     },
 ];
-const TotalOrderStatistical = (props) => {
+const TotalOrderStatisticalByStatus = (props) => {
     const [time, setTime] = useState(dayjs());
     const [type, setType] = useState('date');
     const [data, setData] = useState([]);
@@ -33,14 +59,42 @@ const TotalOrderStatistical = (props) => {
             case 'date':
                 const defaultSeriesClone = [
                     {
-                        name: 'Đơn hàng',
+                        name: 'Hủy đơn hàng',
                         data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        status: 0,
+                    },
+                    {
+                        name: 'Chờ xác nhận',
+                        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        status: 1,
+                    },
+                    {
+                        name: 'Đã xác nhận',
+                        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        status: 2,
+                    },
+                    {
+                        name: 'Đang xử lý',
+                        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        status: 3,
+                    },
+                    {
+                        name: 'Thanh toán',
+                        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        status: 4,
+                    },
+                    {
+                        name: 'Hoàn thành',
+                        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        status: 5,
                     },
                 ];
                 data.forEach((value) => {
                     const hour = dayjs(value.createdAt).hour();
                     defaultSeriesClone.forEach((series) => {
-                        series.data[hour] = ++series.data[hour];
+                        if (series.status === value.status) {
+                            series.data[hour] = ++series.data[hour];
+                        }
                     });
                 });
                 setSeries(defaultSeriesClone);
@@ -48,15 +102,43 @@ const TotalOrderStatistical = (props) => {
             case 'week':
                 const defaultSeriesWeek = [
                     {
-                        name: 'Đơn hàng',
+                        name: 'Hủy đơn hàng',
                         data: [0, 0, 0, 0, 0, 0, 0],
+                        status: 0,
+                    },
+                    {
+                        name: 'Chờ xác nhận',
+                        data: [0, 0, 0, 0, 0, 0, 0],
+                        status: 1,
+                    },
+                    {
+                        name: 'Đã xác nhận',
+                        data: [0, 0, 0, 0, 0, 0, 0],
+                        status: 2,
+                    },
+                    {
+                        name: 'Đang xử lý',
+                        data: [0, 0, 0, 0, 0, 0, 0],
+                        status: 3,
+                    },
+                    {
+                        name: 'Thanh toán',
+                        data: [0, 0, 0, 0, 0, 0, 0],
+                        status: 4,
+                    },
+                    {
+                        name: 'Hoàn thành',
+                        data: [0, 0, 0, 0, 0, 0, 0],
+                        status: 5,
                     },
                 ];
                 data.forEach((value) => {
                     const dayOfWeek = dayjs(value.createdAt).day();
                     const formatDayOfWeek = dayOfWeek ? dayOfWeek - 1 : 6;
                     defaultSeriesWeek.forEach((series) => {
-                        series.data[formatDayOfWeek] = ++series.data[formatDayOfWeek];
+                        if (series.status === value.status) {
+                            series.data[formatDayOfWeek] = ++series.data[formatDayOfWeek];
+                        }
                     });
                 });
                 setSeries(defaultSeriesWeek);
@@ -66,8 +148,34 @@ const TotalOrderStatistical = (props) => {
                 const weekOfMonth = Math.ceil(dayInMonth / 7);
                 const defaultSeriesMonths = [
                     {
-                        name: 'Đơn hàng',
+                        name: 'Hủy đơn hàng',
                         data: weekOfMonth === 4 ? [0, 0, 0, 0] : [0, 0, 0, 0, 0],
+                        status: 0,
+                    },
+                    {
+                        name: 'Chờ xác nhận',
+                        data: weekOfMonth === 4 ? [0, 0, 0, 0] : [0, 0, 0, 0, 0],
+                        status: 1,
+                    },
+                    {
+                        name: 'Đã xác nhận',
+                        data: weekOfMonth === 4 ? [0, 0, 0, 0] : [0, 0, 0, 0, 0],
+                        status: 2,
+                    },
+                    {
+                        name: 'Đang xử lý',
+                        data: weekOfMonth === 4 ? [0, 0, 0, 0] : [0, 0, 0, 0, 0],
+                        status: 3,
+                    },
+                    {
+                        name: 'Thanh toán',
+                        data: weekOfMonth === 4 ? [0, 0, 0, 0] : [0, 0, 0, 0, 0],
+                        status: 4,
+                    },
+                    {
+                        name: 'Hoàn thành',
+                        data: weekOfMonth === 4 ? [0, 0, 0, 0] : [0, 0, 0, 0, 0],
+                        status: 5,
                     },
                 ];
                 data.forEach((value) => {
@@ -78,7 +186,9 @@ const TotalOrderStatistical = (props) => {
                     if (createdAtNumber > 21 && createdAtNumber <= 28) idx = 3;
                     if (createdAtNumber > 28) idx = 4;
                     defaultSeriesMonths.forEach((series) => {
-                        series.data[idx] = ++series.data[idx];
+                        if (series.status === value.status) {
+                            series.data[idx] = ++series.data[idx];
+                        }
                     });
                 });
                 setSeries(defaultSeriesMonths);
@@ -86,14 +196,42 @@ const TotalOrderStatistical = (props) => {
             case 'year':
                 const defaultSeriesYear = [
                     {
-                        name: 'Đơn hàng',
+                        name: 'Hủy đơn hàng',
                         data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        status: 0,
+                    },
+                    {
+                        name: 'Chờ xác nhận',
+                        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        status: 1,
+                    },
+                    {
+                        name: 'Đã xác nhận',
+                        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        status: 2,
+                    },
+                    {
+                        name: 'Đang xử lý',
+                        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        status: 3,
+                    },
+                    {
+                        name: 'Thanh toán',
+                        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        status: 4,
+                    },
+                    {
+                        name: 'Hoàn thành',
+                        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        status: 5,
                     },
                 ];
                 data.forEach((value) => {
                     const createdAtFormat = dayjs(value.createdAt).format('MM');
                     defaultSeriesYear.forEach((series) => {
-                        series.data[createdAtFormat - 1] = ++series.data[createdAtFormat - 1];
+                        if (series.status === value.status) {
+                            series.data[createdAtFormat - 1] = ++series.data[createdAtFormat - 1];
+                        }
                     });
                 });
                 setSeries(defaultSeriesYear);
@@ -101,13 +239,41 @@ const TotalOrderStatistical = (props) => {
             default:
                 const defaultSeriesOptions = [
                     {
-                        name: 'Đơn hàng',
+                        name: 'Hủy đơn hàng',
                         data: [0],
+                        status: 0,
+                    },
+                    {
+                        name: 'Chờ xác nhận',
+                        data: [0],
+                        status: 1,
+                    },
+                    {
+                        name: 'Đã xác nhận',
+                        data: [0],
+                        status: 2,
+                    },
+                    {
+                        name: 'Đang xử lý',
+                        data: [0],
+                        status: 3,
+                    },
+                    {
+                        name: 'Thanh toán',
+                        data: [0],
+                        status: 4,
+                    },
+                    {
+                        name: 'Hoàn thành',
+                        data: [0],
+                        status: 5,
                     },
                 ];
                 data.forEach((value) => {
                     defaultSeriesOptions.forEach((series) => {
-                        series.data[0] = ++series.data[0];
+                        if (series.status === value.status) {
+                            series.data[0] = ++series.data[0];
+                        }
                     });
                 });
                 setSeries(defaultSeriesOptions);
@@ -130,7 +296,7 @@ const TotalOrderStatistical = (props) => {
             <div className="rounded border border-solid border-inherit p-6 my-4">
                 <div className="flex justify-between items-center pb-4">
                     <div span={12}>
-                        <h3 className="font-bold text-lg">Số lượng đơn hàng</h3>
+                        <h3 className="font-bold text-lg">Số lượng đơn hàng theo trạng thái</h3>
                     </div>
                     <div span={12}>
                         <DatePickerByOptions onChange={setTime} setType={setType} />
@@ -140,7 +306,7 @@ const TotalOrderStatistical = (props) => {
                     <HighchartsReact
                         highcharts={Highcharts}
                         options={{
-                            colors: ['#02b875'],
+                            colors: ['#ff4d4f', '#10A19D', '#6C4AB6', '#2146C7', '#FED049', '#02b875'],
                             chart: {
                                 type: 'column',
                                 marginBottom: 100,
@@ -200,4 +366,4 @@ const TotalOrderStatistical = (props) => {
     );
 };
 
-export default TotalOrderStatistical;
+export default TotalOrderStatisticalByStatus;
