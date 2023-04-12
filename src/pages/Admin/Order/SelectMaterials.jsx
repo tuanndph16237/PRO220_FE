@@ -102,11 +102,6 @@ const SelectMaterials = (props) => {
                 'materialId.unit',
             );
 
-            // console.log(name);
-            // console.log(priceInitial);
-            // console.log(unit);
-            // console.log(marterial);
-
             return {
                 materialId: marterial,
                 qty,

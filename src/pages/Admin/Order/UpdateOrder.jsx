@@ -556,10 +556,6 @@ const UpdateOrder = (props) => {
                                                         : dayjs(order?.tg_nhan_xe).format(HOUR_DATE_TIME)
                                                 }
                                                 showNow={false}
-                                                // onChange={(date, dateString) => {
-                                                //     const dateStringConvert = new Date(dateString);
-                                                //     setDateStart(dateStringConvert);
-                                                // }}
                                                 showTime
                                             />
                                         </Form.Item>
@@ -590,17 +586,17 @@ const UpdateOrder = (props) => {
                     >
                         <>
                             <StatusOrderDisplay cancel={isCancel} currentState={statusCurrent} />
-
-                            <SelectMaterials
-                                order={order}
-                                isChangeMaterials={isChangeMaterials}
-                                showModal={showModal}
-                                setShowModal={setShowModal}
-                                handleOkCancel={(data) => {
-                                    // console.log(data.materials);
-                                    updateMaterials(order._id, data);
-                                }}
-                            />
+                            {order.status == 3 && (
+                                <SelectMaterials
+                                    order={order}
+                                    isChangeMaterials={isChangeMaterials}
+                                    showModal={showModal}
+                                    setShowModal={setShowModal}
+                                    handleOkCancel={(data) => {
+                                        updateMaterials(order._id, data);
+                                    }}
+                                />
+                            )}
 
                             <div className="flex gap-x-2 justify-end">
                                 {order.status == 1 && (
@@ -806,6 +802,14 @@ const UpdateOrder = (props) => {
                     )}
                 </Form>
             )}
+            {/* <ReactToPrint
+                trigger={() => {
+                    // NOTE: could just as easily return <SomeComponent />. Do NOT pass an `onClick` prop
+                    // to the root node of the returned component as it will be overwritten.
+                    return <a href="#" ref={tringer}></a>;
+                }}
+                content={() => componentRef.current}
+            /> */}
         </div>
     );
 };
