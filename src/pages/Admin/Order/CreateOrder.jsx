@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Avatar, Button, Col, DatePicker, Form, Input, Row, Select } from 'antd';
@@ -10,6 +10,7 @@ import { R_EMAIL, R_NUMBER, R_NUMBER_PHONE } from '../../../constants/regex';
 import { createOrder } from '../../../api/order';
 import { disabledDate, disabledDateTime } from '../../../utils/date';
 import { Notification } from '../../../utils/notifications';
+import { getApiService } from '../../../api/service';
 
 const CreateOrder = () => {
     const navigate = useNavigate();
@@ -18,10 +19,22 @@ const CreateOrder = () => {
     const [loading, setLoading] = useState(false);
     const [isShowroom, setIsShowroom] = useState(true);
     const [service_type, setService_type] = useState([]);
+    const [services, setServices] = useState([]);
+    const serviceSelect = useRef('');
+
+    const handleService = (data_id) => {
+        const dataFind = services.find((service) => service._id == data_id);
+        serviceSelect.current = dataFind.serviceName;
+    };
+
+    const fetchService = async () => {
+        const dataService = await getApiService();
+        setServices(dataService?.data);
+    };
 
     const onFinish = (data) => {
         setLoading(true);
-        createOrder({ ...data, showroomId, status: 2 })
+        createOrder({ ...data, serviceType: serviceSelect.current, showroomId, status: 2 })
             .then(() => {
                 Notification(NOTIFICATION_TYPE.SUCCESS, 'Thêm đơn hàng thành công!');
                 navigate('/admin/don-hang');
@@ -35,6 +48,10 @@ const CreateOrder = () => {
     const handleChangeSelect = (value) => {
         setService_type(value);
     };
+
+    useEffect(() => {
+        fetchService();
+    }, []);
 
     return (
         <div>
@@ -86,16 +103,12 @@ const CreateOrder = () => {
                                 <Form.Item
                                     label={<p className="text-base font-semibold">Email</p>}
                                     name="email"
-                                    // rules={[
-                                    //     {
-                                    //         required: true,
-                                    //         message: 'Quý khách vui lòng không để trống trường thông tin này.',
-                                    //     },
-                                    //     {
-                                    //         pattern: R_EMAIL,
-                                    //         message: 'Email không đúng định dạng.',
-                                    //     },
-                                    // ]}
+                                    rules={[
+                                        {
+                                            pattern: R_EMAIL,
+                                            message: 'Email không đúng định dạng.',
+                                        },
+                                    ]}
                                 >
                                     <Input
                                         type="email"
@@ -127,23 +140,18 @@ const CreateOrder = () => {
                                             message: 'Quý khách vui lòng không để trống trường thông tin này.',
                                         },
                                     ]}
-                                    initialValue={SEVICE_TYPE.SHOWROOM}
                                 >
                                     <Select
                                         size="large"
                                         placeholder="Sửa chữa tại..."
                                         className="h-10 text-base border-[#02b875]"
-                                        onSelect={(value) => {
-                                            console.log(value);
-                                        }}
+                                        onSelect={(value) => handleService(value)}
                                     >
-                                        <Select.Option value={SEVICE_TYPE.SHOWROOM}>
-                                            Sửa chữa/ Bảo dưỡng tại cửa hàng.
-                                        </Select.Option>
-                                        <Select.Option value={SEVICE_TYPE.RESCUE}>Cứu hộ 24/7</Select.Option>
-                                        <Select.Option value={SEVICE_TYPE.CONTACT_RESCUE}>
-                                            Nhận về sửa chữa
-                                        </Select.Option>
+                                        {services.map((service) => (
+                                            <Select.Option key={service._id} value={service._id}>
+                                                {service.serviceName}
+                                            </Select.Option>
+                                        ))}
                                     </Select>
                                 </Form.Item>
                                 {isShowroom ? null : (

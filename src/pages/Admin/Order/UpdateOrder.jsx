@@ -226,6 +226,14 @@ const UpdateOrder = (props) => {
     };
 
     const handleChangeStatus = async (status, order) => {
+         if (status == 4 && total == 0) {
+            Notification(
+                NOTIFICATION_TYPE.WARNING,
+                'Giá trị của đơn hàng không phù hợp',
+                `Số tiền của đơn hàng hiện tại là: ${total?.toLocaleString('en') + ' VNĐ'}`,
+            );
+            return;
+        }
         updateOrderStatus(order._id, {
             materials: order.materials,
             materialIds: orders.materialIds,
