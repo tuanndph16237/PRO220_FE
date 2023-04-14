@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { Button, Popconfirm, Table, message, Row, Menu, theme } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import _ from 'lodash';
-import { getAllShowroomAsync } from '../../../slices/showroom'
+import { getAllShowroomAsync } from '../../../slices/showroom';
 import { ORDER_STATUS } from '../../../constants/order';
 import { HOUR_DATE_TIME } from '../../../constants/format';
 import moment from 'moment';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { getUserOrder , updateOrderUser} from '../../../api/order';
+import { getUserOrder, updateOrderUser } from '../../../api/order';
 import { JwtDecode } from '../../../utils/auth';
-import {  ORDER_STATUS_TYPE } from '../../../constants/order';
+import { ORDER_STATUS_TYPE } from '../../../constants/order';
 
 const ListOrder = (props) => {
     const dispatch = useDispatch();
@@ -24,14 +24,17 @@ const ListOrder = (props) => {
         try {
             const dataOrderUser = await getUserOrder(id);
             console.log(dataOrderUser);
-            const handleOrderUser = dataOrderUser.data.map((order, index) => ({ key: index,name:order.showroom.name,...order}));
-            if(props.status === ""){
+            const handleOrderUser = dataOrderUser.data.map((order, index) => ({
+                key: index,
+                name: order.showroom.name,
+                ...order,
+            }));
+            if (props.status === '') {
                 setOrderUser(handleOrderUser);
-            }else{
-                const filterData = handleOrderUser.filter((order)=>order.status == props.status)
-                setOrderUser(filterData)
+            } else {
+                const filterData = handleOrderUser.filter((order) => order.status == props.status);
+                setOrderUser(filterData);
             }
-         
         } catch (error) {}
     };
 
@@ -41,12 +44,10 @@ const ListOrder = (props) => {
         }
     }, [showrooms]);
 
-    
     const confirm = async (data) => {
-        await updateOrderUser(data)
+        await updateOrderUser(data);
         message.info('Đơn hàng đã bị hủy');
-        setTimeout(()=> fetchOrderUser(user._id),1000)
-
+        setTimeout(() => fetchOrderUser(user._id), 1000);
     };
     const text = 'Bạn có muốn hủy đơn hàng không';
     const description = 'Delete the task';
@@ -54,7 +55,7 @@ const ListOrder = (props) => {
     const columns = [
         {
             title: 'Cơ sở',
-            dataIndex: 'name',
+            dataIndex: 'nameShowroom',
             width: 300,
         },
         {
@@ -76,18 +77,18 @@ const ListOrder = (props) => {
                 return (
                     <Row>
                         <Link to={`${data.idOrder}`}>
-                            <Button className='bg-[#02b875] text-white w-20	'>Chi tiết</Button>
+                            <Button className="bg-[#02b875] text-white w-20	">Chi tiết</Button>
                         </Link>
                         <Popconfirm
                             placement="top"
                             title={text}
                             description={description}
-                            onConfirm={()=>confirm(data)}
+                            onConfirm={() => confirm(data)}
                             okText="Có"
                             cancelText="Không"
                         >
                             {data.status == 1 && (
-                                <Button  className='w-20' type="primary" danger>
+                                <Button className="w-20" type="primary" danger>
                                     Hủy
                                 </Button>
                             )}
@@ -117,8 +118,8 @@ const ListOrder = (props) => {
             setPath(subString);
         }
     }, [pathname]);
-    const items = ORDER_STATUS_TYPE
-    
+    const items = ORDER_STATUS_TYPE;
+
     return (
         <div>
             <Menu
@@ -128,12 +129,9 @@ const ListOrder = (props) => {
                 defaultSelectedKeys={['']}
                 selectedKeys={[path]}
             />
-            <Table
-                columns={columns}
-                dataSource={orderUser}
-            />
+            <Table columns={columns} dataSource={orderUser} />
         </div>
     );
-}
+};
 
-export default ListOrder
+export default ListOrder;

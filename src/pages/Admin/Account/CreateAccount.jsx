@@ -123,7 +123,7 @@ const CreateAccount = ({ open, onClose, onRefetch, checkShowroom }) => {
                     >
                         <Select
                             className="h-10 text-base border-[#02b875]"
-                            placeholder="Chọn cửa hàng"
+                            placeholder="Chọn vai trò"
                             onChange={handleChange}
                         >
                             {role.map((role, index) => {

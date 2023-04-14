@@ -15,7 +15,6 @@ import { R_EMAIL, R_NUMBER, R_NUMBER_PHONE } from '../../../constants/regex';
 import { Notification } from '../../../utils/notifications';
 import { NOTIFICATION_TYPE } from '../../../constants/status';
 import { getMaterialsWarehouseAsync } from '../../../slices/warehouse';
-import { useGetParam } from '../../../utils/param';
 import { sendMail, updateStatusBill } from '../../../api/payment';
 import { RightOutlined, SolutionOutlined } from '@ant-design/icons/lib/icons';
 import { useReactToPrint } from 'react-to-print';
@@ -24,6 +23,9 @@ import StatusOrderDisplay from './StatusOrderDisplay';
 import SelectMaterials from './SelectMaterials';
 import { updateOrder } from '../../../api/order';
 import { getApiSubService } from '../../../api/service';
+import { useNavigate } from 'react-router-dom';
+import { PERMISSION_LABLEL, PERMISSION_TYPE } from '../../../constants/permission';
+import PermissionCheck from '../../../components/permission/PermissionCheck';
 
 const UpdateOrder = (props) => {
     useDocumentTitle('Cập nhật đơn hàng');
@@ -32,7 +34,7 @@ const UpdateOrder = (props) => {
     const materials = useSelector((state) => state.warehouse.materials.value);
     const showroomId = useSelector((state) => state.user.currentUser.values.showroomId);
     const errors = useSelector((state) => state.order.updateOrder.errors);
-    const [values, setValues] = useState(0);
+
     const { id } = useParams();
     const [order, setOrder] = useState({});
     const [initialValues, setInitialValues] = useState({});
@@ -54,11 +56,10 @@ const UpdateOrder = (props) => {
     const [dateStart, setDateStart] = useState(new Date());
     const [dateFinish, setDateFinish] = useState(new Date());
     const [dataSubService, setDataSubService] = useState([]);
+    const navigate = useNavigate();
 
     const payment = async () => {
-        if (values == 1) {
-            setOpenModal(true);
-        }
+        setOpenModal(true);
     };
 
     const handleOk = async () => {
@@ -71,9 +72,6 @@ const UpdateOrder = (props) => {
     };
     const handleCancel = () => {
         setOpenModal(false);
-    };
-    const onChange = (e) => {
-        setValues(e.target.value);
     };
 
     const fetchSubService = async () => {
@@ -88,6 +86,9 @@ const UpdateOrder = (props) => {
     useEffect(() => {
         if (statusPayment) {
             Notification(NOTIFICATION_TYPE.SUCCESS, 'Thanh toán thành công');
+            // setTimeout(() => {
+            //     navigate('/admin/don-hang');
+            // }, 3000);
         }
     }, [statusPayment]);
 
@@ -226,7 +227,7 @@ const UpdateOrder = (props) => {
     };
 
     const handleChangeStatus = async (status, order) => {
-         if (status == 4 && total == 0) {
+        if (status == 4 && total == 0) {
             Notification(
                 NOTIFICATION_TYPE.WARNING,
                 'Giá trị của đơn hàng không phù hợp',
@@ -270,7 +271,7 @@ const UpdateOrder = (props) => {
             key: 'name',
         },
         {
-            title: 'Đơn vị',
+            title: 'Đơn vị tính',
             dataIndex: 'unit',
             key: 'unit',
         },
@@ -568,15 +569,21 @@ const UpdateOrder = (props) => {
                                             />
                                         </Form.Item>
                                     </Col>
-
-                                    <Button
-                                        // type="primary"
-                                        htmlType="submit"
-                                        className="btn-primary text-white bg-[#02b875] w-full mb-8 mt-8 h-12 hover:out
-                        font-medium rounded-lg text-sm text-center mr-3 md:mr-0"
+                                    <PermissionCheck
+                                        permissionHas={{
+                                            label: PERMISSION_LABLEL.ORDER_MANAGE,
+                                            code: PERMISSION_TYPE.UPDATE,
+                                        }}
                                     >
-                                        Cập nhật
-                                    </Button>
+                                        <Button
+                                            // type="primary"
+                                            htmlType="submit"
+                                            className="btn-primary text-white bg-[#02b875] w-full mb-8 mt-8 h-12 hover:out
+                        font-medium rounded-lg text-sm text-center mr-3 md:mr-0"
+                                        >
+                                            Cập nhật
+                                        </Button>
+                                    </PermissionCheck>
                                 </Col>
                             </>
                         )}
@@ -605,28 +612,34 @@ const UpdateOrder = (props) => {
                                     }}
                                 />
                             )}
+                            <PermissionCheck
+                                permissionHas={{
+                                    label: PERMISSION_LABLEL.ORDER_MANAGE,
+                                    code: PERMISSION_TYPE.UPDATE,
+                                }}
+                            >
+                                <div className="flex gap-x-2 justify-end">
+                                    {order.status == 1 && (
+                                        <Button className="bg-red-500 text-white hover:!text-white">Hủy</Button>
+                                    )}
 
-                            <div className="flex gap-x-2 justify-end">
-                                {order.status == 1 && (
-                                    <Button className="bg-red-500 text-white hover:!text-white">Hủy</Button>
-                                )}
-
-                                {order.status == 0 || order.status == 4 || order.status == 5 ? (
-                                    ''
-                                ) : (
-                                    <Button
-                                        className="!bg-[#02b875] text-white hover:!text-white text-center"
-                                        onClick={() => {
-                                            handleChangeStatus(statusCurrent + 1, order);
-                                        }}
-                                    >
-                                        <div className="flex justify-center items-center gap-x-2">
-                                            <p>Chuyển Tiếp Trạng Thái</p>
-                                            <RightOutlined />
-                                        </div>
-                                    </Button>
-                                )}
-                            </div>
+                                    {order.status == 0 || order.status == 4 || order.status == 5 ? (
+                                        ''
+                                    ) : (
+                                        <Button
+                                            className="!bg-[#02b875] text-white hover:!text-white text-center"
+                                            onClick={() => {
+                                                handleChangeStatus(statusCurrent + 1, order);
+                                            }}
+                                        >
+                                            <div className="flex justify-center items-center gap-x-2">
+                                                <p>Chuyển Tiếp Trạng Thái</p>
+                                                <RightOutlined />
+                                            </div>
+                                        </Button>
+                                    )}
+                                </div>
+                            </PermissionCheck>
                         </>
                     </Form.Item>
                     {order.status >= 3 && (
@@ -643,47 +656,60 @@ const UpdateOrder = (props) => {
                                             <span className="text-base pl-4 font-medium">Vật tư sửa chữa</span>
                                         </Col>
                                         {order.status == 3 && (
-                                            <div className="flex gap-x-2 pb-6">
-                                                {_.size(order.materials) > 0 && (
-                                                    <Button
-                                                        type="primary"
-                                                        onClick={() => {
-                                                            setShowModal(true);
-                                                            setIsChangeMaterials(true);
-                                                        }}
-                                                    >
-                                                        Thay Đổi Vật Tư
-                                                    </Button>
-                                                )}
-                                                {_.size(order.materials) == 0 && (
-                                                    <Button
-                                                        type="primary"
-                                                        onClick={() => {
-                                                            setShowModal(true);
-                                                        }}
-                                                    >
-                                                        Chọn vật tư
-                                                    </Button>
-                                                )}
-                                            </div>
+                                            <PermissionCheck
+                                                permissionHas={{
+                                                    label: PERMISSION_LABLEL.ORDER_MANAGE,
+                                                    code: PERMISSION_TYPE.UPDATE,
+                                                }}
+                                            >
+                                                <div className="flex gap-x-2 pb-6">
+                                                    {_.size(order.materials) > 0 && (
+                                                        <Button
+                                                            type="primary"
+                                                            onClick={() => {
+                                                                setShowModal(true);
+                                                                setIsChangeMaterials(true);
+                                                            }}
+                                                        >
+                                                            Thay Đổi Vật Tư
+                                                        </Button>
+                                                    )}
+                                                    {_.size(order.materials) == 0 && (
+                                                        <Button
+                                                            type="primary"
+                                                            onClick={() => {
+                                                                setShowModal(true);
+                                                            }}
+                                                        >
+                                                            Chọn vật tư
+                                                        </Button>
+                                                    )}
+                                                </div>
+                                            </PermissionCheck>
                                         )}
-
-                                        <Col span={24}>
-                                            <Col span={24} className="pb-6">
-                                                <Avatar
-                                                    size={34}
-                                                    icon={<p className="text-base font-semibold leading-8">4</p>}
-                                                    style={{ backgroundColor: '#02b875' }}
+                                        <PermissionCheck
+                                            permissionHas={{
+                                                label: PERMISSION_LABLEL.ORDER_MANAGE,
+                                                code: PERMISSION_TYPE.UPDATE,
+                                            }}
+                                        >
+                                            <Col span={24}>
+                                                <Col span={24} className="pb-6">
+                                                    <Avatar
+                                                        size={34}
+                                                        icon={<p className="text-base font-semibold leading-8">4</p>}
+                                                        style={{ backgroundColor: '#02b875' }}
+                                                    />
+                                                    <span className="text-base pl-4 font-medium">Dịch vụ khác</span>
+                                                </Col>
+                                                <SubServices
+                                                    statusOrder={order.status}
+                                                    value={subService}
+                                                    dataSource={dataSubService}
+                                                    handleValue={handleDataSubService}
                                                 />
-                                                <span className="text-base pl-4 font-medium">Dịch vụ khác</span>
                                             </Col>
-                                            <SubServices
-                                                statusOrder={order.status}
-                                                value={subService}
-                                                dataSource={dataSubService}
-                                                handleValue={handleDataSubService}
-                                            />
-                                        </Col>
+                                        </PermissionCheck>
                                     </Col>
                                 )}
 
@@ -751,21 +777,6 @@ const UpdateOrder = (props) => {
                                             </div>
                                         </div>
                                     </div>
-
-                                    {order.status == 4 && (
-                                        <Form.Item
-                                            name="money"
-                                            label={<p className="text-base font-semibold">Phương Thức Thanh Toán :</p>}
-                                        >
-                                            <Radio.Group onChange={onChange} value={values}>
-                                                <Space direction="vertical">
-                                                    <Radio value={1}>
-                                                        Thanh toán tiền mặt <SolutionOutlined />
-                                                    </Radio>
-                                                </Space>
-                                            </Radio.Group>
-                                        </Form.Item>
-                                    )}
                                 </Col>
                             </Row>
 
@@ -792,32 +803,29 @@ const UpdateOrder = (props) => {
                                     showIcon
                                 />
                             </Modal>
-                            <Form.Item wrapperCol={{ offset: 8, span: 8 }} name="print">
-                                {order.status == 4 && (
-                                    <Button
-                                        type="primary"
-                                        className={`${
-                                            values == 0 ? '' : 'btn-primary'
-                                        } text-white bg-[#02b875] w-full mb-8 mt-8 h-12 hover:out font-medium rounded-lg text-sm text-center mr-3 md:mr-0`}
-                                        disabled={values == 0 ? true : false}
-                                        onClick={() => handlePrint()}
-                                    >
-                                        Thanh Toán
-                                    </Button>
-                                )}
-                            </Form.Item>
+                            <PermissionCheck
+                                permissionHas={{
+                                    label: PERMISSION_LABLEL.ORDER_MANAGE,
+                                    code: PERMISSION_TYPE.UPDATE,
+                                }}
+                            >
+                                {' '}
+                                <Form.Item wrapperCol={{ offset: 8, span: 8 }} name="print">
+                                    {order.status == 4 && (
+                                        <Button
+                                            type="primary"
+                                            className={`text-white !bg-[#02b875] w-full mb-8 mt-8 h-12 hover:out font-medium rounded-lg text-sm text-center mr-3 md:mr-0`}
+                                            onClick={() => handlePrint()}
+                                        >
+                                            Thanh Toán
+                                        </Button>
+                                    )}
+                                </Form.Item>
+                            </PermissionCheck>
                         </>
                     )}
                 </Form>
             )}
-            {/* <ReactToPrint
-                trigger={() => {
-                    // NOTE: could just as easily return <SomeComponent />. Do NOT pass an `onClick` prop
-                    // to the root node of the returned component as it will be overwritten.
-                    return <a href="#" ref={tringer}></a>;
-                }}
-                content={() => componentRef.current}
-            /> */}
         </div>
     );
 };

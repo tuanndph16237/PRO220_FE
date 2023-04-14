@@ -10,6 +10,8 @@ import DatePickerByOptions from '../../../../components/Customs/DatePickerByOpti
 import { getOrderRevenue } from '../../../../api/order';
 import { getAllShowroomAsync } from '../../../../slices/showroom';
 import { setCategoriesByType } from '../../../../utils/statistical';
+import PermissionCheck from '../../../../components/permission/PermissionCheck';
+import { PERMISSION_LABLEL, PERMISSION_TYPE } from '../../../../constants/permission';
 
 const defaultSeries = [
     {
@@ -359,15 +361,18 @@ const RevenueOrderStatistical = () => {
     };
     return (
         <Fragment>
-            <Select
-                size="large"
-                value={showroomIdSeleted}
-                style={{
-                    width: 400,
-                }}
-                onChange={handleChange}
-                options={showrooms.map((showroom) => ({ value: showroom._id, label: showroom.name }))}
-            />
+            <PermissionCheck permissionHas={{ label: PERMISSION_LABLEL.STATISTICS, code: PERMISSION_TYPE.UPDATE }}>
+                <Select
+                    size="large"
+                    value={showroomIdSeleted}
+                    style={{
+                        width: 400,
+                    }}
+                    onChange={handleChange}
+                    options={showrooms.map((showroom) => ({ value: showroom._id, label: showroom.name }))}
+                />
+            </PermissionCheck>
+
             <div className="rounded border border-solid border-inherit p-6 my-4">
                 <div className="flex justify-between items-center pb-4">
                     <div span={12}>

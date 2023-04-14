@@ -20,6 +20,8 @@ const DrawerUpdateShowroom = () => {
     const [defaultList, setDefaultList] = useState([]);
     const [url, setUrl] = useState(null);
     const [address, setAddress] = useState('');
+    // const [addressVi, setAddressVi] = useState('');
+    // const [addressEn, setAddressEn] = useState('');
     const [zone, setZone] = useState([]);
     const coordinate = useRef({
         latitude: '',
@@ -89,13 +91,15 @@ const DrawerUpdateShowroom = () => {
             let coordinates = item.center;
             coordinate.current.latitude = coordinates[1];
             coordinate.current.longitude = coordinates[0];
-            setAddress(item.place_name_vi);
+            setAddress(item.place_name_vi || item.place_name_en);
         });
         getShowroomById(id).then((res) => {
             dataUpdate.current = res.data;
             setAddress(res.data.address);
         });
     }, []);
+
+    console.log(address);
 
     const onFinish = async (values) => {
         const data = {

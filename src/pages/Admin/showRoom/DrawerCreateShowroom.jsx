@@ -74,8 +74,7 @@ const DrawerCreateShowroom = () => {
             let coordinates = item.center;
             coordinate.current.latitude = coordinates[1];
             coordinate.current.longitude = coordinates[0];
-            setAddress(item.place_name_vi);
-            setAddress(item.place_name_en);
+            setAddress(item.place_name_vi || item.place_name_en);
         });
     }, []);
 
@@ -117,7 +116,7 @@ const DrawerCreateShowroom = () => {
                 layout={'vertical'}
                 initialValues={{
                     remember: false,
-                    districtId:'----chọn địa điểm cửa hàng----'
+                    districtId: '----chọn địa điểm cửa hàng----',
                 }}
                 onFinish={onFinish}
                 autoComplete="off"
@@ -169,10 +168,7 @@ const DrawerCreateShowroom = () => {
                         },
                     ]}
                 >
-                    <Select
-                        size="large"
-                        className="h-10 w-full text-base border-[#02b875]"
-                    >
+                    <Select size="large" className="h-10 w-full text-base border-[#02b875]">
                         {zone.map((item) => (
                             <Select.Option value={item._id} key={item._id} label={item.name}>
                                 <div span={24}>

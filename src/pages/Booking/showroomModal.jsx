@@ -6,14 +6,15 @@ import { findNearShowroom, searchInListShowroom } from '../../api/showroom';
 
 const ShowroomModal = ({ setSelectShowroom }) => {
     const [zone, setZone] = useState([]);
-    const [selectZone, setSelectZone] = useState('----chọn tất cả-------');
+    const [selectZone, setSelectZone] = useState('');
     const [dataToPreview, setDataToPreview] = useState([]);
     const [searchText, setSearchText] = useState('');
     const [isData, setIsData] = useState(true);
+    const [firstCallApi, setFirstCallApi] = useState(true);
 
     const fetchAPIFilter = async () => {
         const getDataSearch = await searchInListShowroom({
-            district: selectZone == '----chọn tất cả-------' ? '' : selectZone,
+            district: selectZone == '' ? '' : selectZone,
             address: searchText,
         });
         if (_.isEmpty(getDataSearch.data)) {
@@ -48,12 +49,30 @@ const ShowroomModal = ({ setSelectShowroom }) => {
         });
     };
 
+    const fetchDataLocationAroundFirst = () => {
+        navigator.geolocation.getCurrentPosition(async (position) => {
+            let latitude = position.coords.latitude.toString();
+            let longitude = position.coords.longitude.toString();
+            let dist = 2000;
+            const dataUserNearBy = await findNearShowroom({ latitude, longitude, dist });
+            if (_.isEmpty(dataUserNearBy.data)) {
+                fetchAPIFilter();
+                setFirstCallApi(false);
+            } else {
+                setDataToPreview(dataUserNearBy.data);
+                setFirstCallApi(false);
+                setIsData(true);
+            }
+        });
+    };
+
     useEffect(() => {
         fetchApiDistrict();
+        fetchDataLocationAroundFirst();
     }, []);
 
     useEffect(() => {
-        fetchAPIFilter();
+        if (!firstCallApi) fetchAPIFilter();
     }, [selectZone, searchText]);
 
     return (
@@ -88,7 +107,7 @@ const ShowroomModal = ({ setSelectShowroom }) => {
                         </Button>
                     ))}
                     <Button type="primary" onClick={() => findUserLocation()}>
-                        Cửa Hàng Gần Nhất ( 2km )
+                        Cửa Hàng Gần Nhất ( 1km )
                     </Button>
                 </div>
             </div>

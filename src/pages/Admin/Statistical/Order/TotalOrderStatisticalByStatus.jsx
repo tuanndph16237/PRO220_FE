@@ -8,6 +8,8 @@ import { getTotalOrderByOptions } from '../../../../api/order';
 import { setCategoriesByType } from '../../../../utils/statistical';
 import { Fragment } from 'react';
 import ShowroomPicker from '../../../../components/ShowroomPicker';
+import PermissionCheck from '../../../../components/permission/PermissionCheck';
+import { PERMISSION_LABLEL, PERMISSION_TYPE } from '../../../../constants/permission';
 
 const defaultSeries = [
     {
@@ -292,7 +294,13 @@ const TotalOrderStatisticalByStatus = (props) => {
     }, [time, showroomId, type]);
     return (
         <Fragment>
+            {/* <PermissionCheck
+                permissionHas={{ label: PERMISSION_LABLEL.STATISTICS, code: PERMISSION_TYPE.UPDATE }}
+            >
+             <ShowroomPicker onChangeShowroom={setShowroomId} />
+            </PermissionCheck> */}
             <ShowroomPicker onChangeShowroom={setShowroomId} />
+
             <div className="rounded border border-solid border-inherit p-6 my-4">
                 <div className="flex justify-between items-center pb-4">
                     <div span={12}>

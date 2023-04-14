@@ -12,6 +12,8 @@ import { ORDER_STATUS, SEVICE_TYPE } from '../../../constants/order';
 import SpinCustomize from '../../../components/Customs/Spin';
 import Filter from '../../../components/Filter/Filter';
 import { CSVLink } from 'react-csv';
+import PermissionCheck from '../../../components/permission/PermissionCheck';
+import { PERMISSION_LABLEL, PERMISSION_TYPE } from '../../../constants/permission';
 
 const OrderManage = () => {
     const dispatch = useDispatch();
@@ -231,15 +233,19 @@ const OrderManage = () => {
                                     Xuất excel
                                 </CSVLink>
                             </Button>
-                            <Button
-                                onClick={() => {
-                                    navigate('/admin/them-don-hang');
-                                }}
-                                className="btn-primary text-white mr-5"
-                                type="primary"
+                            <PermissionCheck
+                                permissionHas={{ label: PERMISSION_LABLEL.ORDER_MANAGE, code: PERMISSION_TYPE.CREATE }}
                             >
-                                Thêm đơn hàng
-                            </Button>
+                                <Button
+                                    onClick={() => {
+                                        navigate('/admin/them-don-hang');
+                                    }}
+                                    className="btn-primary text-white mr-5"
+                                    type="primary"
+                                >
+                                    Thêm đơn hàng
+                                </Button>
+                            </PermissionCheck>
                         </div>
                     </div>
                     <p className="py-5 pt-2">
