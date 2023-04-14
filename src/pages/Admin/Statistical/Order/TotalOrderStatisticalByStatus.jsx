@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import DatePickerByOptions from '../../../../components/Customs/DatePickerByOptions';
@@ -6,10 +6,8 @@ import Highcharts from 'highcharts/highstock';
 import HighchartsReact from 'highcharts-react-official';
 import { getTotalOrderByOptions } from '../../../../api/order';
 import { setCategoriesByType } from '../../../../utils/statistical';
-import { Fragment } from 'react';
+import useDocumentTitle from '../../../../hooks/useDocumentTitle';
 import ShowroomPicker from '../../../../components/ShowroomPicker';
-import PermissionCheck from '../../../../components/permission/PermissionCheck';
-import { PERMISSION_LABLEL, PERMISSION_TYPE } from '../../../../constants/permission';
 
 const defaultSeries = [
     {
@@ -44,6 +42,7 @@ const defaultSeries = [
     },
 ];
 const TotalOrderStatisticalByStatus = (props) => {
+    useDocumentTitle('Thống kê đơn hàng theo trạng thái');
     const [time, setTime] = useState(dayjs());
     const [type, setType] = useState('date');
     const [data, setData] = useState([]);
@@ -92,7 +91,7 @@ const TotalOrderStatisticalByStatus = (props) => {
                     },
                 ];
                 data.forEach((value) => {
-                    const hour = dayjs(value.createdAt).hour();
+                    const hour = dayjs(value.appointmentSchedule).hour();
                     defaultSeriesClone.forEach((series) => {
                         if (series.status === value.status) {
                             series.data[hour] = ++series.data[hour];
@@ -135,7 +134,7 @@ const TotalOrderStatisticalByStatus = (props) => {
                     },
                 ];
                 data.forEach((value) => {
-                    const dayOfWeek = dayjs(value.createdAt).day();
+                    const dayOfWeek = dayjs(value.appointmentSchedule).day();
                     const formatDayOfWeek = dayOfWeek ? dayOfWeek - 1 : 6;
                     defaultSeriesWeek.forEach((series) => {
                         if (series.status === value.status) {
@@ -181,7 +180,7 @@ const TotalOrderStatisticalByStatus = (props) => {
                     },
                 ];
                 data.forEach((value) => {
-                    const createdAtNumber = +dayjs(value.createdAt).format('DD');
+                    const createdAtNumber = +dayjs(value.appointmentSchedule).format('DD');
                     let idx = 0;
                     if (createdAtNumber > 7 && createdAtNumber <= 14) idx = 1;
                     if (createdAtNumber > 14 && createdAtNumber <= 21) idx = 2;
@@ -229,7 +228,7 @@ const TotalOrderStatisticalByStatus = (props) => {
                     },
                 ];
                 data.forEach((value) => {
-                    const createdAtFormat = dayjs(value.createdAt).format('MM');
+                    const createdAtFormat = dayjs(value.appointmentSchedule).format('MM');
                     defaultSeriesYear.forEach((series) => {
                         if (series.status === value.status) {
                             series.data[createdAtFormat - 1] = ++series.data[createdAtFormat - 1];
@@ -294,11 +293,6 @@ const TotalOrderStatisticalByStatus = (props) => {
     }, [time, showroomId, type]);
     return (
         <Fragment>
-            {/* <PermissionCheck
-                permissionHas={{ label: PERMISSION_LABLEL.STATISTICS, code: PERMISSION_TYPE.UPDATE }}
-            >
-             <ShowroomPicker onChangeShowroom={setShowroomId} />
-            </PermissionCheck> */}
             <ShowroomPicker onChangeShowroom={setShowroomId} />
 
             <div className="rounded border border-solid border-inherit p-6 my-4">

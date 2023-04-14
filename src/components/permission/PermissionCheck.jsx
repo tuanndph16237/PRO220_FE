@@ -7,7 +7,7 @@ const PermissionCheck = ({ children, permissionHas }) => {
     let checkIsPermission = false;
 
     const handleCheckIsAllow = (permissionHas) => {
-        const findMatch = rolePermission.find((catePermission) => catePermission?.name == permissionHas?.label);
+        const findMatch = _.find(rolePermission, (catePermission) => catePermission?.name == permissionHas?.label);
         if (findMatch) {
             if (_.some(findMatch.listPermissions, (rolePermission) => rolePermission?.code == permissionHas?.code))
                 checkIsPermission = true;
