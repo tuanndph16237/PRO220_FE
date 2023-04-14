@@ -57,10 +57,10 @@ const index = () => {
                     tags: ['cool', 'teacher'],
                 };
             });
-            const newData = showdata.filter((item) => item.name !== 'Admin');
-            datas.current = newData;
-            setData(newData);
-            setShowroomsFilter(newData.map((item) => ({ label: item.name, value: item.key })));
+            // const newData = showdata.filter((item) => item.name !== 'Admin');
+            datas.current = showdata;
+            setData(showdata);
+            setShowroomsFilter(showdata.map((item) => ({ label: item.name, value: item.key })));
         })();
     }, [Role]);
     const handleFilter = (values) => {
