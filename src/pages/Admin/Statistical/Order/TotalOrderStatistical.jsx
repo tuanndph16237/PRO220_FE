@@ -122,7 +122,7 @@ const TotalOrderStatistical = (props) => {
                     setData(data);
                 })
                 .catch((err) => {
-                    console.log('getTotalOrderByOptions-err-status', err);
+                    return;
                 });
         }
     }, [time, showroomId, type]);

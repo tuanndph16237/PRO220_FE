@@ -35,7 +35,6 @@ const CreatePost = ({ open, onClose, onRefetch }) => {
                 onRefetch();
             })
             .catch((err) => {
-                console.log('create-acount', err);
                 Notification(NOTIFICATION_TYPE.ERROR, 'Thêm tin tức thất bại', message.message);
             })
             .finally(() => {

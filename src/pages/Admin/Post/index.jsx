@@ -54,7 +54,6 @@ const PostManager = () => {
             await getAllPost();
         })();
     }, []);
-    console.log('data', data);
 
     const handleRemoveAccount = (id) => {};
 
@@ -66,7 +65,7 @@ const PostManager = () => {
                 setData(newData);
             })
             .catch((err) => {
-                console.log('get posts err', err);
+                return;
             })
             .finally(() => setLoading(false));
     };

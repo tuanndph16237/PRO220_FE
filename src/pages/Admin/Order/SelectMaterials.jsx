@@ -62,15 +62,15 @@ const SelectMaterials = (props) => {
     };
 
     const handleGiveBackMaterial = (id) => {
-        const data = props.order.materials.find((value) => value.materialId === id);
+        const data = props?.order?.materials.find((value) => value.materialId === id);
         const dataPost = {
-            showroomId: props.order.showroomId,
+            showroomId: props?.order?.showroomId,
             material: {
                 materialId: id,
-                qty: data.qty,
+                qty: data?.qty,
             },
         };
-        //tra laij vat tu
+        // tra laij vat tu
         giveBackMaterial(dataPost);
         // luu lai order
     };
@@ -213,10 +213,7 @@ const SelectMaterials = (props) => {
                                 <InfiniteScroll dataLength={materials.length} scrollableTarget="scrollableDiv">
                                     <List
                                         dataSource={materials}
-                                        renderItem={({
-                                            materialId: { _id, name, price, unit, priceInitial },
-                                            quantity,
-                                        }) => {
+                                        renderItem={({ materialId: { _id, name, price }, quantity }) => {
                                             return (
                                                 <List.Item key={_id}>
                                                     <button
@@ -276,9 +273,6 @@ const SelectMaterials = (props) => {
                                                                 materialId: materialSeleted.materialId,
                                                                 qty: value,
                                                                 price: materialSeleted.price,
-                                                                // name: materialSeleted.name,
-                                                                // unit: materialSeleted.unit,
-                                                                // priceInitial: materialSeleted.priceInitial,
                                                             };
                                                         }
                                                         return materialSeleted;

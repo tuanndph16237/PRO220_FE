@@ -28,7 +28,7 @@ const UpdateService = () => {
     const [form] = Form.useForm();
     const [dataUpdate, setDataUpdate] = useState(dataApi);
     const onFinish = (values) => {
-        console.log('dữ liệu từ form:', values);
+        return;
     };
 
     return (

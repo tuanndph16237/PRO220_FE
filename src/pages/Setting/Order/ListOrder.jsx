@@ -23,7 +23,6 @@ const ListOrder = (props) => {
     const fetchOrderUser = async (id) => {
         try {
             const dataOrderUser = await getUserOrder(id);
-            console.log(dataOrderUser);
             const handleOrderUser = dataOrderUser.data.map((order, index) => ({
                 key: index,
                 name: order.showroom.name,

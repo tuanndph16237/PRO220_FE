@@ -72,7 +72,6 @@ export const OrderSlice = createSlice({
             state.updateOrder.loading = true;
         },
         [updateOrderAsync.rejected.type]: (state, action) => {
-            console.log('update-async-error', action);
             state.updateOrder.loading = false;
             state.updateOrder.errors = action.payload;
         },

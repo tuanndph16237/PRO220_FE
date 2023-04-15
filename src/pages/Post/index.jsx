@@ -25,7 +25,7 @@ const Posts = () => {
         })();
     }, []);
 
-    function getUniqueListBy(arr, key) {
+    function getUniqueListBy (arr, key) {
         return [...new Map(arr.map((item) => [item[key], item])).values()];
     }
     const handleGetPosts = (filter) => {
@@ -40,7 +40,7 @@ const Posts = () => {
                 setPosts(uniqueById);
             })
             .catch((err) => {
-                console.log('get post user err', err);
+                return;
             })
             .finally(() => {
                 setLoading(false);

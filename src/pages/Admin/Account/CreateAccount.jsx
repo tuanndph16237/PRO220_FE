@@ -38,9 +38,7 @@ const CreateAccount = ({ open, onClose, onRefetch, checkShowroom }) => {
                     onRefetch();
                 }
             })
-            .catch((err) => {
-                console.log('create-acount', err);
-            })
+            .catch((err) => {})
             .finally(() => {
                 setLoading(false);
             });

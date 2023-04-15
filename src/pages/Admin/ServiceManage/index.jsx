@@ -37,9 +37,7 @@ const ServiceManager = () => {
 
                         <Button
                             type="primary"
-                            onClick={() => {
-                                console.log(record.key);
-                            }}
+                          
                             danger
                         >
                             Delete

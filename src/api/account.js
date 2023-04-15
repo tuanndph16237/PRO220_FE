@@ -15,7 +15,6 @@ export const removeAccount = async (id) => {
 };
 
 export const updateAccount = async (data) => {
-    console.log('data', _.omit(data, ['_id', 'password', '__v']));
     return instance.put(`/accounts/${data._id}`, _.omit(data, ['_id', 'password', '__v']));
 };
 

@@ -30,7 +30,6 @@ const MaterialManage = () => {
 
     const handleSearch = (selectedKeys, confirm, dataIndex) => {
         confirm();
-        console.log(dataIndex, selectedKeys);
         setSearchText(selectedKeys[0]);
         setSearchedColumn(dataIndex);
     };

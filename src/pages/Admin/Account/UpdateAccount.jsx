@@ -64,7 +64,6 @@ const UpdateAccount = ({ idUpdate, onClose, onRefetch, checkShowroom }) => {
         if (name.name !== 'Quản Lý') {
             update = _.omit({ ...data, ...values, showroomId: null });
         }
-        console.log('values',values)
         setUpdating(true);
         updateAccount(update)
             .then(({ data: res }) => {

@@ -23,7 +23,6 @@ import StatusOrderDisplay from './StatusOrderDisplay';
 import SelectMaterials from './SelectMaterials';
 import { updateOrder } from '../../../api/order';
 import { getApiSubService } from '../../../api/service';
-import { useNavigate } from 'react-router-dom';
 import { PERMISSION_LABLEL, PERMISSION_TYPE } from '../../../constants/permission';
 import PermissionCheck from '../../../components/permission/PermissionCheck';
 
@@ -56,7 +55,6 @@ const UpdateOrder = (props) => {
     const [dateStart, setDateStart] = useState(new Date());
     const [dateFinish, setDateFinish] = useState(new Date());
     const [dataSubService, setDataSubService] = useState([]);
-    const navigate = useNavigate();
 
     const payment = async () => {
         setOpenModal(true);
@@ -86,9 +84,6 @@ const UpdateOrder = (props) => {
     useEffect(() => {
         if (statusPayment) {
             Notification(NOTIFICATION_TYPE.SUCCESS, 'Thanh toán thành công');
-            // setTimeout(() => {
-            //     navigate('/admin/don-hang');
-            // }, 3000);
         }
     }, [statusPayment]);
 

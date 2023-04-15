@@ -12,8 +12,7 @@ import moment from 'moment';
 
 import {
     UserOutlined,
-    EnvironmentOutlined,
-    LikeOutlined,
+    FieldTimeOutlined,
     TagOutlined,
     SettingOutlined,
     WhatsAppOutlined,
@@ -27,25 +26,67 @@ import _ from 'lodash';
 const OrderDetail = () => {
     const columns = [
         {
-            title: 'STT',
-            dataIndex: 'key',
+            title: 'Tên vật tư & Công việc',
+            dataIndex: 'name',
+            width: '50%',
+            key: 'name',
         },
         {
-            title: 'Tên vật liệu',
-            dataIndex: 'name',
+            title: 'Đơn vị tính',
+            dataIndex: 'unit',
+            key: 'unit',
         },
         {
             title: 'Số lượng',
+            className: 'column-money',
             dataIndex: 'qty',
+            key: 'qty',
         },
         {
-            title: 'Giá tiền',
+            title: 'Đơn giá',
             dataIndex: 'price',
+            key: 'price',
             render: (value) => {
-                return value.toLocaleString('en');
+                return value == undefined ? undefined : value?.toLocaleString('en') + ' VNĐ';
+            },
+        },
+        {
+            title: 'Tiền P.Tùng',
+            dataIndex: 'partPrice',
+            key: 'partPrice',
+            render: (value) => {
+                return value == undefined ? undefined : value?.toLocaleString('en') + ' VNĐ';
+            },
+        },
+        {
+            title: 'Tiền Công',
+            dataIndex: 'priceWorking',
+            key: 'priceWorking',
+            render: (value) => {
+                return value == undefined ? undefined : value?.toLocaleString('en') + ' VNĐ';
             },
         },
     ];
+
+    const handleDataMaterialsAndWork = (data) => {
+        const dataSources = data?.materials.map((dataMaterial) => {
+            return {
+                key: dataMaterial._id,
+                ...dataMaterial,
+                partPrice: dataMaterial?.qty * dataMaterial?.price,
+            };
+        });
+
+        const dataSourcesSubservice = data?.subServices.map((subService) => {
+            return {
+                key: subService._id,
+                ...subService,
+            };
+        });
+
+        return [...dataSources, ...dataSourcesSubservice];
+    };
+
     const { id } = useParams();
     const [responseCode] = useGetParam('vnp_ResponseCode');
     const [statusPayment, setStatusPayment] = useState(false);
@@ -63,16 +104,14 @@ const OrderDetail = () => {
     useEffect(() => {
         (async () => {
             const { data } = await getOrderById(id);
-            const listMaterials = data.listMaterials.map((order, index) => {
-                return { key: ++index, ...order };
-            });
             if (data.status == 4) {
                 setOpentpayment(true);
             }
-            currentOrder.current = { ...data, listMaterials };
-            setDataOrderDetail({ ...data, listMaterials });
+            currentOrder.current = { ...data, listMaterials: handleDataMaterialsAndWork(data) };
+            setDataOrderDetail({ ...data, listMaterials: handleDataMaterialsAndWork(data) });
         })();
     }, [id]);
+
     useEffect(() => {
         (async () => {
             if (responseCode) {
@@ -80,6 +119,7 @@ const OrderDetail = () => {
             }
         })();
     }, [responseCode]);
+
     useEffect(() => {
         if (statusPayment) {
             Notification(NOTIFICATION_TYPE.SUCCESS, 'Thanh toán thành công');
@@ -88,7 +128,7 @@ const OrderDetail = () => {
     const Payment = async () => {
         const valuePayment = {
             idOrder: id,
-            amount: dataOrderDetail.totals,
+            amount: dataOrderDetail?.total,
             bankCode: 'NCB',
             orderInfo: 'Sửa Xe Tại Cửa Hàng Dodoris',
             orderType: 'billpayment',
@@ -143,7 +183,7 @@ const OrderDetail = () => {
                 <div className=" border rounded-lg  ">
                     <div className=" font-bold  my-1 text-[#02b875]	ml-3 text-center	">
                         <div>Thời gian đặt lịch:</div>
-                        <div>{moment(dataOrderDetail.appointmentSchedule).format(HOUR_DATE_TIME)}</div>
+                        <div>{moment(dataOrderDetail?.appointmentSchedule).format(HOUR_DATE_TIME)}</div>
                     </div>
                     <div>
                         <div className="">
@@ -151,14 +191,10 @@ const OrderDetail = () => {
                                 <div>
                                     <UserOutlined className="mr-2" />
                                 </div>
-                                <div>{dataOrderDetail.name}</div>
-                            </div>
-                            <div className="my-px text-lg ml-3	 mb-1">
-                                <EnvironmentOutlined className="mr-2" />
-                                {dataOrderDetail.address}
+                                <div>{dataOrderDetail?.name}</div>
                             </div>
                             <div className="my-px text-lg flex ml-3  mb-1	">
-                                <LikeOutlined />
+                                <SettingOutlined />
                                 <div className="text-orange-500 ml-2  mb-1	">
                                     {ORDER_STATUS[dataOrderDetail.status]}
                                 </div>{' '}
@@ -167,15 +203,35 @@ const OrderDetail = () => {
                         <div>
                             <div className="my-px text-lg  flex	ml-3  mb-1">
                                 <WhatsAppOutlined />
-                                <div className="ml-2">{dataOrderDetail.number_phone} </div>
+                                <div className="ml-2">{dataOrderDetail?.number_phone} </div>
                             </div>
                             <div className="my-px text-lg  flex	ml-3  mb-1">
                                 <SettingOutlined />
-                                <div className="ml-2">{SEVICE_TYPE_ODERDETAIL[dataOrderDetail.serviceType]}</div>
+                                <div className="ml-2">Sửa chữa</div>
                             </div>
                             <div className="my-px text-lg 	ml-3">
                                 <TagOutlined className="mr-2" />
-                                Mô tả: {dataOrderDetail.description}
+                                {dataOrderDetail?.reasons}
+                            </div>
+                            <div className="my-px text-lg 	ml-3">
+                                <FieldTimeOutlined className="mr-2" />
+                                <p>
+                                    Thời gian nhận xe thực tế:{' '}
+                                    {moment(dataOrderDetail?.tg_nhan_xe).format(HOUR_DATE_TIME)}
+                                </p>
+                            </div>
+                            <div className="my-px text-lg 	ml-3">
+                                <FieldTimeOutlined className="mr-2" />
+                                <p>
+                                    Thời gian trả xe thực tế:{' '}
+                                    {moment(dataOrderDetail?.tg_tra_xe).format(HOUR_DATE_TIME)}
+                                </p>
+                            </div>
+                            <div className="my-px text-lg 	ml-3">
+                                <p>Loại xe: {dataOrderDetail?.vehicleType}</p>
+                            </div>
+                            <div className="my-px text-lg 	ml-3">
+                                <p>Biển Số: {dataOrderDetail?.licensePlates}</p>
                             </div>
                         </div>
                     </div>
@@ -183,7 +239,7 @@ const OrderDetail = () => {
 
                 <div className="col-span-2 ">
                     <div className="border rounded-lg ">
-                        <div className="my-3 ml-3 font-bold  text-[#02b875]	">Dịch vụ sửa chữa</div>
+                        <div className="my-3 ml-3 font-bold  text-[#02b875]	">Vật tư & công việc</div>
                         <div>
                             <Table columns={columns} dataSource={dataOrderDetail.listMaterials} />
                         </div>
@@ -203,7 +259,7 @@ const OrderDetail = () => {
                             <div>
                                 <div className="my-px text-lg 	ml-[0px]">
                                     <div className="font-bold mt-2 text-red-600	text-[14px] ml-[10px]">
-                                        Tổng tiền: {dataOrderDetail?.total.toLocaleString('en') + ' VNĐ'}{' '}
+                                        Tổng tiền: {dataOrderDetail?.totalWithVat.toLocaleString('en') + ' VNĐ'}{' '}
                                     </div>
                                     <Button type="primary" className="btn-primary m-[10px]" onClick={() => Payment()}>
                                         Thanh Toán

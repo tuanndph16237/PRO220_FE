@@ -63,7 +63,6 @@ const UpdatePost = ({ idUpdate, onClose, onRefetch }) => {
                 onRefetch(res);
             })
             .catch((err) => {
-                console.log('update-post', err);
                 Notification(NOTIFICATION_TYPE.SUCCESS, 'Cập nhật thất bại');
             })
             .finally(() => {

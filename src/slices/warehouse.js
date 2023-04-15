@@ -46,7 +46,6 @@ export const WarehouseSlice = createSlice({
             state.materials.loading = true;
         },
         [getMaterialsWarehouseAsync.rejected]: (state, action) => {
-            console.log('getMaterialsWarehouseAsync-errors,', action);
             state.materials.loading = false;
             state.materials.errors = true;
         },
@@ -66,10 +65,10 @@ export const WarehouseSlice = createSlice({
             state.materials.value = newMaterials;
         },
         [updateWarehouseByMaterialsAsync.rejected]: (state, action) => {
-            console.log('updateWarehouseByMaterialsAsync-errors,', action);
+            return;
         },
         [giveBackMaterialAsync.rejected]: (state, action) => {
-            console.log('giveBackMaterialAsync-errors,', action);
+            return;
         },
         [giveBackMaterialAsync.fulfilled]: (state, action) => {
             const newMaterials = state.materials.value.map((material) => {

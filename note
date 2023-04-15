@@ -1,63 +1,58 @@
 //Login back-end
 router.post('/login', (req, res, next) => {
-    if(validUser(req.body)) {
-        User
-            .getOneByEmail(req.body.email)
-            .then(user => {
-                if(user) {
-                    bcrypt
-                        .compare(req.body.password_digest, user.password_digest)
-                        .then((result) => {
-                            if(result) {
-                                const isSecure = process.env.NODE_ENV != 'development';
+    if (validUser(req.body)) {
+        User.getOneByEmail(req.body.email).then((user) => {
+            if (user) {
+                bcrypt.compare(req.body.password_digest, user.password_digest).then((result) => {
+                    if (result) {
+                        const isSecure = process.env.NODE_ENV != 'development';
 
-                                res.cookie('user_id', user.id, {
-                                    httpOnly: true,
-                                    secure: isSecure,
-                                    signed: true
-                                })
-                                res.json({
-                                    message: 'Logged in'
-                                });
-                            } else {
-                                next(new Error('Invalid Login'))
-                            }
+                        res.cookie('user_id', user.id, {
+                            httpOnly: true,
+                            secure: isSecure,
+                            signed: true,
                         });
-                } else {
-                    next(new Error('Invalid Login'))
-                }
-            });
+                        res.json({
+                            message: 'Logged in',
+                        });
+                    } else {
+                        next(new Error('Invalid Login'));
+                    }
+                });
+            } else {
+                next(new Error('Invalid Login'));
+            }
+        });
     } else {
-        next(new Error('Invalid Login'))
+        next(new Error('Invalid Login'));
     }
 });
 
 //Allow CORS index.js
 app.use(
-cors({
-    origin: "http://localhost:3000",
-    credentials: true
-})
+    cors({
+        origin: 'http://localhost:3000',
+        credentials: true,
+    }),
 );
 
 //Login client side (React.js)
-loginUser(e, loginEmail, password) {
+loginUser(e, loginEmail, password);
 e.preventDefault();
 
 let email = loginEmail;
 let password_digest = password;
 let body = JSON.stringify({ email, password_digest });
 
-fetch("http://localhost:5656/api/login", {
-    method: "POST",
+fetch('http://localhost:5656/api/login', {
+    method: 'POST',
     headers: {
-    "Content-Type": "application/json"
+        'Content-Type': 'application/json',
     },
-    credentials: "include",
-    body
+    credentials: 'include',
+    body,
 })
-    .then(response => response.json())
-    .then(user => {
-    console.log(user);
+    .then((response) => response.json())
+    .then((user) => {
+        return;
     });
-}

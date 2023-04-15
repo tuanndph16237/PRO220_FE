@@ -39,7 +39,6 @@ const index = () => {
         })();
     }, []);
     const handleFilter = (values) => {
-        console.log('values', values);
         if (values.nameId.length !== 0) {
             setData(data.filter((item) => values.nameId.includes(item.key)));
         }

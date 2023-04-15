@@ -24,7 +24,7 @@ const Post = () => {
                 setPost(data);
             })
             .catch((error) => {
-                console.log('get post by title err', error);
+                return;
             })
             .finally(() => {
                 setLoading(false);
