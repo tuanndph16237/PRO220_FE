@@ -83,7 +83,7 @@ const BookingPage = () => {
     const [numberPhone, setNumberPhone] = useState(0);
     const [openText, setOpenText] = useState(false);
     const [isServiceEmpty, setIsServiceEmpty] = useState(true);
-
+    const [validate,setVlidate] = useState(true)
     const verifyCode = () => {
         setLoadingVerify(true);
         window.confirmationResult
@@ -184,15 +184,20 @@ const BookingPage = () => {
     };
 
     const handlChecked = async () => {
-        const { data } = await checkPhoneinSystem({ number_phone: numberPhone });
-        if (!data.isPhoneInSystem) {
-            setOpentModal(false);
-            onSignInSubmit(numberPhone);
-        } else {
-            setOpentModal(false);
-            setInitialValues(_.omit(data, ['isPhoneInSystem']));
-            setIsOpenForm(true);
+        if (numberPhone !== 0) {
+            const { data } = await checkPhoneinSystem({ number_phone: numberPhone });
+            if (!data.isPhoneInSystem) {
+                setOpentModal(false);
+                onSignInSubmit(numberPhone);
+            } else {
+                setOpentModal(false);
+                setInitialValues(_.omit(data, ['isPhoneInSystem']));
+                setIsOpenForm(true);
+            }
+        }else{
+            setVlidate(false)
         }
+        console.log(numberPhone)
     };
 
     const onCheckfinish = (value) => {
@@ -205,9 +210,7 @@ const BookingPage = () => {
     };
 
     const handlOk = async (value) => {
-        if (value) {
-            setNumberPhone(value);
-        }
+        setNumberPhone(value);
     };
     useEffect(() => {
         (() => {
@@ -484,7 +487,12 @@ const BookingPage = () => {
                                         }}
                                         onSubmit={handlChecked}
                                     >
-                                        <ShowformModal onValue={(item) => handlOk(item)} title={'Nhập số điện thoại'} />
+                                        <ShowformModal
+                                            onValue={(item) => handlOk(item)}
+                                            title={'Nhập số điện thoại'}
+                                            status={'phone'}
+                                            validate = {validate}
+                                        />
                                     </ModalCustomize>
                                 )}
                                 <ModalCustomize
