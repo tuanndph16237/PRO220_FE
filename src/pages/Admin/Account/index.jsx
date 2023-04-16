@@ -175,7 +175,7 @@ const AccountManager = () => {
                         Thêm thành viên
                     </Button>
                     <button className="pr-6" onClick={() => handleFilter()}>
-                        <Tooltip title="Làm mới đơn hàng">
+                        <Tooltip title="Làm mới tài khoản">
                             <SyncOutlined style={{ fontSize: '18px', color: '#000' }} />
                         </Tooltip>
                     </button>

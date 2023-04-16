@@ -18,6 +18,10 @@ export const updateAccount = async (data) => {
     return instance.put(`/accounts/${data._id}`, _.omit(data, ['_id', 'password', '__v']));
 };
 
+export const updatePassword = async (data) => {
+    return instance.put(`/accounts/${data._id}`, _.omit(data));
+};
+
 export const getUser = async (id) => {
     return instance.get(`/account/${id}`);
 };

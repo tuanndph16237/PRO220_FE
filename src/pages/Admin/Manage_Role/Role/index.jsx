@@ -81,7 +81,7 @@ const index = () => {
                         Thêm vai trò
                     </Button>
                     <button className="pr-6" onClick={() => handleFilters()}>
-                        <Tooltip title="Làm mới đơn hàng">
+                        <Tooltip title="Làm mới quyền">
                             <SyncOutlined style={{ fontSize: '18px', color: '#000' }} />
                         </Tooltip>
                     </button>

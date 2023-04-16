@@ -8,6 +8,7 @@ import DatePickerByOptions from '../../../../components/Customs/DatePickerByOpti
 import { getOrderRevenue } from '../../../../api/order';
 import { setCategoriesByType } from '../../../../utils/statistical';
 import ShowroomPicker from '../../../../components/ShowroomPicker';
+
 const defaultSeries = [
     {
         type: 'column',

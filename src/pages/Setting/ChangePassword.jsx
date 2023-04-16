@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Form, Input } from 'antd';
 import _, { isEmpty } from 'lodash';
-import { Password, updateAccount } from '../../api/account';
+import { Password, updateAccount, updatePassword } from '../../api/account';
 import { JwtDecode } from '../../utils/auth';
 import { Notification } from '../../utils/notifications';
 import { NOTIFICATION_TYPE } from '../../constants/status';
@@ -23,7 +23,8 @@ const ChangePassword = () => {
             }
         });
         if (data == NOTIFICATION_TYPE.SUCCESS) {
-            const { data } = await updateAccount(_.omit(value, ['currentPassword']));
+            const valueData = _.omit(value, ['currentPassword'])
+            const { data } = await updatePassword(valueData);
             Notification(NOTIFICATION_TYPE.SUCCESS, 'Cập nhập mật khẩu thành công!');
         }
     };

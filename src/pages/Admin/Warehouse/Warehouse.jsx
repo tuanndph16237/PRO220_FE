@@ -12,7 +12,7 @@ import {
     Select,
 } from 'antd';
 import { JwtDecode } from '../../../utils/auth';
-import { SearchOutlined } from '@ant-design/icons';
+import { SearchOutlined, SyncOutlined } from '@ant-design/icons';
 import React, { useEffect, useRef, useState, useMemo, useReducer } from 'react';
 import { exchangePart, getWarehouseByShowroomId, updateQuantityOnePart } from '../../../api/warehouse';
 import ListShowroom from './ListShowrom';
@@ -75,6 +75,8 @@ const Warehouse = () => {
     const [totals, setTotals] = useState(0);
     const { showroomId } = JwtDecode();
     const [listShowroom, setListShowroom] = useState([]);
+    const [options, setOptions] = useState();
+    const datas = useRef([]);
     const initialState = {
         idCurrentShowroom: showroomId,
         idShowroomExchange: '',
@@ -118,6 +120,13 @@ const Warehouse = () => {
                 };
             });
             setData(data);
+            datas.current = data;
+            setOptions([
+                {
+                    value: 'soluong',
+                    label: 'sản phẩm đã hết',
+                },
+            ]);
             setTotals(dataWarehouse.data.totals);
         } catch (res) {
             noti(NOTIFICATION_TYPE.ERROR, `${res.response.data.error}`);
@@ -401,26 +410,32 @@ const Warehouse = () => {
             setData(a);
         }
     };
+    const handleFilter = (values = {}) => {
+        setData(datas.current);
+        setOptions([
+            {
+                value: 'soluong',
+                label: 'sản phẩm đã hết',
+            },
+        ])
+    };
     return (
         <>
             <div className="my-3 flex gap-5">
                 <div>{!showroomId ? <ListShowroom options={listShowroom} selectShowroom={dispatch} /> : ''}</div>
                 {data.length > 0 && (
                     <>
-                        <Button onClick={() => OpenShowDrawer()} className="btn-primary text-white" type="primary">
-                            Bộ Lọc
-                        </Button>
+                        <button className="pr-6" onClick={() => handleFilter()}>
+                            <Tooltip title="Làm Vật tư">
+                                <SyncOutlined style={{ fontSize: '18px', color: '#000' }} />
+                            </Tooltip>
+                        </button>
                         <Select
                             style={{
-                                width: 120,
+                                width: 140,
                             }}
                             onChange={handleChange}
-                            options={[
-                                {
-                                    value: 'soluong',
-                                    label: 'sản phẩm đã hết',
-                                },
-                            ]}
+                            options={options}
                             placeholder="Lựa chọn"
                         />
                         <div className="flex justify-end pr-4">

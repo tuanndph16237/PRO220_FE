@@ -65,3 +65,7 @@ export const getOrderRevenue = (data) => {
 export const checkPhoneinSystem = (data)=>{
     return instance.post('http://localhost:8080/api/phone-in-system', data);
 }
+
+export const getOrderShowroom = (id)=>{
+    return instance.get(`http://localhost:8080/api/getOderShowroom/${id}`)
+}

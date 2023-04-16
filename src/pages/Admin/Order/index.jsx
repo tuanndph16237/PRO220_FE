@@ -6,7 +6,7 @@ import dayjs from 'dayjs';
 import { getOrdersAsync } from '../../../slices/order';
 import { getAllShowroomAsync } from '../../../slices/showroom';
 import { EditOutlined, SyncOutlined } from '@ant-design/icons';
-import { Button, Space, Table, Tooltip } from 'antd';
+import { Button, Select, Space, Table, Tooltip } from 'antd';
 import { HOUR_DATE_TIME } from '../../../constants/format';
 import { ORDER_STATUS, SEVICE_TYPE } from '../../../constants/order';
 import SpinCustomize from '../../../components/Customs/Spin';
@@ -14,18 +14,20 @@ import Filter from '../../../components/Filter/Filter';
 import { CSVLink } from 'react-csv';
 import PermissionCheck from '../../../components/permission/PermissionCheck';
 import { PERMISSION_LABLEL, PERMISSION_TYPE } from '../../../constants/permission';
+import { getShowrooms } from '../../../api/showroom';
+import { getOrderShowroom } from '../../../api/order';
+import { JwtDecode } from '../../../utils/auth';
 
 const OrderManage = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const showrooms = useSelector((state) => state.showroom.showrooms.values);
+    const [options, setOptions] = useState([]);
     const orders = useSelector((state) => state.order.orders.values);
     const loading = useSelector((state) => state.order.orders.loading);
-    const handleOrder = orders.map((order) => {
-        return { ...order, key: order._id };
-    });
+    const [handleOrder, setHandleOrder] = useState([]);
     const [csvData, setCsvData] = useState([]);
-
+    const jwtDecode = JwtDecode();
     const columns = [
         {
             title: 'Mã đơn hàng',
@@ -42,7 +44,7 @@ const OrderManage = () => {
             render: (status, data) => ORDER_STATUS[status],
         },
         {
-            title: 'Tên khách hàng',
+            title: 'Tên khá ch hàng',
             dataIndex: 'name',
         },
         {
@@ -109,9 +111,24 @@ const OrderManage = () => {
         },
     ];
     useEffect(() => {
-        handleFilter();
+        (async () => {
+            const { data } = await getShowrooms();
+            const setData = data.map((item) => {
+                return {
+                    label: item.name,
+                    value: item._id,
+                };
+            });
+            setOptions(setData);
+            handleFilter();
+        })();
     }, []);
-
+    useEffect(() => {
+        const handleOrder = orders.map((order) => {
+            return { ...order, key: order._id };
+        });
+        setHandleOrder(handleOrder);
+    }, [orders]);
     useEffect(() => {
         const newCsvData = orders.map((order) => {
             const status = ORDER_STATUS[order.status];
@@ -137,6 +154,14 @@ const OrderManage = () => {
     const handleFilter = (values = {}) => {
         dispatch(getOrdersAsync(values));
     };
+    const handleFilterShowroom = async (value) => {
+        const { data } = await getOrderShowroom(value);
+        const handleOrder = data.map((order) => {
+            return { ...order, key: order._id };
+        });
+        console.log(handleOrder);
+        setHandleOrder(handleOrder);
+    };
     return (
         <div className="banner-content">
             {
@@ -150,11 +175,6 @@ const OrderManage = () => {
                             </button>
                             <Filter
                                 items={[
-                                    // {
-                                    //     label: <Space align="center">Mã đơn hàng</Space>,
-                                    //     key: '_id',
-                                    //     name: 'Mã đơn hàng',
-                                    // },
                                     {
                                         label: <Space align="center">Trạng thái</Space>,
                                         key: 'status',
@@ -213,6 +233,17 @@ const OrderManage = () => {
                                 ]}
                                 onFilter={handleFilter}
                             />
+                            {
+                                (jwtDecode.role == 'Admin' ? (
+                                    <>
+                                        <Select
+                                            defaultValue={'Mời bạn lựa chọn'}
+                                            options={options}
+                                            onChange={handleFilterShowroom}
+                                        />
+                                    </>
+                                ) : null)
+                            }
                         </div>
                         <div>
                             <Button className="btn-primary text-white mr-5" type="primary">

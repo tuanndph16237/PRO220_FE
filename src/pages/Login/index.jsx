@@ -65,10 +65,9 @@ const Login = () => {
                                 <Form.Item valuePropName="checked" noStyle>
                                     <Checkbox className="float-left">Ghi nhớ tài khoản</Checkbox>
                                 </Form.Item>
-
-                                <a className="login-form-forgot float-right" href="">
-                                    Quên mật khẩu?
-                                </a>
+                                <Link to="/quen-mat-khau" className="login-form-forgot float-right">
+                                        Quên mật khẩu?
+                                    </Link>
                             </Form.Item>
 
                             <Form.Item>

@@ -49,6 +49,7 @@ import CreateService from './pages/Admin/ServiceManage/CreateService';
 import UpdateService from './pages/Admin/ServiceManage/UpdateService';
 import TotalOrderStatisticalByStatus from './pages/Admin/Statistical/Order/TotalOrderStatisticalByStatus';
 import TotalOrderStatistical from './pages/Admin/Statistical/Order/TotalOrderStatistical';
+import PasswordRetrieval from './pages/Password';
 
 function App() {
     return (
@@ -60,6 +61,7 @@ function App() {
                 <Route path="tin-tuc" element={<Posts />} />
                 <Route path="tin-tuc/*" element={<Post />} />
                 <Route path="gioi-thieu" element={<AboutPage />} />
+                <Route path="quen-mat-khau" element={<PasswordRetrieval />} />
                 <Route
                     path="dang-nhap"
                     element={

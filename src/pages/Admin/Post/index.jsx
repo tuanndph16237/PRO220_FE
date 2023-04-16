@@ -90,7 +90,7 @@ const PostManager = () => {
             <div className="flex justify-between align-center pb-4">
                 <div>
                     <button className="pr-6" onClick={() => handleFilter()}>
-                        <Tooltip title="Làm mới đơn hàng">
+                        <Tooltip title="Làm mới tin tức">
                             <SyncOutlined style={{ fontSize: '18px', color: '#000' }} />
                         </Tooltip>
                     </button>
