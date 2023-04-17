@@ -152,6 +152,7 @@ const Warehouse = () => {
         try {
             const dataUpdatePart = await exchangePart(obj);
             await fetchApiWarehouse(state.idCurrentShowroom);
+            noti(NOTIFICATION_TYPE.SUCCESS, `Chuyển vật tư thành công`);
             setKeyChange({});
             dispatch({
                 type: 'RESET',
@@ -347,6 +348,10 @@ const Warehouse = () => {
                         ...row,
                     },
                 };
+                if (row.quantity <= item.quantity) {
+                    noti(NOTIFICATION_TYPE.WARNING, `Số lượng nhập vào phải lớn hơn hiện tại là ${item.quantity}`);
+                    return;
+                }
                 const isSuccess = await updateQuantityOnePart(saveDataToDB);
                 if (isSuccess.data.success) {
                     noti(NOTIFICATION_TYPE.SUCCESS, 'Cập nhật số lượng thành công');
@@ -428,7 +433,7 @@ const Warehouse = () => {
                 value: 'soluong',
                 label: 'sản phẩm đã hết',
             },
-        ])
+        ]);
     };
     return (
         <>
