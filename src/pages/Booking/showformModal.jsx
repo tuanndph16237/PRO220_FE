@@ -7,11 +7,6 @@ import { NOTIFICATION_TYPE } from '../../constants/status';
 const ShowformModal = (props) => {
     const [validate, setValidate] = useState({});
     const numberPhone = useRef(0);
-    useEffect(()=>{
-        if(!props.validate){
-            setValidate({ validateStatus: NOTIFICATION_TYPE.ERROR, help: 'không được để trống!' });
-        }
-    },[props.validate])
     const hanldChange = (item) => {
         if (item.target.value) {
             if (props.status == 'phone') {
@@ -22,12 +17,20 @@ const ShowformModal = (props) => {
                         setValidate({ validateStatus: NOTIFICATION_TYPE.SUCCESS });
                     } else {
                         props.onValue(0);
-                        setValidate({ validateStatus: NOTIFICATION_TYPE.ERROR, help: 'mật khẩu không khớp!' });
+                        setValidate({
+                            validateStatus: NOTIFICATION_TYPE.ERROR,
+                            help: 'số điện thoại không hợp lệ ! Lưu ý : phải đủ 12 chữ số',
+                        });
                     }
                     numberPhone.current = item.target.value;
                 }
             }
-        }else{
+            if (props.status == 'text') {
+                if (item.target.value !== '') {
+                    props.onValue(item.target.value);
+                }
+            }
+        } else {
             setValidate({ validateStatus: NOTIFICATION_TYPE.ERROR, help: 'không được để trống!' });
         }
     };

@@ -83,7 +83,6 @@ const BookingPage = () => {
     const [numberPhone, setNumberPhone] = useState(0);
     const [openText, setOpenText] = useState(false);
     const [isServiceEmpty, setIsServiceEmpty] = useState(true);
-    const [validate, setVlidate] = useState(true);
     const verifyCode = () => {
         setLoadingVerify(true);
         window.confirmationResult
@@ -179,11 +178,10 @@ const BookingPage = () => {
         setOpenModal(false);
     };
 
-    const handlCheckedtext = () => {
-        setOpenText(false);
-    };
+    const handlCheckedtext = () => {};
 
     const handlChecked = async () => {
+        console.log('dsa');
         if (numberPhone !== 0) {
             const { data } = await checkPhoneinSystem({ number_phone: numberPhone });
             if (!data.isPhoneInSystem) {
@@ -194,19 +192,19 @@ const BookingPage = () => {
                 setInitialValues(_.omit(data, ['isPhoneInSystem']));
                 setIsOpenForm(true);
             }
-        } else {
-            setVlidate(false);
         }
-        console.log(numberPhone);
     };
 
     const onCheckfinish = (value) => {
-        const values = {
-            number_phone: numberPhone,
-            name: value,
-        };
-        setInitialValues(values);
-        setIsOpenForm(true);
+        if (value !== '') {
+            const values = {
+                number_phone: numberPhone,
+                name: value,
+            };
+            setOpenText(false);
+            setInitialValues(values);
+            setIsOpenForm(true);
+        }
     };
 
     const handlOk = async (value) => {
@@ -479,7 +477,6 @@ const BookingPage = () => {
                                             onValue={(item) => handlOk(item)}
                                             title={'Nhập số điện thoại'}
                                             status={'phone'}
-                                            validate={validate}
                                         />
                                     </ModalCustomize>
                                 )}
@@ -489,7 +486,11 @@ const BookingPage = () => {
                                     setShowModal={() => setOpenText(false)}
                                     onSubmit={handlCheckedtext}
                                 >
-                                    <ShowformModal onValue={(item) => onCheckfinish(item)} title={'Nhập tên của bạn'} />
+                                    <ShowformModal
+                                        onValue={(item) => onCheckfinish(item)}
+                                        title={'Nhập tên của bạn'}
+                                        status={'text'}
+                                    />
                                 </ModalCustomize>
                             </>
                         )}
