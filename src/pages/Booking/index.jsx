@@ -83,7 +83,7 @@ const BookingPage = () => {
     const [numberPhone, setNumberPhone] = useState(0);
     const [openText, setOpenText] = useState(false);
     const [isServiceEmpty, setIsServiceEmpty] = useState(true);
-    const [validate,setVlidate] = useState(true)
+    const [validate, setVlidate] = useState(true);
     const verifyCode = () => {
         setLoadingVerify(true);
         window.confirmationResult
@@ -194,10 +194,10 @@ const BookingPage = () => {
                 setInitialValues(_.omit(data, ['isPhoneInSystem']));
                 setIsOpenForm(true);
             }
-        }else{
-            setVlidate(false)
+        } else {
+            setVlidate(false);
         }
-        console.log(numberPhone)
+        console.log(numberPhone);
     };
 
     const onCheckfinish = (value) => {
@@ -270,6 +270,7 @@ const BookingPage = () => {
                                             <Input
                                                 className="h-10 text-base border-[#02b875]"
                                                 placeholder="Nguyen Van A"
+                                                disabled
                                             />
                                         </Form.Item>
                                     </Col>
@@ -277,21 +278,8 @@ const BookingPage = () => {
                                         <Form.Item
                                             label={<p className="text-base font-semibold">Số điện thoại</p>}
                                             name="number_phone"
-                                            rules={[
-                                                {
-                                                    required: true,
-                                                    message: 'Quý khách vui lòng không để trống trường thông tin này.',
-                                                },
-                                                {
-                                                    pattern: R_NUMBER_PHONE,
-                                                    message: 'Số điện thoại không đúng định dạng.',
-                                                },
-                                            ]}
                                         >
-                                            <Input
-                                                className="h-10 text-base border-[#02b875]"
-                                                disabled={_.get(user, 'number_phone', false)}
-                                            />
+                                            <Input className="h-10 text-base border-[#02b875]" disabled />
                                         </Form.Item>
                                     </Col>
                                     <Col span={24}>
@@ -491,7 +479,7 @@ const BookingPage = () => {
                                             onValue={(item) => handlOk(item)}
                                             title={'Nhập số điện thoại'}
                                             status={'phone'}
-                                            validate = {validate}
+                                            validate={validate}
                                         />
                                     </ModalCustomize>
                                 )}

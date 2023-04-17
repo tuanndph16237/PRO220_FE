@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Table, Avatar, Button, Col, DatePicker, Form, Input, Row, Radio, Space, Modal, Alert } from 'antd';
+import { Table, Avatar, Button, Col, DatePicker, Form, Input, Row, Modal, Alert } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { getOrderById, updateOrderStatus } from '../../../api/order';
 import _ from 'lodash';
 import dayjs from 'dayjs';
@@ -11,12 +11,12 @@ import { HOUR_DATE_TIME } from '../../../constants/format';
 import './order.css';
 import useDocumentTitle from '../../../hooks/useDocumentTitle';
 import { disabledDate, disabledDateTime } from '../../../utils/date';
-import { R_EMAIL, R_NUMBER, R_NUMBER_PHONE } from '../../../constants/regex';
+import { R_EMAIL, R_NUMBER, R_NUMBER_PHONE, R_VEHICLE_NUMBER } from '../../../constants/regex';
 import { Notification } from '../../../utils/notifications';
 import { NOTIFICATION_TYPE } from '../../../constants/status';
 import { getMaterialsWarehouseAsync } from '../../../slices/warehouse';
 import { sendMail, updateStatusBill } from '../../../api/payment';
-import { RightOutlined, SolutionOutlined } from '@ant-design/icons/lib/icons';
+import { RightOutlined, LeftOutlined } from '@ant-design/icons/lib/icons';
 import { useReactToPrint } from 'react-to-print';
 import SubServices from './SubServices';
 import StatusOrderDisplay from './StatusOrderDisplay';
@@ -33,7 +33,6 @@ const UpdateOrder = (props) => {
     const materials = useSelector((state) => state.warehouse.materials.value);
     const showroomId = useSelector((state) => state.user.currentUser.values.showroomId);
     const errors = useSelector((state) => state.order.updateOrder.errors);
-
     const { id } = useParams();
     const [order, setOrder] = useState({});
     const [initialValues, setInitialValues] = useState({});
@@ -222,6 +221,10 @@ const UpdateOrder = (props) => {
     };
 
     const handleChangeStatus = async (status, order) => {
+        if (status == 4 && _.isEmpty(order?.licensePlates)) {
+            Notification(NOTIFICATION_TYPE.WARNING, 'Thiếu thông tin về phương tiên sửa chữa, cần phải cập nhật thêm!');
+            return;
+        }
         if (status == 4 && total == 0) {
             Notification(
                 NOTIFICATION_TYPE.WARNING,
@@ -230,6 +233,7 @@ const UpdateOrder = (props) => {
             );
             return;
         }
+
         updateOrderStatus(order._id, {
             materials: order.materials,
             materialIds: orders.materialIds,
@@ -313,6 +317,12 @@ const UpdateOrder = (props) => {
 
     return (
         <div>
+            <Link to={'/admin/don-hang'}>
+                <Button className="btn-primary text-white my-3 flex justify-center items-center gap-2" type="primary">
+                    <LeftOutlined />
+                    <p> Trở về danh sách đơn hàng</p>
+                </Button>
+            </Link>
             {_.isEmpty(initialValues) ? (
                 <div className="absolute top-1/2 left-1/2">
                     <SpinCustomize />
@@ -329,11 +339,7 @@ const UpdateOrder = (props) => {
                     <Row gutter={16}>
                         <Col span={12}>
                             <Col span={24} className="pb-6">
-                                <Avatar
-                                    size={34}
-                                    icon={<p className="text-base font-semibold leading-8">1</p>}
-                                    style={{ backgroundColor: '#02b875' }}
-                                />
+                                <Avatar size={34} style={{ backgroundColor: '#17274e' }} />
                                 <span className="text-base pl-4 font-medium">Thông tin khách hàng</span>
                             </Col>
                             <Col span={24}>
@@ -384,7 +390,7 @@ const UpdateOrder = (props) => {
                                 <Avatar
                                     size={34}
                                     icon={<p className="text-base font-semibold leading-8"></p>}
-                                    style={{ backgroundColor: '#02b875' }}
+                                    style={{ backgroundColor: '#17274e' }}
                                 />
                                 <span className="text-base pl-4 font-medium">Loại dịch vụ & Thời gian</span>
                             </Col>
@@ -448,7 +454,7 @@ const UpdateOrder = (props) => {
                                         <Avatar
                                             size={34}
                                             icon={<p className="text-base font-semibold leading-8"></p>}
-                                            style={{ backgroundColor: '#02b875' }}
+                                            style={{ backgroundColor: '#17274e' }}
                                         />
                                         <span className="text-base pl-4 font-medium">Thông tin xe</span>
                                     </Col>
@@ -478,11 +484,16 @@ const UpdateOrder = (props) => {
                                                     required: true,
                                                     message: 'Vui lòng không để trống trường thông tin này.',
                                                 },
+                                                {
+                                                    pattern: R_VEHICLE_NUMBER,
+                                                    message:
+                                                        'Biển số xe không đúng định dạng. Vidu 30-A-3222, 29-B-42323',
+                                                },
                                             ]}
                                         >
                                             <Input
                                                 className="h-10 text-base border-[#02b875]"
-                                                placeholder="30 F 23132 "
+                                                placeholder="30-F-23132"
                                             />
                                         </Form.Item>
                                     </Col>
@@ -490,12 +501,6 @@ const UpdateOrder = (props) => {
                                         <Form.Item
                                             label={<p className="text-base font-semibold">Số khung</p>}
                                             name="soKhung"
-                                            rules={[
-                                                {
-                                                    required: true,
-                                                    message: 'Vui lòng không để trống trường thông tin này.',
-                                                },
-                                            ]}
                                         >
                                             <Input
                                                 type="text"
@@ -507,12 +512,6 @@ const UpdateOrder = (props) => {
                                         <Form.Item
                                             label={<p className="text-base font-semibold">Số máy</p>}
                                             name="vehicleNumber"
-                                            rules={[
-                                                {
-                                                    required: true,
-                                                    message: 'Vui lòng không để trống trường thông tin này.',
-                                                },
-                                            ]}
                                         >
                                             <Input
                                                 type="text"
@@ -537,7 +536,7 @@ const UpdateOrder = (props) => {
                                         <Avatar
                                             size={34}
                                             icon={<p className="text-base font-semibold leading-8"></p>}
-                                            style={{ backgroundColor: '#02b875' }}
+                                            style={{ backgroundColor: '#17274e' }}
                                         />
                                         <span className="text-base pl-4 font-medium">Thông tin khác</span>
                                     </Col>
@@ -615,7 +614,14 @@ const UpdateOrder = (props) => {
                             >
                                 <div className="flex gap-x-2 justify-end">
                                     {order.status == 1 && (
-                                        <Button className="bg-red-500 text-white hover:!text-white">Hủy</Button>
+                                        <Button
+                                            className="bg-red-500 text-white hover:!text-white"
+                                            onClick={() => {
+                                                handleChangeStatus(0, order);
+                                            }}
+                                        >
+                                            Hủy
+                                        </Button>
                                     )}
 
                                     {order.status == 0 || order.status == 4 || order.status == 5 ? (
@@ -643,11 +649,7 @@ const UpdateOrder = (props) => {
                                 {order.status == 3 && (
                                     <Col span={12}>
                                         <Col span={24} className="pb-1">
-                                            <Avatar
-                                                size={34}
-                                                icon={<p className="text-base font-semibold leading-8">3</p>}
-                                                style={{ backgroundColor: '#02b875' }}
-                                            />
+                                            <Avatar size={34} style={{ backgroundColor: '#17274e' }} />
                                             <span className="text-base pl-4 font-medium">Vật tư sửa chữa</span>
                                         </Col>
                                         {order.status == 3 && (
@@ -689,12 +691,8 @@ const UpdateOrder = (props) => {
                                             }}
                                         >
                                             <Col span={24}>
-                                                <Col span={24} className="pb-6">
-                                                    <Avatar
-                                                        size={34}
-                                                        icon={<p className="text-base font-semibold leading-8">4</p>}
-                                                        style={{ backgroundColor: '#02b875' }}
-                                                    />
+                                                <Col span={24} className="pb-6 !px-0">
+                                                    <Avatar size={34} style={{ backgroundColor: '#17274e' }} />
                                                     <span className="text-base pl-4 font-medium">Dịch vụ khác</span>
                                                 </Col>
                                                 <SubServices
@@ -710,11 +708,7 @@ const UpdateOrder = (props) => {
 
                                 <Col span={12}>
                                     <Col span={24} className="pb-6">
-                                        <Avatar
-                                            size={34}
-                                            icon={<p className="text-base font-semibold leading-8">5</p>}
-                                            style={{ backgroundColor: '#02b875' }}
-                                        />
+                                        <Avatar size={34} style={{ backgroundColor: '#17274e' }} />
                                         <span className="text-base pl-4 font-medium">Phiếu Sửa Chữa</span>
                                     </Col>
                                     <div ref={componentRef} className="p-5">
@@ -798,6 +792,7 @@ const UpdateOrder = (props) => {
                                     showIcon
                                 />
                             </Modal>
+
                             <PermissionCheck
                                 permissionHas={{
                                     label: PERMISSION_LABLEL.ORDER_MANAGE,

@@ -25,6 +25,7 @@ import { PERMISSION_LABLEL, PERMISSION_TYPE } from '../../../constants/permissio
 import Exchange from './Exchange';
 import ModalCustomize from '../../../components/Customs/ModalCustomize';
 import Filter from '../../../components/Filter/Filter';
+import { Link } from 'react-router-dom';
 
 const noti = (type, message, description) => {
     notification[type]({
@@ -117,6 +118,7 @@ const Warehouse = () => {
                     key: item.materialId._id,
                     name: item.materialId.name,
                     quantity: item.quantity,
+                    unit: item.materialId.unit,
                 };
             });
             setData(data);
@@ -237,9 +239,9 @@ const Warehouse = () => {
     const columns = [
         {
             key: 'name',
-            title: 'Tên linh kiện',
+            title: 'Tên vật tư',
             dataIndex: 'name',
-            width: '60%',
+            width: '50%',
             editable: false,
             ellipsis: {
                 showTitle: false,
@@ -252,9 +254,14 @@ const Warehouse = () => {
             ),
         },
         {
+            title: 'Đơn vị tính',
+            dataIndex: 'unit',
+            width: '10%',
+        },
+        {
             title: 'Số lượng',
             dataIndex: 'quantity',
-            width: '20%',
+            width: '10%',
             editable: true,
         },
         {
@@ -283,7 +290,7 @@ const Warehouse = () => {
                         >
                             <div className="flex justify-center items-center gap-x-4">
                                 <Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)}>
-                                    Edit
+                                    Cập nhật số lượng
                                 </Typography.Link>
                                 <div
                                     onClick={() => {
@@ -340,9 +347,13 @@ const Warehouse = () => {
                         ...row,
                     },
                 };
-
-                await updateQuantityOnePart(saveDataToDB);
-
+                const isSuccess = await updateQuantityOnePart(saveDataToDB);
+                if (isSuccess.data.success) {
+                    noti(NOTIFICATION_TYPE.SUCCESS, 'Cập nhật số lượng thành công');
+                } else {
+                    noti(NOTIFICATION_TYPE.WARNING, 'Số lượng hiện tại trong kho tổng không đủ!');
+                    return;
+                }
                 newData.splice(index, 1, {
                     ...item,
                     ...row,
@@ -422,6 +433,19 @@ const Warehouse = () => {
     return (
         <>
             <div className="my-3 flex gap-5">
+                <PermissionCheck
+                    permissionHas={{
+                        label: PERMISSION_LABLEL.WAREHOUSE_MANAGE,
+                        code: PERMISSION_TYPE.UPDATE,
+                    }}
+                >
+                    <Link to={'/admin/quan-ly-kho/general-warehouse'}>
+                        <Button className="btn-primary text-white" type="primary">
+                            Tổng kho
+                        </Button>
+                    </Link>
+                </PermissionCheck>
+
                 <div>{!showroomId ? <ListShowroom options={listShowroom} selectShowroom={dispatch} /> : ''}</div>
                 {data.length > 0 && (
                     <>
