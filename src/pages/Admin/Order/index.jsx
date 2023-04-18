@@ -5,10 +5,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import dayjs from 'dayjs';
 import { getOrdersAsync } from '../../../slices/order';
 import { getAllShowroomAsync } from '../../../slices/showroom';
-import { EditOutlined, SyncOutlined } from '@ant-design/icons';
+import { SyncOutlined } from '@ant-design/icons';
 import { Button, Select, Space, Table, Tag, Tooltip } from 'antd';
 import { HOUR_DATE_TIME } from '../../../constants/format';
-import { ORDER_STATUS, SEVICE_TYPE } from '../../../constants/order';
+import { ORDER_STATUS } from '../../../constants/order';
 import SpinCustomize from '../../../components/Customs/Spin';
 import Filter from '../../../components/Filter/Filter';
 import { CSVLink } from 'react-csv';
@@ -111,8 +111,8 @@ const OrderManage = () => {
                 appointmentSchedule: dayjs(order.appointmentSchedule).format(HOUR_DATE_TIME),
                 tg_tra_xe: dayjs(order.tg_tra_xe).format(HOUR_DATE_TIME),
                 showroomId: _.get(_.find(showrooms, ['_id', order.showroomId]), 'name', ''),
-                total: (order.total && order.total.toLocaleString('en') + ' VNĐ') || '',
-                totalWithVat: (order.totalWithVat && order.totalWithVat.toLocaleString('en') + ' VNĐ') || '',
+                total: (order.total && order.total.toLocaleString('en') + ' VNĐ') || 0,
+                totalWithVat: (order.totalWithVat && order.totalWithVat.toLocaleString('en') + ' VNĐ') || 0,
             };
         });
         setCsvData(newCsvData);
