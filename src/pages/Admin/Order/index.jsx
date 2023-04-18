@@ -97,7 +97,7 @@ const OrderManage = () => {
         });
         setHandleOrder(handleOrder);
     }, [orders]);
-    useEffect(() => {
+    const handleExport = (event, done) => {
         const newCsvData = orders.map((order) => {
             const status = ORDER_STATUS[order.status];
             return {
@@ -105,14 +105,19 @@ const OrderManage = () => {
                 number_phone: order.number_phone,
                 email: order.email,
                 status,
+                vehicleType: order.vehicleType,
+                licensePlates: order.licensePlates,
+                serviceType: order.serviceType,
                 appointmentSchedule: dayjs(order.appointmentSchedule).format(HOUR_DATE_TIME),
+                tg_tra_xe: dayjs(order.tg_tra_xe).format(HOUR_DATE_TIME),
                 showroomId: _.get(_.find(showrooms, ['_id', order.showroomId]), 'name', ''),
                 total: (order.total && order.total.toLocaleString('en') + ' VNĐ') || '',
+                totalWithVat: (order.totalWithVat && order.totalWithVat.toLocaleString('en') + ' VNĐ') || '',
             };
         });
         setCsvData(newCsvData);
-    }, [orders]);
-
+        done(true);
+    };
     useEffect(() => {
         if (_.isEmpty(showrooms)) {
             dispatch(getAllShowroomAsync());
@@ -219,12 +224,19 @@ const OrderManage = () => {
                                         { label: 'Tên khách hàng', key: 'name' },
                                         { label: 'Số điện thoại', key: 'number_phone' },
                                         { label: 'Email', key: 'email' },
-                                        { label: 'Trạng thái', key: 'status' },
+                                        { label: 'Loại xe', key: 'vehicleType' },
+                                        { label: 'Biển số xe', key: 'licensePlates' },
+                                        { label: 'Trạng thái đơn hàng', key: 'status' },
+                                        { label: 'Loại hình dịch vụ', key: 'serviceType' },
                                         { label: 'Thời gian sữa chữa', key: 'appointmentSchedule' },
+                                        { label: 'Thời gian trả xe', key: 'tg_tra_xe' },
                                         { label: 'Cửa hàng', key: 'showroomId' },
                                         { label: 'Tổng tiền đơn hàng', key: 'total' },
+                                        { label: 'Tổng tiền đơn hàng đã có VAT', key: 'totalWithVat' },
                                     ]}
+                                    asyncOnClick={true}
                                     separator={';'}
+                                    onClick={handleExport}
                                     filename={'Đơn hàng.csv'}
                                 >
                                     Xuất excel

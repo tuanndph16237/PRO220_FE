@@ -111,12 +111,12 @@ const UpdateProfile = () => {
                             <UploadImage onChangeUrl={handleChangeUrl} defaultFileList={defaultList} />
                             <div>
                                 <Form.Item
-                                    label="name"
+                                    label="Họ tên"
                                     name="name"
                                     rules={[
                                         {
                                             required: true,
-                                            message: 'Please input your name!',
+                                            message: 'Vui lòng không để trống trường này!',
                                         },
                                     ]}
                                     className="updateProfile"
@@ -125,12 +125,12 @@ const UpdateProfile = () => {
                                 </Form.Item>
 
                                 <Form.Item
-                                    label="email"
+                                    label="Email"
                                     name="email"
                                     rules={[
                                         {
                                             required: true,
-                                            message: 'Please input your Email!',
+                                            message: 'Vui lòng không để trống trường này!',
                                         },
                                     ]}
                                     className="updateProfile"
@@ -139,11 +139,11 @@ const UpdateProfile = () => {
                                 </Form.Item>
                                 <Form.Item
                                     name="number_phone"
-                                    label="Phone"
+                                    label="Số điện thoại"
                                     rules={[
                                         {
                                             required: true,
-                                            message: 'Please input your phone number phone!',
+                                            message: 'Vui lòng không để trống trường này!',
                                         },
                                     ]}
                                     className="updateProfile"
@@ -162,8 +162,8 @@ const UpdateProfile = () => {
                                     }}
                                     className="updateProfile"
                                 >
-                                    <Button type="primary" htmlType="submit">
-                                        Submit
+                                    <Button type="primary" htmlType="submit" className="btn-primary text-white">
+                                        Lưu
                                     </Button>
                                 </Form.Item>
                             </div>

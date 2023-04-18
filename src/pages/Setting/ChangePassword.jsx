@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Form, Input } from 'antd';
 import _, { isEmpty } from 'lodash';
-import { Password, updateAccount, updatePassword } from '../../api/account';
+import { Password, updatePassword } from '../../api/account';
 import { JwtDecode } from '../../utils/auth';
 import { Notification } from '../../utils/notifications';
 import { NOTIFICATION_TYPE } from '../../constants/status';
@@ -17,13 +17,13 @@ const ChangePassword = () => {
         const { data } = await Password(_.omit(value, ['password']));
         setValidate(() => {
             if (data == NOTIFICATION_TYPE.ERROR) {
-                return { validateStatus: NOTIFICATION_TYPE.ERROR, help: 'mật khẩu không khớp!' };
+                return { validateStatus: NOTIFICATION_TYPE.ERROR, help: 'Mật khẩu không khớp!' };
             } else {
                 return { validateStatus: NOTIFICATION_TYPE.SUCCESS };
             }
         });
         if (data == NOTIFICATION_TYPE.SUCCESS) {
-            const valueData = _.omit(value, ['currentPassword'])
+            const valueData = _.omit(value, ['currentPassword']);
             const { data } = await updatePassword(valueData);
             Notification(NOTIFICATION_TYPE.SUCCESS, 'Cập nhập mật khẩu thành công!');
         }
@@ -60,7 +60,7 @@ const ChangePassword = () => {
                     rules={[
                         {
                             required: true,
-                            message: 'Please input your password!',
+                            message: 'Vui lòng không để trống trường này!',
                         },
                     ]}
                     hasFeedback
@@ -73,7 +73,7 @@ const ChangePassword = () => {
                     rules={[
                         {
                             required: true,
-                            message: 'Please input your password!',
+                            message: 'Vui lòng không để trống trường này!',
                         },
                     ]}
                     hasFeedback
@@ -88,7 +88,7 @@ const ChangePassword = () => {
                     rules={[
                         {
                             required: true,
-                            message: 'Please confirm your password!',
+                            message: 'Vui lòng không để trống trường này!',
                         },
                         ({ getFieldValue }) => ({
                             validator(_, value) {
@@ -108,8 +108,8 @@ const ChangePassword = () => {
                         span: 16,
                     }}
                 >
-                    <Button type="primary" htmlType="submit">
-                        Submit
+                    <Button type="primary" htmlType="submit" className="btn-primary text-white">
+                        Đổi mật khẩu
                     </Button>
                 </Form.Item>
             </Form>
