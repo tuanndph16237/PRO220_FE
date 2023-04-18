@@ -6,7 +6,7 @@ import dayjs from 'dayjs';
 import { getOrdersAsync } from '../../../slices/order';
 import { getAllShowroomAsync } from '../../../slices/showroom';
 import { EditOutlined, SyncOutlined } from '@ant-design/icons';
-import { Button, Select, Space, Table, Tooltip } from 'antd';
+import { Button, Select, Space, Table, Tag, Tooltip } from 'antd';
 import { HOUR_DATE_TIME } from '../../../constants/format';
 import { ORDER_STATUS, SEVICE_TYPE } from '../../../constants/order';
 import SpinCustomize from '../../../components/Customs/Spin';
@@ -54,60 +54,28 @@ const OrderManage = () => {
         {
             title: 'Loại hình dịch vụ',
             dataIndex: 'serviceType',
-            render: (servviceType) => {
-                switch (servviceType) {
-                    case SEVICE_TYPE.SHOWROOM:
-                        return 'Sửa chữa/ Bảo dưỡng tại cửa hàng.';
-
-                    case SEVICE_TYPE.RESCUE:
-                        return 'Cứu hộ 24/7';
-
-                    case SEVICE_TYPE.CONTACT_RESCUE:
-                        return 'Nhận về sửa chữa';
-
-                    default:
-                        return '';
-                }
-            },
         },
         {
             title: 'Thời gian sửa chữa',
             dataIndex: 'appointmentSchedule',
             render: (date) => dayjs(date).format(HOUR_DATE_TIME),
         },
-
-        {
-            title: 'Mô tả',
-            dataIndex: 'description',
-        },
-        {
-            title: 'Phụ phí',
-            dataIndex: 'subPrice',
-            render: (value) => value && value.toLocaleString('en') + ' VNĐ',
-        },
-        {
-            title: 'giảm giá',
-            render: () => '10%',
-        },
         {
             title: 'Tổng tiền',
             dataIndex: 'total',
-            render: (value) => value && value.toLocaleString('en') + ' VNĐ',
+            render: (value) =>
+                value > 0 ? (
+                    value.toLocaleString('en') + ' VNĐ'
+                ) : (
+                    <Tag color={'volcano'} key={'loser'}>
+                        chưa thanh toán
+                    </Tag>
+                ),
         },
         {
             title: 'Cửa hàng sửa chữa',
             dataIndex: 'showroomId',
             render: (showroomId) => _.get(_.find(showrooms, ['_id', showroomId]), 'name', ''),
-        },
-        {
-            title: '',
-            render: (data) => {
-                return (
-                    <Link to={data._id}>
-                        <EditOutlined className="text-xl pr-4" />
-                    </Link>
-                );
-            },
         },
     ];
     useEffect(() => {
@@ -233,17 +201,15 @@ const OrderManage = () => {
                                 ]}
                                 onFilter={handleFilter}
                             />
-                            {
-                                (jwtDecode.role == 'Admin' ? (
-                                    <>
-                                        <Select
-                                            defaultValue={'Mời bạn lựa chọn'}
-                                            options={options}
-                                            onChange={handleFilterShowroom}
-                                        />
-                                    </>
-                                ) : null)
-                            }
+                            {jwtDecode.role == 'Admin' ? (
+                                <>
+                                    <Select
+                                        defaultValue={'Mời bạn lựa chọn'}
+                                        options={options}
+                                        onChange={handleFilterShowroom}
+                                    />
+                                </>
+                            ) : null}
                         </div>
                         <div>
                             <Button className="btn-primary text-white mr-5" type="primary">
@@ -290,7 +256,7 @@ const OrderManage = () => {
                     ) : (
                         <Table
                             scroll={{
-                                x: 3000,
+                                x: 1500,
                             }}
                             columns={columns}
                             dataSource={handleOrder}

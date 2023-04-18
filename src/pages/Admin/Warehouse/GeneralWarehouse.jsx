@@ -1,15 +1,17 @@
-import { DownloadOutlined } from '@ant-design/icons';
-import { Button, Form, Table } from 'antd';
-import React, { useEffect, useState } from 'react';
+import { ArrowLeftOutlined, DownloadOutlined, SyncOutlined } from '@ant-design/icons';
+import { Button, Form, Table, Tooltip } from 'antd';
+import React, { useEffect, useRef, useState } from 'react';
 import ModalCustomize from '../../../components/Customs/ModalCustomize';
 import MockUp from './MockUp';
 import { generalPart, updateGeneralPart } from '../../../api/warehouse';
 import { NOTIFICATION_TYPE } from '../../../constants/status';
 import { Notification } from '../../../utils/notifications';
+import { Link } from 'react-router-dom';
 
 const GeneralWarehouse = () => {
     const [open, setOpenModal] = useState(false);
     const [isChange, setIsChange] = useState(false);
+    const data = useRef([])
     const [dataChange, setDataChange] = useState({
         idMaterial: '',
         quantity: 0,
@@ -31,6 +33,7 @@ const GeneralWarehouse = () => {
                 return { key: data._id, ...data };
             });
             setDataWarehouse(handleKey);
+            data.current =handleKey
         } catch (error) {
             Notification(NOTIFICATION_TYPE.ERROR, 'Không thể lấy dữ liệu, thử tải lại!');
         }
@@ -88,9 +91,32 @@ const GeneralWarehouse = () => {
             ),
         },
     ];
-
+    const handleChange = () => {
+        const a = dataWarehouse.filter((item) => item.quantity === 0);
+        setDataWarehouse(a);
+    };
+    const handleFilter = (values = {}) => {
+        setDataWarehouse(data.current);
+    };
     return (
         <>
+            <div className="my-4 flex justify-between items-center">
+                <div>
+                    <Link to={'/admin/quan-ly-kho'} className="m-4">
+                        <ArrowLeftOutlined className="px-2" />
+                        Quay Lại
+                    </Link>
+                    <button className="pr-6" onClick={() => handleFilter()}>
+                            <Tooltip title="Làm Vật tư">
+                                <SyncOutlined style={{ fontSize: '18px', color: '#000' }} />
+                            </Tooltip>
+                        </button>
+                    <Button onClick={handleChange} className="btn-primary text-white" type="primary">
+                        lọc sản phẩm đã hết
+                    </Button>
+                </div>
+                <p className='mx4'>số lượng : {dataWarehouse.length}</p>
+            </div>
             <Table columns={columns} dataSource={dataWarehouse} />
             <ModalCustomize
                 showModal={open}

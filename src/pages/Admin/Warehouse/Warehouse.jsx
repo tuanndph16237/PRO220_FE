@@ -76,7 +76,7 @@ const Warehouse = () => {
     const [totals, setTotals] = useState(0);
     const { showroomId } = JwtDecode();
     const [listShowroom, setListShowroom] = useState([]);
-    const [options, setOptions] = useState();
+    const [options, setOptions] = useState(true);
     const datas = useRef([]);
     const initialState = {
         idCurrentShowroom: showroomId,
@@ -86,7 +86,6 @@ const Warehouse = () => {
         quantityCurrent: 0,
         idPart: '',
     };
-
     const reducer = (state, action) => {
         switch (action.type) {
             case 'UPDATE_CURRENT_SHOWROOM':
@@ -127,6 +126,10 @@ const Warehouse = () => {
                 {
                     value: 'soluong',
                     label: 'sản phẩm đã hết',
+                },
+                {
+                    value: 'ex',
+                    label: 'ex',
                 },
             ]);
             setTotals(dataWarehouse.data.totals);
@@ -410,30 +413,11 @@ const Warehouse = () => {
     }, [state.idCurrentShowroom]);
 
     const handleChange = (value) => {
-        if (value == 'sort') {
-            for (let i = 0; i < data.length; i++) {
-                for (let j = i + 1; j < data.length; j++) {
-                    if (data[i].quantity > data[j].quantity) {
-                        const temp = data[i];
-                        data[i] = data[j];
-                        data[j] = temp;
-                    }
-                }
-            }
-            setData(data);
-        } else {
-            const a = data.filter((item) => item.quantity === 0);
-            setData(a);
-        }
+        const a = data.filter((item) => item.quantity === 0);
+        setData(a);
     };
     const handleFilter = (values = {}) => {
         setData(datas.current);
-        setOptions([
-            {
-                value: 'soluong',
-                label: 'sản phẩm đã hết',
-            },
-        ]);
     };
     return (
         <>
@@ -459,14 +443,9 @@ const Warehouse = () => {
                                 <SyncOutlined style={{ fontSize: '18px', color: '#000' }} />
                             </Tooltip>
                         </button>
-                        <Select
-                            style={{
-                                width: 140,
-                            }}
-                            onChange={handleChange}
-                            options={options}
-                            placeholder="Lựa chọn"
-                        />
+                        <Button onClick={handleChange} className="btn-primary text-white" type="primary">
+                            lọc sản phẩm đã hết
+                        </Button>
                         <div className="flex justify-end pr-4">
                             <p className="text-[18px]">
                                 Số lượng: <span className="font-bold">{data?.length}</span>
