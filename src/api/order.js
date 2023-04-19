@@ -62,10 +62,18 @@ export const getOrderRevenue = (data) => {
     return instance.post('/order/statistical-revenue', data);
 };
 
-export const checkPhoneinSystem = (data)=>{
-    return instance.post('http://localhost:8080/api/phone-in-system', data);
-}
+export const checkPhoneinSystem = (data) => {
+    return instance.post('/phone-in-system', data);
+};
 
-export const getOrderShowroom = (id)=>{
-    return instance.get(`http://localhost:8080/api/getOderShowroom/${id}`)
-}
+export const getOrderShowroom = (id) => {
+    return instance.get(`/getOderShowroom/${id}`);
+};
+
+export const getOrderNotifications = (data) => {
+    return instance.post(`/order/notification`, data);
+};
+
+export const updateOrderNotifications = (id) => {
+    return instance.patch(`/order/notification/${id}`);
+};

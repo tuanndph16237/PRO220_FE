@@ -1,22 +1,16 @@
-import {
-    Form,
-    Input,
-    InputNumber,
-    Popconfirm,
-    Table,
-    Typography,
-    Space,
-    Button,
-    Tooltip,
-    notification,
-    Select,
-} from 'antd';
+import { Form, Input, InputNumber, Popconfirm, Table, Typography, Space, Button, Tooltip } from 'antd';
 import { JwtDecode } from '../../../utils/auth';
 import { SearchOutlined, SyncOutlined } from '@ant-design/icons';
 import React, { useEffect, useRef, useState, useMemo, useReducer } from 'react';
-import { exchangePart, getWarehouseByShowroomId, updateQuantityOnePart } from '../../../api/warehouse';
+import {
+    exchangePart,
+    getOnePartRequired,
+    getWarehouseByShowroomId,
+    updatePartRequired,
+    updateQuantityOnePart,
+} from '../../../api/warehouse';
 import ListShowroom from './ListShowrom';
-import { getShowrooms } from '../../../api/showroom';
+import { getShowroomById, getShowrooms } from '../../../api/showroom';
 import { NOTIFICATION_TYPE } from '../../../constants/status';
 import useDocumentTitle from '../../../hooks/useDocumentTitle';
 import _ from 'lodash';
@@ -25,14 +19,10 @@ import { PERMISSION_LABLEL, PERMISSION_TYPE } from '../../../constants/permissio
 import Exchange from './Exchange';
 import ModalCustomize from '../../../components/Customs/ModalCustomize';
 import Filter from '../../../components/Filter/Filter';
-import { Link } from 'react-router-dom';
-
-const noti = (type, message, description) => {
-    notification[type]({
-        message,
-        description,
-    });
-};
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import queryString from 'query-string';
+import { createNotificationPart } from '../../../api/notification';
+import { Notification } from '../../../utils/notifications';
 
 const EditableCell = ({ editing, dataIndex, title, inputType, record, index, children, ...restProps }) => {
     const inputNode = inputType === 'number' ? <InputNumber /> : <Input />;
@@ -78,6 +68,7 @@ const Warehouse = () => {
     const [listShowroom, setListShowroom] = useState([]);
     const [options, setOptions] = useState(true);
     const datas = useRef([]);
+    const navigate = useNavigate();
     const initialState = {
         idCurrentShowroom: showroomId,
         idShowroomExchange: '',
@@ -96,12 +87,17 @@ const Warehouse = () => {
                 return { ...state, ...action.payload };
             case 'UPDATE_ID_PART':
                 return { ...state, ...action.payload };
+            case 'UPDATE_SHOWROOM_ID':
+                return { ...state, ...action.payload };
             case 'RESET':
                 return { ...initialState, idCurrentShowroom: state.idCurrentShowroom };
             default:
                 return state;
         }
     };
+
+    const { search } = useLocation();
+    const queryParams = queryString.parse(search);
 
     const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -111,6 +107,7 @@ const Warehouse = () => {
 
     const fetchApiWarehouse = async () => {
         try {
+            const showroomData = await getShowroomById(state.idCurrentShowroom);
             const dataWarehouse = await getWarehouseByShowroomId(state.idCurrentShowroom);
             const data = dataWarehouse.data.handleData.map((item) => {
                 return {
@@ -118,8 +115,13 @@ const Warehouse = () => {
                     name: item.materialId.name,
                     quantity: item.quantity,
                     unit: item.materialId.unit,
+                    isRequired: item.isRequired,
+                    image: showroomData.data.images[0],
+                    showroomId: showroomData.data._id,
+                    nameShowroom: showroomData.data.name,
                 };
             });
+
             setData(data);
             datas.current = data;
             setOptions([
@@ -134,7 +136,7 @@ const Warehouse = () => {
             ]);
             setTotals(dataWarehouse.data.totals);
         } catch (res) {
-            noti(NOTIFICATION_TYPE.ERROR, `${res.response.data.error}`);
+            Notification(NOTIFICATION_TYPE.ERROR, `${res.response.data.error}`);
         }
     };
 
@@ -147,23 +149,44 @@ const Warehouse = () => {
             }));
             setListShowroom(handleDataShowroom);
         } catch (res) {
-            noti(NOTIFICATION_TYPE.ERROR, `${res.response.data.error}`);
+            Notification(NOTIFICATION_TYPE.ERROR, `${res.response.data.error}`);
         }
     };
 
     const updateApiPartQuantity = async (obj) => {
         try {
-            const dataUpdatePart = await exchangePart(obj);
+            await exchangePart(obj);
             await fetchApiWarehouse(state.idCurrentShowroom);
-            noti(NOTIFICATION_TYPE.SUCCESS, `Chuyển vật tư thành công`);
+            Notification(NOTIFICATION_TYPE.SUCCESS, `Chuyển vật tư thành công`);
             setKeyChange({});
             dispatch({
                 type: 'RESET',
             });
         } catch (res) {
-            noti(NOTIFICATION_TYPE.ERROR, `${res.response.data.error}`);
+            Notification(NOTIFICATION_TYPE.ERROR, `${res.response.data.error}`);
         }
     };
+
+    const updateApiPartRequired = async (obj) => {
+        try {
+            await updatePartRequired({ showroomId: obj.showroomId, idPart: obj.key });
+            await createNotificationPart({
+                nameMaterial: obj.name,
+                nameShowroom: obj.nameShowroom,
+                materialId: obj.key,
+                showroomId: obj.showroomId,
+                imageShowroom: obj.image,
+            });
+            await fetchApiWarehouse(state.idCurrentShowroom);
+            Notification(NOTIFICATION_TYPE.SUCCESS, `Đã gửi yêu cầu vật tư tới kho tổng`);
+            dispatch({
+                type: 'RESET',
+            });
+        } catch (res) {
+            Notification(NOTIFICATION_TYPE.ERROR, `${res.response.data.error}`);
+        }
+    };
+
     const handleSearch = (selectedKeys, confirm, dataIndex) => {
         confirm();
         setSearchText(selectedKeys[0]);
@@ -296,28 +319,39 @@ const Warehouse = () => {
                                 <Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)}>
                                     Cập nhật số lượng
                                 </Typography.Link>
-                                <div
-                                    onClick={() => {
-                                        setOpenModal(true);
-                                        setKeyChange({ id: record.key });
-                                        dispatch({
-                                            type: 'UPDATE_ID_PART',
-                                            payload: { idPart: record.key, quantityCurrent: record.quantity },
-                                        });
-                                    }}
-                                >
-                                    <img
-                                        src="/images/exchangeswap.png"
-                                        alt="logo-exchange"
-                                        className="bg-black cursor-pointer rounded-sm p-1 active:bg-slate-300"
-                                    />
-                                </div>
+                                {data.length == 1 || (
+                                    <div
+                                        onClick={() => {
+                                            setOpenModal(true);
+                                            setKeyChange({ id: record.key });
+                                            dispatch({
+                                                type: 'UPDATE_ID_PART',
+                                                payload: { idPart: record.key, quantityCurrent: record.quantity },
+                                            });
+                                        }}
+                                    >
+                                        <img
+                                            src="/images/exchangeswap.png"
+                                            alt="logo-exchange"
+                                            className="bg-black cursor-pointer rounded-sm p-1 active:bg-slate-300"
+                                        />
+                                    </div>
+                                )}
                             </div>
                         </PermissionCheck>
                         <PermissionCheck
                             permissionHas={{ label: PERMISSION_LABLEL.WAREHOUSE_MANAGE, code: PERMISSION_TYPE.SHOW }}
                         >
-                            <Button type="primary">Yêu cầu vật</Button>
+                            {record.quantity == 0 &&
+                                (record.isRequired ? (
+                                    <div className="!bg-[#02b875] text-white py-2 rounded-md text-center max-w-[200px]">
+                                        Đã gửi yêu cầu vật tư
+                                    </div>
+                                ) : (
+                                    <Button danger={true} onClick={() => updateApiPartRequired(record)}>
+                                        Gửi yêu cầu vật tư
+                                    </Button>
+                                ))}
                         </PermissionCheck>
                     </>
                 );
@@ -345,21 +379,27 @@ const Warehouse = () => {
             if (index > -1) {
                 const item = newData[index];
                 const saveDataToDB = {
-                    idShowroom: state.idCurrentShowroom,
+                    idShowroom: item?.showroomId,
                     material: {
-                        materialId: item.key,
+                        materialId: item?.key,
                         ...row,
                     },
                 };
                 if (row.quantity <= item.quantity) {
-                    noti(NOTIFICATION_TYPE.WARNING, `Số lượng nhập vào phải lớn hơn hiện tại là ${item.quantity}`);
+                    Notification(
+                        NOTIFICATION_TYPE.WARNING,
+                        `Số lượng nhập vào phải lớn hơn hiện tại là ${item.quantity}`,
+                    );
                     return;
                 }
                 const isSuccess = await updateQuantityOnePart(saveDataToDB);
                 if (isSuccess.data.success) {
-                    noti(NOTIFICATION_TYPE.SUCCESS, 'Cập nhật số lượng thành công');
+                    Notification(NOTIFICATION_TYPE.SUCCESS, 'Cập nhật số lượng thành công');
+                    setTimeout(() => {
+                        navigate('/admin');
+                    }, 3000);
                 } else {
-                    noti(NOTIFICATION_TYPE.WARNING, 'Số lượng hiện tại trong kho tổng không đủ!');
+                    Notification(NOTIFICATION_TYPE.WARNING, 'Số lượng hiện tại trong kho tổng không đủ!');
                     return;
                 }
                 newData.splice(index, 1, {
@@ -374,7 +414,7 @@ const Warehouse = () => {
                 setEditingKey('');
             }
         } catch (errInfo) {
-            noti(NOTIFICATION_TYPE.ERROR, 'Cập nhật số lượng thất bại!');
+            Notification(NOTIFICATION_TYPE.ERROR, 'Cập nhật số lượng thất bại!');
         }
     };
 
@@ -404,6 +444,12 @@ const Warehouse = () => {
 
     useMemo(() => {
         fetchApiShowroom();
+
+        if (!_.isEmpty(queryParams)) {
+            getOnePartRequired(queryParams).then(({ data }) => {
+                setData(data);
+            });
+        }
     }, []);
 
     useEffect(() => {
@@ -434,23 +480,29 @@ const Warehouse = () => {
                         </Button>
                     </Link>
                 </PermissionCheck>
-
-                <div>{!showroomId ? <ListShowroom options={listShowroom} selectShowroom={dispatch} /> : ''}</div>
-                {data.length > 0 && (
+                {_.isEmpty(queryParams) && (
                     <>
-                        <button className="pr-6" onClick={() => handleFilter()}>
-                            <Tooltip title="Làm Vật tư">
-                                <SyncOutlined style={{ fontSize: '18px', color: '#000' }} />
-                            </Tooltip>
-                        </button>
-                        <Button onClick={handleChange} className="btn-primary text-white" type="primary">
-                            lọc sản phẩm đã hết
-                        </Button>
-                        <div className="flex justify-end pr-4">
-                            <p className="text-[18px]">
-                                Số lượng: <span className="font-bold">{data?.length}</span>
-                            </p>
+                        <div>
+                            {!showroomId ? <ListShowroom options={listShowroom} selectShowroom={dispatch} /> : ''}
                         </div>
+
+                        {data.length > 0 && (
+                            <>
+                                <button className="pr-6" onClick={() => handleFilter()}>
+                                    <Tooltip title="Làm Vật tư">
+                                        <SyncOutlined style={{ fontSize: '18px', color: '#000' }} />
+                                    </Tooltip>
+                                </button>
+                                <Button onClick={handleChange} className="btn-primary text-white" type="primary">
+                                    lọc sản phẩm đã hết
+                                </Button>
+                                <div className="flex justify-end pr-4">
+                                    <p className="text-[18px]">
+                                        Số lượng: <span className="font-bold">{data?.length}</span>
+                                    </p>
+                                </div>
+                            </>
+                        )}
                     </>
                 )}
             </div>

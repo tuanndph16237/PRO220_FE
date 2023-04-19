@@ -181,7 +181,6 @@ const BookingPage = () => {
     const handlCheckedtext = () => {};
 
     const handlChecked = async () => {
-        console.log('dsa');
         if (numberPhone !== 0) {
             const { data } = await checkPhoneinSystem({ number_phone: numberPhone });
             if (!data.isPhoneInSystem) {

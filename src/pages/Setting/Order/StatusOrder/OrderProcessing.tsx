@@ -1,14 +1,15 @@
-import React from 'react'
+import React from 'react';
 import { Steps } from 'antd';
 
-const OrderProcessing = ({status}) => {
-  return (
-    <div>
-        <Steps
-                current={status==5?5:--status}
+const OrderProcessing = ({ status }) => {
+    return (
+        <div>
+            <Steps
+                current={status == 5 ? 5 : --status}
                 percent={60}
                 labelPlacement="vertical"
                 className="site-navigation-steps"
+                type="navigation"
                 items={[
                     {
                         title: 'Chờ xác nhận',
@@ -27,8 +28,8 @@ const OrderProcessing = ({status}) => {
                     },
                 ]}
             />
-    </div>
-  )
-}
+        </div>
+    );
+};
 
-export default OrderProcessing
+export default OrderProcessing;

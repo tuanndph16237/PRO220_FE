@@ -132,7 +132,6 @@ const OrderManage = () => {
         const handleOrder = data.map((order) => {
             return { ...order, key: order._id };
         });
-        console.log(handleOrder);
         setHandleOrder(handleOrder);
     };
     return (

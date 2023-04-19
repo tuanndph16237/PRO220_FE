@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Avatar, Divider, Dropdown, List, Skeleton, Space } from 'antd';
-import InfiniteScroll from 'react-infinite-scroll-component';
+import { Avatar, Dropdown, List, Skeleton, Space } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout, saveUserValues } from '../slices/user';
 import { isTokenExpired, JwtDecode } from '../utils/auth';
@@ -9,6 +8,10 @@ import { Token } from '../constants/auth';
 import { isEmpty } from 'lodash';
 import jwtDecode from 'jwt-decode';
 import { BellOutlined } from '@ant-design/icons';
+import { getOrderNotifications, updateOrderNotifications } from '../api/order';
+import dayjs from 'dayjs';
+import { HOUR_DATE_TIME } from '../constants/format';
+import { getApiNotifications } from '../api/notification';
 
 const User = (props) => {
     const items = [];
@@ -18,16 +21,20 @@ const User = (props) => {
     const user = useSelector((state) => state.user.currentUser.values);
     const accessToken = useSelector((state) => state.user.currentUser.accessToken);
     const isLogged = useSelector((state) => state.user.isLogged);
+    const [roleInJwt, setRoleInJwt] = useState(false);
+    const [dataOrderNoti, setDataOrderNoti] = useState([]);
+    const userDecode = JwtDecode();
     const { pathname } = useLocation();
 
     useEffect(() => {
-        const userDecode = JwtDecode();
         if (!isEmpty(userDecode) || !isEmpty(accessToken)) {
             const Jwt = userDecode ? userDecode : jwtDecode(accessToken);
+            setRoleInJwt(Jwt?.role == 'Quản Lý' || Jwt?.role == 'Nhân Viên Kho' ? true : false);
             dispatch(saveUserValues(Jwt));
             setIsAdmin(!!Jwt.role);
         }
     }, [isLogged]);
+
     useEffect(() => {
         const url = window.location.href;
         const split = url.split('/')[3];
@@ -35,28 +42,49 @@ const User = (props) => {
     }, []);
 
     useEffect(() => {
-        (() => {
-            {
-                const roleLogin = JwtDecode();
-                if (roleLogin && isTokenExpired(roleLogin)) {
-                    dispatch(logout());
-                    localStorage.removeItem(Token.accessToken);
-                }
+        (async () => {
+            if (userDecode && isTokenExpired(userDecode)) {
+                dispatch(logout());
+                localStorage.removeItem(Token.accessToken);
+            }
+            switch (userDecode?.role) {
+                case 'Quản Lý':
+                    const dataNoti = await getOrderNotifications({ showroomId: userDecode?.showroomId });
+                    setDataOrderNoti(dataNoti?.data);
+                    break;
+                case 'Nhân Viên Kho':
+                    const dataNotiPart = await getApiNotifications();
+                    setDataOrderNoti(dataNotiPart?.data);
+                    break;
+
+                default:
+                    break;
             }
         })();
     }, [pathname]);
+
     const hanldelogout = () => {
         dispatch(logout());
         localStorage.removeItem(Token.accessToken);
     };
 
-    const listData = Array.from({ length: 10 }).map((_, i) => ({
-        href: 'https://ant.design',
-        title: `ant design part ${i + 1}`,
-        avatar: `https://joesch.moe/api/v1/random?key=${i}`,
-        description: 'Ant Design, a design language for background applications, is refined by Ant UED Team.',
-        content:
-            'We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently.',
+    const listData = dataOrderNoti.map((item) => ({
+        href: `/admin/don-hang/${item._id}`,
+        title: `Đặt lịch có mã đơn hàng ${item._id} đang chờ xác nhận`,
+        avatar: `https://cdn-icons-png.flaticon.com/512/4230/4230738.png`,
+        description: `khách hàng ( anh / chị ) ${item.name} đã đặt lịch ${item.serviceType}, thời gian đặt lịch ${dayjs(
+            item?.appointmentSchedule,
+        ).format(HOUR_DATE_TIME)}`,
+        content: item._id,
+    }));
+
+    const listDataNotiPart = dataOrderNoti.map((item) => ({
+        href: `/admin/quan-ly-kho?showroomId=${item.showroomId}&materialId=${item.materialId}`,
+        title: `Cửa hàng ${item.nameShowroom} đang yêu cầu vật tư`,
+        avatar: `${item.imageShowroom}`,
+        description: `đã gửi yêu cầu cấp vật tư - ${item.nameMaterial} -
+         vào lúc ${dayjs(item?.createdAt).format(HOUR_DATE_TIME)}`,
+        content: '',
     }));
 
     return (
@@ -92,81 +120,92 @@ const User = (props) => {
                 </div>
             ) : (
                 <div className="flex gap-7 items-center">
-                    <Dropdown
-                        className="relative"
-                        menu={{ items }}
-                        dropdownRender={(menu) => (
-                            <div
-                                className={
-                                    props.layoutAdmin
-                                        ? 'dropdown-content absolute top-[-32px] right-0 min-w-[450px]'
-                                        : 'dropdown-content absolute top-[-10px] right-0 min-w-[450px]'
-                                }
-                            >
-                                <div
-                                    className="z-50 my-4 text-base list-none bg-white rounded divide-y divide-gray-100 shadow "
-                                    id="user-dropdown"
-                                >
-                                    <div className="py-3 px-4">
-                                        <span className="block text-sm text-gray-900">Thông Báo</span>
-                                    </div>
-                                    <div
-                                        style={{
-                                            height: 500,
-                                            overflow: 'auto',
-                                            padding: '0 16px',
-                                        }}
-                                    >
-                                        <List
-                                            itemLayout="vertical"
-                                            size="small"
-                                            dataSource={listData}
-                                            renderItem={(item) => (
-                                                <List.Item>
-                                                    <Skeleton loading={false} active avatar>
-                                                        <List.Item.Meta
-                                                            avatar={<Avatar className="w-6 h-6" src={item.avatar} />}
-                                                            title={
-                                                                <a className="font-light" href={item.href}>
-                                                                    {item.title}
-                                                                </a>
-                                                            }
-                                                            description={item.description}
-                                                        />
-                                                        {/* {item.content} */}
-                                                    </Skeleton>
-                                                </List.Item>
-                                            )}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-                        trigger={['click']}
-                    >
-                        <Space className="relative">
-                            <button
-                                type="button"
-                                className=" text-sm rounded-full dark:focus:ring-gray-600"
-                                id="user-menu-button"
-                                aria-expanded="false"
-                                data-dropdown-toggle="user-dropdown"
-                                data-dropdown-placement="bottom"
-                            >
+                    {roleInJwt && (
+                        <Dropdown
+                            className="relative"
+                            menu={{ items }}
+                            dropdownRender={(menu) => (
                                 <div
                                     className={
                                         props.layoutAdmin
-                                            ? 'w-5 h-5 rounded-[50%] absolute bg-red-500 top-2 right-[-12px]'
-                                            : 'w-5 h-5 rounded-[50%] absolute bg-red-500 top-[-8px] right-[-12px]'
+                                            ? 'dropdown-content absolute top-[-32px] right-0 min-w-[450px]'
+                                            : 'dropdown-content absolute top-[-10px] right-0 min-w-[450px]'
                                     }
                                 >
-                                    <span className="text-white">10</span>
+                                    <div
+                                        className="z-50 my-4 text-base list-none bg-white rounded divide-y divide-gray-100 shadow "
+                                        id="user-dropdown"
+                                    >
+                                        <div className="py-3 px-4">
+                                            <span className="block text-sm text-gray-900">Thông Báo</span>
+                                        </div>
+                                        <div
+                                            style={{
+                                                // height: 500,
+                                                overflow: 'auto',
+                                                padding: '0 16px',
+                                            }}
+                                        >
+                                            <List
+                                                itemLayout="vertical"
+                                                size="small"
+                                                dataSource={userDecode?.role == 'Quản Lý' ? listData : listDataNotiPart}
+                                                renderItem={(item) => (
+                                                    <List.Item>
+                                                        <Skeleton loading={false} active avatar>
+                                                            <List.Item.Meta
+                                                                avatar={
+                                                                    <Avatar className="w-6 h-6" src={item.avatar} />
+                                                                }
+                                                                title={
+                                                                    <a
+                                                                        className="font-light"
+                                                                        href={item.href}
+                                                                        onClick={() => {
+                                                                            if (userDecode?.role == 'Quản Lý') {
+                                                                                updateOrderNotifications(item.content);
+                                                                            }
+                                                                        }}
+                                                                    >
+                                                                        {item.title}
+                                                                    </a>
+                                                                }
+                                                                description={item.description}
+                                                            />
+                                                            {/* {item.content} */}
+                                                        </Skeleton>
+                                                    </List.Item>
+                                                )}
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
-                                <BellOutlined className="w-5 h-6 text-2xl relative" />
-                            </button>
-                        </Space>
-                    </Dropdown>
-
+                            )}
+                            trigger={['click']}
+                        >
+                            <Space className="relative">
+                                <button
+                                    type="button"
+                                    className=" text-sm rounded-full dark:focus:ring-gray-600"
+                                    id="user-menu-button"
+                                    aria-expanded="false"
+                                    data-dropdown-toggle="user-dropdown"
+                                    data-dropdown-placement="bottom"
+                                >
+                                    <div
+                                        className={
+                                            props.layoutAdmin
+                                                ? 'w-5 h-5 rounded-[50%] absolute bg-red-500 top-2 right-[-12px]'
+                                                : 'w-5 h-5 rounded-[50%] absolute bg-red-500 top-[-8px] right-[-12px]'
+                                        }
+                                    >
+                                        <span className="text-white text-xs">{dataOrderNoti.length}</span>
+                                    </div>
+                                    <BellOutlined className="w-5 h-6 text-2xl relative" />
+                                </button>
+                            </Space>
+                        </Dropdown>
+                    )}
                     <Dropdown
                         className="relative"
                         menu={{ items }}

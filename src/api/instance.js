@@ -13,7 +13,7 @@ instance.interceptors.request.use(
     async (config) => {
         const userDecode = JwtDecode();
         if (!userDecode || !userDecode.role || userDecode.role == ROLE.ADMIN) return config;
-        config.params = { ...config.params, showroomId: userDecode.showroomId };
+        config.params = { ...config.params };
         return config;
     },
     (error) => {
@@ -26,8 +26,8 @@ instance.interceptors.response.use(
         return response;
     },
     function (error) {
-        const {response} = error
-        Notification(NOTIFICATION_TYPE.ERROR,'Try cập không hợp lệ',response.data.message)
+        const { response } = error;
+        Notification(NOTIFICATION_TYPE.ERROR, 'Try cập không hợp lệ', response.data.message);
         return Promise.reject(error);
     },
 );

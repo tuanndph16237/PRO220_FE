@@ -52,7 +52,6 @@ const ChangePassword = () => {
                 setSendOTP(true);
             })
             .catch((error) => {
-                console.log('error', error);
                 Notification(
                     NOTIFICATION_TYPE.ERROR,
                     'Đã có lỗi xảy ra! Vui lòng thử lại',
@@ -84,7 +83,6 @@ const ChangePassword = () => {
                 Notification(NOTIFICATION_TYPE.WARNING, 'Xác thực thành công!', 'Vui lòng nhập các trường còn thiếu.');
             })
             .catch((error) => {
-                console.log('nhap sai otp', error);
                 Notification(NOTIFICATION_TYPE.ERROR, 'Đã có lỗi xảy ra!', formatErrorMessageSendOTP(error.message));
                 if (formatErrorMessageSendOTP(error.message) === 'Hết thời gian xác thực OTP!') {
                     setOtp('');

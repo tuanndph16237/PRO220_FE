@@ -22,6 +22,7 @@ import { paymentVNPay, sendMail, updateStatusBill } from '../../../api/payment';
 import { NOTIFICATION_TYPE } from '../../../constants/status';
 import { Notification } from '../../../utils/notifications';
 import _ from 'lodash';
+import dayjs from 'dayjs';
 
 const OrderDetail = () => {
     const columns = [
@@ -183,7 +184,7 @@ const OrderDetail = () => {
                 <div className=" border rounded-lg  ">
                     <div className=" font-bold  my-1 text-[#02b875]	ml-3 text-center	">
                         <div>Thời gian đặt lịch:</div>
-                        <div>{moment(dataOrderDetail?.appointmentSchedule).format(HOUR_DATE_TIME)}</div>
+                        <div>{dayjs(dataOrderDetail?.appointmentSchedule).format(HOUR_DATE_TIME)}</div>
                     </div>
                     <div>
                         <div className="">
@@ -214,17 +215,19 @@ const OrderDetail = () => {
                                 {dataOrderDetail?.reasons}
                             </div>
                             <div className="my-px text-lg 	ml-3">
-                                <FieldTimeOutlined className="mr-2" />
                                 <p>
                                     Thời gian nhận xe thực tế:{' '}
-                                    {moment(dataOrderDetail?.tg_nhan_xe).format(HOUR_DATE_TIME)}
+                                    {dataOrderDetail?.tg_nhan_xe == null
+                                        ? ''
+                                        : dayjs(dataOrderDetail?.tg_nhan_xe).format(HOUR_DATE_TIME)}
                                 </p>
                             </div>
                             <div className="my-px text-lg 	ml-3">
-                                <FieldTimeOutlined className="mr-2" />
                                 <p>
                                     Thời gian trả xe thực tế:{' '}
-                                    {moment(dataOrderDetail?.tg_tra_xe).format(HOUR_DATE_TIME)}
+                                    {dataOrderDetail?.tg_tra_xe == null
+                                        ? ''
+                                        : dayjs(dataOrderDetail?.tg_tra_xe).format(HOUR_DATE_TIME)}
                                 </p>
                             </div>
                             <div className="my-px text-lg 	ml-3">

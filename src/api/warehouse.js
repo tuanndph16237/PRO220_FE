@@ -37,3 +37,11 @@ export const generalPart = () => {
 export const updateGeneralPart = (data) => {
     return instance.patch(`/general-warehouse`, data);
 };
+
+export const updatePartRequired = (data) => {
+    return instance.patch(`/required-part?`, data);
+};
+
+export const getOnePartRequired = (data) => {
+    return instance.get(`/required-part?`, { params: data });
+};
