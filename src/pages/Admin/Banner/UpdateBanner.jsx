@@ -23,8 +23,8 @@ const UpdateBanner = () => {
     const dispatch = useDispatch();
     const loading = useSelector((state) => state.banner.update.loading);
 
-    const [banner, setBanner] = useState({});
     const [url, setUrl] = useState(null);
+    const [banner, setBanner] = useState({});
     const [defaultList, setDefaultList] = useState([]);
     const [initialValues, setInitialValues] = useState({});
 

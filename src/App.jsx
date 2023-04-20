@@ -51,6 +51,9 @@ import TotalOrderStatisticalByStatus from './pages/Admin/Statistical/Order/Total
 import TotalOrderStatistical from './pages/Admin/Statistical/Order/TotalOrderStatistical';
 import GeneralWarehouse from './pages/Admin/Warehouse/GeneralWarehouse';
 import PasswordRetrieval from './pages/Password';
+import SubServiceManager from './pages/Admin/subServiceManage';
+import CreateSubService from './pages/Admin/subServiceManage/CreateSubService';
+import UpdateSubService from './pages/Admin/subServiceManage/UpdateSubService';
 
 function App() {
     return (
@@ -135,6 +138,9 @@ function App() {
                 <Route path="quan-ly-dich-vu" element={<ServiceManager />} />
                 <Route path="them-dich-vu" element={<CreateService />} />
                 <Route path="sua-dich-vu/:id" element={<UpdateService />} />
+                <Route path="quan-ly-sub-dich-vu" element={<SubServiceManager />} />
+                <Route path="them-sub-dich-vu" element={<CreateSubService />} />
+                <Route path="sua-sub-dich-vu/:id" element={<UpdateSubService />} />
                 <Route path="quan-ly-nguoi-dung" element={<ManagerAccount />} />
             </Route>
             <Route path="*" element={<PageNotFound />} />
