@@ -27,7 +27,7 @@ instance.interceptors.response.use(
     },
     function (error) {
         const { response } = error;
-        Notification(NOTIFICATION_TYPE.ERROR, 'Try cập không hợp lệ', response.data.message);
+        Notification(NOTIFICATION_TYPE.ERROR, 'Truy cập không hợp lệ', response.data.message);
         return Promise.reject(error);
     },
 );

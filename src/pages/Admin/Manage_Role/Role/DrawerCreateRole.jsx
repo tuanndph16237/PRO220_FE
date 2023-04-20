@@ -1,5 +1,4 @@
-import { Button, Drawer } from 'antd';
-import { useEffect, useState } from 'react';
+import { Drawer } from 'antd';
 import CreateRole from './CreateRole';
 import EditRole from './EditRole';
 
@@ -12,7 +11,13 @@ const DrawerCreateRole = ({ open, onClose, action, id }) => {
     };
     return (
         <>
-            <Drawer title={action} placement="right" width="40%" onClose={HanldClose} open={open}>
+            <Drawer
+                title={action === 'Create' ? 'Thêm vai trò' : 'Cập nhật vai trò'}
+                placement="right"
+                width="40%"
+                onClose={HanldClose}
+                open={open}
+            >
                 {(action === 'Create' && <CreateRole action onClose={onClose} />) ||
                     (action === 'Edit' && <EditRole id={id} onClose={onClose} />)}
             </Drawer>

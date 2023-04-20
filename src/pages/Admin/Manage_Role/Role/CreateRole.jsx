@@ -119,9 +119,6 @@ const CreateRole = ({ onClose }) => {
                 style={{
                     maxWidth: 600,
                 }}
-                initialValues={{
-                    remember: true,
-                }}
                 onFinish={onFinish}
                 onFinishFailed={onFinishFailed}
                 autoComplete="off"
@@ -160,8 +157,8 @@ const CreateRole = ({ onClose }) => {
                         span: 16,
                     }}
                 >
-                    <Button type="primary" htmlType="submit" disabled={open}>
-                        Submit
+                    <Button type="primary" className="btn-primary text-white" htmlType="submit" disabled={open}>
+                        Lưu
                     </Button>
                 </Form.Item>
             </Form>

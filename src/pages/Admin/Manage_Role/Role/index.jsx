@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Space, Table, Tag, Spin, Button, Tooltip } from 'antd';
-import { EditOutlined, PlusOutlined, SyncOutlined } from '@ant-design/icons';
+import { Space, Table, Spin, Button, Tooltip } from 'antd';
+import { EditOutlined, SyncOutlined } from '@ant-design/icons';
 import DrawerCreateRole from './DrawerCreateRole';
 import { getAllRoleAsync } from '../../../../slices/role';
 import { isEmpty } from 'lodash';
@@ -57,7 +57,6 @@ const index = () => {
                     tags: ['cool', 'teacher'],
                 };
             });
-            // const newData = showdata.filter((item) => item.name !== 'Admin');
             datas.current = showdata;
             setData(showdata);
             setShowroomsFilter(showdata.map((item) => ({ label: item.name, value: item.key })));
