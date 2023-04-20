@@ -235,10 +235,15 @@ const UpdateOrder = (props) => {
         }
 
         updateOrderStatus(order._id, {
-            materials: order.materials,
-            materialIds: orders.materialIds,
-            reasons: orders.reasons,
+            materials: order?.materials,
+            materialIds: orders?.materialIds,
+            reasons: orders?.reasons,
             total: total,
+            number_phone: order?.number_phone,
+            showroomName: order?.showroomName,
+            isCustomer: order?.isCustomer,
+            appointmentSchedule: order?.appointmentSchedule,
+            serviceType: order?.serviceType,
             tg_tra_xe: status >= 4 ? dateFinish : null,
             status,
         })

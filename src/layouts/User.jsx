@@ -141,7 +141,7 @@ const User = (props) => {
                                         </div>
                                         <div
                                             style={{
-                                                // height: 500,
+                                                height: 500,
                                                 overflow: 'auto',
                                                 padding: '0 16px',
                                             }}
