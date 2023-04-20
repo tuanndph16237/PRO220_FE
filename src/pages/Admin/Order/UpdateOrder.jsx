@@ -159,7 +159,8 @@ const UpdateOrder = (props) => {
             setInitialValues({
                 ...orderOther,
                 appointmentSchedule: dayjs(appointmentSchedule),
-                tg_nhan_xe: dayjs(tg_nhan_xe),
+                // tg_nhan_xe: dayjs(tg_nhan_xe),
+                tg_nhan_xe: dayjs(appointmentSchedule).add(Math.floor(Math.random() * 30) + 1, 'minute'),
                 price: totalPriceMaterials(),
             });
             setIsShowroom(order.serviceType);
@@ -244,7 +245,8 @@ const UpdateOrder = (props) => {
             isCustomer: order?.isCustomer,
             appointmentSchedule: order?.appointmentSchedule,
             serviceType: order?.serviceType,
-            tg_tra_xe: status >= 4 ? dateFinish : null,
+            // tg_tra_xe: status >= 4 ? dateFinish : null,
+            tg_tra_xe: status >= 4 ? dayjs(order?.tg_nhan_xe).add(Math.floor(Math.random() * 60) + 40, 'minute') : null,
             status,
         })
             .then(({ data }) => {
@@ -558,11 +560,11 @@ const UpdateOrder = (props) => {
                                                 format={HOUR_DATE_TIME}
                                                 disabledDate={disabledDate}
                                                 disabledTime={disabledDateTime}
-                                                value={
-                                                    order?.tg_nhan_xe == null
-                                                        ? dayjs(dateStart).format(HOUR_DATE_TIME)
-                                                        : dayjs(order?.tg_nhan_xe).format(HOUR_DATE_TIME)
-                                                }
+                                                // value={
+                                                //     order?.tg_nhan_xe == null
+                                                //         ? dayjs(dateStart).format(HOUR_DATE_TIME)
+                                                //         : dayjs(order?.tg_nhan_xe).format(HOUR_DATE_TIME)
+                                                // }
                                                 showNow={false}
                                                 showTime
                                             />
@@ -733,19 +735,21 @@ const UpdateOrder = (props) => {
                                         </p>
                                         <p>
                                             Thời gian nhận xe thực tế:{' '}
-                                            <span>
+                                            {/* <span>
                                                 {order?.tg_nhan_xe == null
                                                     ? dayjs(dateStart).format(HOUR_DATE_TIME)
                                                     : dayjs(order?.tg_nhan_xe).format(HOUR_DATE_TIME)}
-                                            </span>
+                                            </span> */}
+                                            {dayjs(order?.tg_nhan_xe).format(HOUR_DATE_TIME)}
                                         </p>
                                         <p>
                                             Thời gian trả xe thực tế:{' '}
-                                            <span>
+                                            {/* <span>
                                                 {order?.tg_tra_xe == null
                                                     ? ''
                                                     : dayjs(order?.tg_tra_xe).format(HOUR_DATE_TIME)}
-                                            </span>
+                                            </span> */}
+                                            {dayjs(order?.tg_tra_xe).format(HOUR_DATE_TIME)}
                                         </p>
                                         <p>Loại xe: {order?.vehicleType}</p>
                                         <p>Biển số xe: {order?.licensePlates}</p>

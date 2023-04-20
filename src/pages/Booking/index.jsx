@@ -409,13 +409,13 @@ const BookingPage = () => {
                                                         size="large"
                                                         defaultValue={date}
                                                         format={DATE_FORMAT}
-                                                        mode="date"
-                                                        disabledDate={(current) => {
-                                                            const hourPresent = dayjs().format('HH');
-                                                            if (!+hourPresent || +hourPresent >= 17)
-                                                                return dayjs().add(1, 'days') >= current;
-                                                            return dayjs().add(-1, 'days') >= current;
-                                                        }}
+                                                        // mode="date"
+                                                        // disabledDate={(current) => {
+                                                        //     const hourPresent = dayjs().format('HH');
+                                                        //     if (!+hourPresent || +hourPresent >= 17)
+                                                        //         return dayjs().add(1, 'days') >= current;
+                                                        //     return dayjs().add(-1, 'days') >= current;
+                                                        // }}
                                                         className="w-full border-[#02b875]"
                                                         placeholder="Ngày"
                                                         showToday
