@@ -184,8 +184,8 @@ const EditRole = ({ id, onClose }) => {
                         span: 16,
                     }}
                 >
-                    <Button type="primary" htmlType="submit" disabled={open}>
-                        Submit
+                    <Button type="primary" className="btn-primary text-white" htmlType="submit" disabled={open}>
+                        Cập nhật
                     </Button>
                 </Form.Item>
             </Form>

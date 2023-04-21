@@ -78,6 +78,7 @@ const OrderManage = () => {
             render: (showroomId) => _.get(_.find(showrooms, ['_id', showroomId]), 'name', ''),
         },
     ];
+
     useEffect(() => {
         (async () => {
             const { data } = await getShowrooms();
@@ -87,8 +88,13 @@ const OrderManage = () => {
                     value: item._id,
                 };
             });
+            if (jwtDecode.role === 'Admin') {
+                await handleFilter();
+            }
+            if (jwtDecode.showroomId) {
+                await handleFilter({ showroomId: jwtDecode.showroomId });
+            }
             setOptions(setData);
-            handleFilter();
         })();
     }, []);
     useEffect(() => {
@@ -124,8 +130,8 @@ const OrderManage = () => {
         }
     }, [showrooms]);
 
-    const handleFilter = (values = {}) => {
-        dispatch(getOrdersAsync(values));
+    const handleFilter = async (values = {}) => {
+        await dispatch(getOrdersAsync(values));
     };
     const handleFilterShowroom = async (value) => {
         const { data } = await getOrderShowroom(value);

@@ -1,27 +1,27 @@
 import { Button, Form, Input, Select, Space, Spin } from 'antd';
 import React, { useState } from 'react';
 import _ from 'lodash';
-import { getApiServiceById, updateApiService } from '../../../api/service';
+import { getApiServiceById, getApiSubServiceById, updateApiService, updateApiSubService } from '../../../api/service';
 import { Notification } from '../../../utils/notifications';
 import { NOTIFICATION_TYPE } from '../../../constants/status';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect } from 'react';
 
-const UpdateService = () => {
+const UpdateSubService = () => {
     const navigate = useNavigate()
     const { id } = useParams();
     const [initialValues, setInitialValues] = useState({});
     const [form] = Form.useForm();
     useEffect(() => {
         (async () => {
-            const { data } = await getApiServiceById(id);
+            const { data } = await getApiSubServiceById(id);
             setInitialValues(data);
         })();
     }, [id]);
     const onFinish = async (values) => {
-        await updateApiService(id, values)
-        Notification(NOTIFICATION_TYPE.SUCCESS, 'Sửa service thành công!')
-        navigate('/admin/quan-ly-dich-vu')
+        await updateApiSubService(id, values)
+        Notification(NOTIFICATION_TYPE.SUCCESS, 'Sửa dịch vụ phát sinh thành công!')
+        navigate('/admin/quan-ly-sub-dich-vu')
         return;
     };
 
@@ -35,10 +35,10 @@ const UpdateService = () => {
                 </div>
             ) : (
                 <Form form={form} initialValues={initialValues} name="dynamic_form_complex" onFinish={onFinish} style={{ maxWidth: 600 }} autoComplete="off">
-                    <Form.Item name="serviceName" label="Dịch vụ" rules={[{ required: true, message: 'phải nhập dịch vụ!' }]}>
+                    <Form.Item name="name" label="Dịch vụ phát sinh" rules={[{ required: true, message: 'phải nhập dịch vụ phát sinh!' }]}>
                         <Input />
                     </Form.Item>
-                    <Form.Item name="icon" label="Icon" rules={[{ required: true, message: 'phải nhập icon!' }]}>
+                    <Form.Item name="fee" label="Giá" rules={[{ required: true, message: 'phải nhập giá!' }]}>
                         <Input />
                     </Form.Item>
                     <Form.Item>
@@ -52,4 +52,4 @@ const UpdateService = () => {
     );
 };
 
-export default UpdateService;
+export default UpdateSubService;
